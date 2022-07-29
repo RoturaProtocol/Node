@@ -40,6 +40,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 
+import brs.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,8 +195,8 @@ public class BurstGUI extends JFrame {
         						" Timestamp: " + DATE_FORMAT.format(blockDate));
 
         				Date now = new Date();
-        			    long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
-
+        			   // long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
+                double blockTime = TextUtils.getBlockTime(block.getHeight());
         				int missingBlocks = (int) ((now.getTime() - blockDate.getTime())/(blockTime * 1000));
         				int prog = block.getHeight()*100/(block.getHeight() + missingBlocks);
         				syncProgressBar.setValue(prog);

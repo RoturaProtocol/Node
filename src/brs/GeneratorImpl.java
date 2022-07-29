@@ -9,11 +9,7 @@ import brs.props.PropertyService;
 import brs.props.Props;
 import brs.services.AccountService;
 import brs.services.TimeService;
-import brs.util.Convert;
-import brs.util.DownloadCacheImpl;
-import brs.util.Listener;
-import brs.util.Listeners;
-import brs.util.ThreadPool;
+import brs.util.*;
 import burst.kit.crypto.BurstCrypto;
 import burst.kit.entity.BurstID;
 
@@ -158,7 +154,8 @@ public class GeneratorImpl implements Generator {
   public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
     BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
 
-    double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
+   // double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
+    double blockTime = TextUtils.getBlockTime(blockHeight);
     double lnScale = (blockTime) / Math.log(blockTime);
     logger.debug("calculateDeadline1 height{},deadline{},hit{} ,capacityBaseTarget{},commitment{},averageCommitment{}",blockHeight,deadline,hit ,capacityBaseTarget,commitment,averageCommitment);
 

@@ -10,6 +10,7 @@ import brs.services.BlockService;
 import brs.services.TransactionService;
 import brs.util.Convert;
 import brs.util.DownloadCacheImpl;
+import brs.util.TextUtils;
 import brs.util.ThreadPool;
 import signum.net.NetworkParameters;
 
@@ -31,7 +32,7 @@ public class BlockServiceImpl implements BlockService {
   private final DownloadCacheImpl downloadCache;
   private final Generator generator;
   private NetworkParameters networkParameters;
-  
+
   private final List<Block> watchedBlocks = new ArrayList<>();
 
   private static final Logger logger = LoggerFactory.getLogger(BlockServiceImpl.class);
@@ -103,7 +104,7 @@ public class BlockServiceImpl implements BlockService {
       return false;
     }
   }
-  
+
   private Account getRewardAccount(Block block) {
 	Account rewardAccount = accountService.getAccount(block.getGeneratorPublicKey());
 	if(rewardAccount.getPublicKey() == null) {
@@ -119,7 +120,7 @@ public class BlockServiceImpl implements BlockService {
     }
     return rewardAccount;
   }
-  
+
   @Override
   public void watchBlock(Block block) {
 	  watchedBlocks.add(block);
@@ -129,19 +130,19 @@ public class BlockServiceImpl implements BlockService {
   public void preVerify(Block block, Block prevBlock) throws BlockchainProcessor.BlockNotAcceptedException, InterruptedException {
     preVerify(block, prevBlock, null);
   }
-  
+
   @Override
   public void preVerify(Block block, Block prevBlock, byte[] scoopData) throws BlockchainProcessor.BlockNotAcceptedException, InterruptedException {
     // Just in case its already verified
     if (block.isVerified()) {
       return;
     }
-    
+
     if(block.getPreviousBlockId() != prevBlock.getId()) {
       logger.info("Error pre-verifying block, invalid previous block");
       return;
     }
-    
+
     int checkPointHeight = Burst.getPropertyService().getInt(Props.BRS_CHECKPOINT_HEIGHT);
     try {
       if(block.getHeight() < checkPointHeight) {
@@ -152,7 +153,7 @@ public class BlockServiceImpl implements BlockService {
     	if(block.getHeight() == checkPointHeight) {
        	    String checkPointHash = Burst.getPropertyService().getString(Props.BRS_CHECKPOINT_HASH);
 
-       	    String receivedHash = Hex.toHexString(block.getPreviousBlockHash()); 
+       	    String receivedHash = Hex.toHexString(block.getPreviousBlockHash());
     		if(!receivedHash.equals(checkPointHash)) {
     			logger.error("Error pre-verifying checkpoint block {}", block.getHeight());
     			return;
@@ -249,8 +250,9 @@ public class BlockServiceImpl implements BlockService {
 
   @Override
   public void calculateBaseTarget(Block block, Block previousBlock) throws BlockOutOfOrderException {
-    long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
-    
+   // long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
+    long blockTime = new Double(TextUtils.getBlockTime(block.getHeight())).longValue();
+
     if (block.getId() == Genesis.GENESIS_BLOCK_ID && block.getPreviousBlockId() == 0) {
       block.setBaseTarget(Constants.INITIAL_BASE_TARGET);
       block.setCumulativeDifficulty(BigInteger.ZERO);
@@ -336,20 +338,20 @@ public class BlockServiceImpl implements BlockService {
       if (newBaseTarget > curBaseTarget * 12 / 10) {
         newBaseTarget = curBaseTarget * 12 / 10;
       }
-      
+
       long peerBaseTarget = block.getBaseTarget();
       block.setBaseTarget(newBaseTarget);
       BigInteger difficulty = Convert.two64.divide(BigInteger.valueOf(newBaseTarget));
-      
+
       if(Burst.getFluxCapacitor().getValue(FluxValues.POC_PLUS, block.getHeight())) {
         block.setCommitment(generator.estimateCommitment(block.getGeneratorId(), previousBlock));
 
         // update the average commitment based on a moving average filter
         long curCommitment = previousBlock.getAverageCommitment();
-        
+
         long avgCommitmentWindow = Burst.getFluxCapacitor().getValue(FluxValues.AVERAGE_COMMITMENT_WINDOW, block.getHeight());
         long newAvgCommitment = (curCommitment*(avgCommitmentWindow - 1L) + block.getCommitment())/avgCommitmentWindow;
-        
+
         // avoid changing more than 20% in a single block
         if (newAvgCommitment < curCommitment * 8 / 10) {
           newAvgCommitment = curCommitment * 8 / 10;
@@ -357,11 +359,11 @@ public class BlockServiceImpl implements BlockService {
         if (newAvgCommitment > curCommitment * 12 / 10) {
           newAvgCommitment = curCommitment * 12 / 10;
         }
-        
+
         // assuming a minimum value of 1 coin
         newAvgCommitment = Math.max(newAvgCommitment, Burst.getPropertyService().getInt(Props.ONE_COIN_NQT));
         block.setBaseTarget(newBaseTarget, newAvgCommitment);
-        
+
         if(block.getPeer()!=null && peerBaseTarget != 0L && peerBaseTarget != block.getBaseTarget()) {
           if(logger.isDebugEnabled()) {
             logger.debug("Peer base target mismatch, height {}, id {}, generator id {}, cap bt {}, avg com. {}", block.getHeight(),
@@ -372,20 +374,20 @@ public class BlockServiceImpl implements BlockService {
           throw new RuntimeException("Peer base target " + peerBaseTarget + ", expected is " + block.getBaseTarget() + ", peer " +
               block.getPeer().getAnnouncedAddress());
         }
-        
+
         int pastBlockHeight = Math.max(0,  block.getHeight() - Constants.MAX_ROLLBACK);
         Block pastBlock = blockchain.getBlockAtHeight(pastBlockHeight);
-        
+
         long pastAverageCommitment = pastBlock.getAverageCommitment();
         if(Burst.getFluxCapacitor().getValue(FluxValues.SPEEDWAY, block.getHeight())) {
           // use the average from past and now to get a smoother result
           pastAverageCommitment = (pastAverageCommitment + block.getAverageCommitment())/2;
         }
         double commitmentFactor = generator.getCommitmentFactor(newAvgCommitment, pastAverageCommitment, block.getHeight());
-        
+
         difficulty = BigInteger.valueOf((long)(difficulty.doubleValue()*commitmentFactor));
-      }      
-      
+      }
+
       block.setCumulativeDifficulty(previousBlock.getCumulativeDifficulty().add(difficulty));
     }
   }
