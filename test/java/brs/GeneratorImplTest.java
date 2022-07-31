@@ -43,7 +43,7 @@ public class GeneratorImplTest {
         FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.POC2);
         FluxCapacitor fluxCapacitorLnTime = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.POC2, FluxValues.SODIUM);
         FluxCapacitor fluxCapacitorPocPlus = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.POC2, FluxValues.POC_PLUS);
-        
+
         doReturn(240).when(fluxCapacitor).getValue(FluxValues.BLOCK_TIME);
         doReturn(240).when(fluxCapacitorLnTime).getValue(FluxValues.BLOCK_TIME);
         doReturn(240).when(fluxCapacitorPocPlus).getValue(FluxValues.BLOCK_TIME);
@@ -61,6 +61,10 @@ public class GeneratorImplTest {
 
     @Test
     public void testGeneratorCalculateDeadline() {
+
+      double addTime  = Math.log(100000000)/Math.log(10000);
+      System.out.println(addTime);
+
     	BigInteger hit = generator.calculateHit(TestConstants.TEST_ACCOUNT_NUMERIC_ID_PARSED, 0, exampleGenSig, generator.calculateScoop(exampleGenSig, exampleHeight), exampleHeight);
         BigInteger deadline = generator.calculateDeadline(hit, exampleBaseTarget, 0, 0, exampleHeight);
         assertEquals(BigInteger.valueOf(7157291745432L), deadline);

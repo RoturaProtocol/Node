@@ -195,8 +195,7 @@ public class BurstGUI extends JFrame {
         						" Timestamp: " + DATE_FORMAT.format(blockDate));
 
         				Date now = new Date();
-        			   // long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
-                double blockTime = TextUtils.getBlockTime(block.getHeight());
+                long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
         				int missingBlocks = (int) ((now.getTime() - blockDate.getTime())/(blockTime * 1000));
         				int prog = block.getHeight()*100/(block.getHeight() + missingBlocks);
         				syncProgressBar.setValue(prog);

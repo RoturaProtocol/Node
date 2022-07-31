@@ -250,8 +250,7 @@ public class BlockServiceImpl implements BlockService {
 
   @Override
   public void calculateBaseTarget(Block block, Block previousBlock) throws BlockOutOfOrderException {
-   // long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
-    long blockTime = new Double(TextUtils.getBlockTime(block.getHeight())).longValue();
+    long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
 
     if (block.getId() == Genesis.GENESIS_BLOCK_ID && block.getPreviousBlockId() == 0) {
       block.setBaseTarget(Constants.INITIAL_BASE_TARGET);

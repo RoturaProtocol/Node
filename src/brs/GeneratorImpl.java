@@ -152,33 +152,25 @@ public class GeneratorImpl implements Generator {
 
   @Override
   public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
-    BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
+      double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
+      BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
+      double addTime  = Math.log(deadline.doubleValue())/Math.log(10000);
+      return BigInteger.valueOf((long)(addTime + blockTime));
 
-   // double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
-    double blockTime = TextUtils.getBlockTime(blockHeight);
-    double lnScale = (blockTime) / Math.log(blockTime);
-    logger.debug("calculateDeadline1 height{},deadline{},hit{} ,capacityBaseTarget{},commitment{},averageCommitment{}",blockHeight,deadline,hit ,capacityBaseTarget,commitment,averageCommitment);
-
-    //if(fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight)) {
-      // private static final double lnScale = 49d; // value that would keep the legacy network size estimation close to real capacity
-
-      double commitmentFactor = getCommitmentFactor(commitment, averageCommitment, blockHeight);
-      double nextDeadline = deadline.doubleValue()/commitmentFactor;
-      logger.debug("calculateDeadline2 height{},deadline{},nextDeadline{},commitmentFactor{}",blockHeight,deadline,nextDeadline,commitmentFactor);
-
-      if(nextDeadline > 1) {
-        // Avoid zero logarithm
-        //nextDeadline = Math.log(nextDeadline) * lnScale;
-        nextDeadline = Math.log10(nextDeadline);
-      }
-
-      deadline = BigInteger.valueOf((long)(nextDeadline + blockTime));
-      logger.debug("calculateDeadline3 height{},nextDeadline{},lnScale{},deadline{}",blockHeight,nextDeadline,lnScale,deadline);
-    //}
-    logger.debug("calculateDeadline finally height{},deadline{},",blockHeight,deadline);
-
-
-    return deadline;
+//    double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
+//    double lnScale = (blockTime) / Math.log(blockTime);
+//    logger.debug("calculateDeadline1 height{},deadline{},hit{} ,capacityBaseTarget{},commitment{},averageCommitment{},blockTime{}",blockHeight,deadline,hit ,capacityBaseTarget,commitment,averageCommitment,blockTime);
+//    double commitmentFactor = getCommitmentFactor(commitment, averageCommitment, blockHeight);
+//    double nextDeadline = deadline.doubleValue()/commitmentFactor;
+//    logger.debug("calculateDeadline2 height{},deadline{},nextDeadline{},commitmentFactor{}",blockHeight,deadline,nextDeadline,commitmentFactor);
+//    if(nextDeadline > 1) {
+//        // Avoid zero logarithm
+//        //nextDeadline = Math.log(nextDeadline) * lnScale;
+//        nextDeadline = Math.log10(nextDeadline);
+//      }
+//    deadline = BigInteger.valueOf((long)(nextDeadline + blockTime));
+//    logger.debug("calculateDeadline3 height{},nextDeadline{},lnScale{},deadline{}",blockHeight,nextDeadline,lnScale,deadline);
+//    return deadline;
   }
 
   public class GeneratorStateImpl implements GeneratorState {
