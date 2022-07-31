@@ -23,7 +23,7 @@ public class TestnetNetwork extends NetworkParametersBase {
     setProperty(Props.POC2_BLOCK_HEIGHT, "0");
 
     setProperty(Props.SODIUM_BLOCK_HEIGHT, "160620");
-    setProperty(Props.SIGNUM_HEIGHT, "269100");
+    setProperty(Props.SIGNUM_HEIGHT, "0");
     setProperty(Props.POC_PLUS_HEIGHT, "-1");
     setProperty(Props.SPEEDWAY_HEIGHT, "338090");
     FluxValues.MIN_CAPACITY.updateValueChanges(Arrays.asList(
