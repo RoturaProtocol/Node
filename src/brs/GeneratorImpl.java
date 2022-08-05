@@ -155,9 +155,9 @@ public class GeneratorImpl implements Generator {
     //return BigInteger.valueOf(5);
     double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
     BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
-    double addTime  = Math.log(deadline.doubleValue())/Math.log(10000);
+    double addTime  = Math.log(deadline.doubleValue())/Math.log(50);
     BigInteger r  = BigInteger.valueOf((long)(addTime + blockTime));
-    logger.debug("calculateDeadline3 height{},deadline{},blockTime{},addTime{},r{}",blockHeight,deadline,blockTime,addTime,r);
+    logger.info("calculateDeadline3 height{},deadline{},blockTime{},addTime{},r{}",blockHeight,deadline,blockTime,addTime,r);
     return  r;
 
 //    double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
