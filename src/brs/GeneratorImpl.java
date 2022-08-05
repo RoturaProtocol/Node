@@ -152,11 +152,13 @@ public class GeneratorImpl implements Generator {
 
   @Override
   public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
-    return BigInteger.valueOf(5);
-    //      double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
-//      BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
-//      double addTime  = Math.log(deadline.doubleValue())/Math.log(10000);
-//      return BigInteger.valueOf((long)(addTime + blockTime));
+    //return BigInteger.valueOf(5);
+    double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
+    BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
+    double addTime  = Math.log(deadline.doubleValue())/Math.log(10000);
+    BigInteger r  = BigInteger.valueOf((long)(addTime + blockTime));
+    logger.debug("calculateDeadline3 height{},deadline{},blockTime{},addTime{},r{}",blockHeight,deadline,blockTime,addTime,r);
+    return  r;
 
 //    double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
 //    double lnScale = (blockTime) / Math.log(blockTime);
