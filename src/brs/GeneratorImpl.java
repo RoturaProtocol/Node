@@ -56,18 +56,24 @@ public class GeneratorImpl implements Generator {
         //找到最小的smallestHit
         while (it.hasNext() && !Thread.currentThread().isInterrupted() && ThreadPool.running.get()) {
           Entry<Long, GeneratorStateImpl> generator = it.next();
-          logger.info("Error in block generation thread smallestHit={},hit={}",smallestHit,generator.getValue().hit );
+          logger.info("cac hit1 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
           if (currentBlock < generator.getValue().getBlock()) {
+            logger.info("cac hit2 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
             if (smallestHit.compareTo(BigInteger.valueOf(0)) == 0){
               smallestHit = generator.getValue().hit;
+              logger.info("cac hit3 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
             }
             if (smallestHit.compareTo(generator.getValue().hit) < 0){
-                smallestHit = generator.getValue().hit;
+              logger.info("cac hit4 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
+              smallestHit = generator.getValue().hit;
             }
           }
         }
 
 
+        logger.info("cac hit5 smallestHit={}",smallestHit );
+        it = generators.entrySet().iterator();
+        logger.info("cac hit6 smallestHit={}",smallestHit );
         while (it.hasNext() && !Thread.currentThread().isInterrupted() && ThreadPool.running.get()) {
           Entry<Long, GeneratorStateImpl> generator = it.next();
           if (currentBlock < generator.getValue().getBlock()) {
