@@ -51,10 +51,29 @@ public class GeneratorImpl implements Generator {
       try {
         long currentBlock = blockchain.getLastBlock().getHeight();
         Iterator<Entry<Long, GeneratorStateImpl>> it = generators.entrySet().iterator();
+        BigInteger smallestHit = BigInteger.valueOf(0);
+
+        //找到最小的smallestHit
+        while (it.hasNext() && !Thread.currentThread().isInterrupted() && ThreadPool.running.get()) {
+          Entry<Long, GeneratorStateImpl> generator = it.next();
+          logger.info("Error in block generation thread smallestHit={},hit={}",smallestHit,generator.getValue().hit );
+          if (currentBlock < generator.getValue().getBlock()) {
+            if (smallestHit.compareTo(BigInteger.valueOf(0)) == 0){
+              smallestHit = generator.getValue().hit;
+            }
+            if (smallestHit.compareTo(generator.getValue().hit) < 0){
+                smallestHit = generator.getValue().hit;
+            }
+          }
+        }
+
+
         while (it.hasNext() && !Thread.currentThread().isInterrupted() && ThreadPool.running.get()) {
           Entry<Long, GeneratorStateImpl> generator = it.next();
           if (currentBlock < generator.getValue().getBlock()) {
-            generator.getValue().forge(blockchainProcessor);
+            if (generator.getValue().hit.compareTo(smallestHit) == 0 ){
+              generator.getValue().forge(blockchainProcessor);
+            }
           } else {
             it.remove();
           }
