@@ -6,9 +6,12 @@ import brs.at.AT;
 import brs.at.AtConstants;
 import brs.at.AtMachineState;
 import brs.common.QuickMocker;
+import brs.crypto.Crypto;
 import brs.services.ATService;
 import brs.services.AccountService;
 import brs.services.ParameterService;
+import burst.kit.crypto.BurstCrypto;
+import burst.kit.entity.BurstAddress;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.Before;
@@ -81,4 +84,15 @@ public class GetAccountATsTest {
     assertNotNull(atsResult);
   }
 
+  @Test
+  public void test_getAccountID() {
+    BurstAddress address;
+    String secretPhrase = "access couple pledge isolate cricket depend color century quantum improve swim unknown";
+    byte[] publicKey = Crypto.getPublicKey(secretPhrase);
+    address = BurstCrypto.getInstance().getBurstAddressFromPublic(publicKey);
+    System.out.println(address.getSignedLongId());
+    System.out.println(address.getBurstID());
+    System.out.println(address.getID());
+    System.out.println(address.getPublicKey());
+  }
 }
