@@ -32,7 +32,7 @@ public interface BlockchainStore {
   int getTransactionCount();
 
   Collection<Transaction> getAllTransactions();
-  
+
   long getAtBurnTotal();
 
   Collection<Transaction> getTransactions(Account account, int numberOfConfirmations, byte type, byte subtype,
@@ -44,6 +44,7 @@ public interface BlockchainStore {
   Collection<Transaction> getTransactions(DSLContext ctx, Result<TransactionRecord> rs);
 
   void addBlock(Block block);
+  void addGenesisAccount();
 
   Collection<Block> getLatestBlocks(int amountBlocks);
 

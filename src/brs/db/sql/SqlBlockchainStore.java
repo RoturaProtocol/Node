@@ -5,6 +5,7 @@ import brs.Block;
 import brs.Transaction;
 import brs.Attachment.CommitmentAdd;
 import brs.Attachment.CommitmentRemove;
+import brs.crypto.Crypto;
 import brs.db.BlockDb;
 import brs.db.TransactionDb;
 import brs.db.store.BlockchainStore;
@@ -19,8 +20,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static brs.schema.Tables.BLOCK;
-import static brs.schema.Tables.TRANSACTION;
+import static brs.schema.Tables.*;
 
 public class SqlBlockchainStore implements BlockchainStore {
 
@@ -47,13 +47,13 @@ public class SqlBlockchainStore implements BlockchainStore {
   @Override
   public Collection<Block> getBlocks(Account account, int timestamp, int from, int to) {
     return Db.useDSLContext(ctx -> {
-      
+
       SelectConditionStep<BlockRecord> query = ctx.selectFrom(BLOCK).where(BLOCK.GENERATOR_ID.eq(account.getId()));
       if (timestamp > 0) {
         query.and(BLOCK.TIMESTAMP.ge(timestamp));
       }
       // TODO: this filter is not working.
-      // Additionally, if we filter the blocks foget counting becomes wrong. 
+      // Additionally, if we filter the blocks foget counting becomes wrong.
 //      if(from > 0 || to > 0) {
 //        int blockchainHeight = Burst.getBlockchain().getHeight();
 //        query.and(BLOCK.HEIGHT.between(to > 0 ? blockchainHeight - to : 0).and(blockchainHeight - Math.max(from, 0)));
@@ -61,7 +61,7 @@ public class SqlBlockchainStore implements BlockchainStore {
       return getBlocks(query.orderBy(BLOCK.HEIGHT.desc()).fetch());
     });
   }
-  
+
   @Override
   public int getBlocksCount(long accountId, int from, int to) {
     if(from >  to) {
@@ -70,7 +70,7 @@ public class SqlBlockchainStore implements BlockchainStore {
     return Db.useDSLContext(ctx -> {
       SelectConditionStep<BlockRecord> query = ctx.selectFrom(BLOCK).where(BLOCK.GENERATOR_ID.eq(accountId))
     		  .and(BLOCK.HEIGHT.between(from).and(to));
-      
+
       return ctx.fetchCount(query);
     });
   }
@@ -216,6 +216,15 @@ public class SqlBlockchainStore implements BlockchainStore {
   }
 
   @Override
+  public void addGenesisAccount() {
+    Db.useDSLContext(ctx -> {
+      byte[] b = Crypto.getPublicKey("impact aerobic name close fan test tiger ghost burst color velvet fresh");
+      ctx.insertInto(ACCOUNT,ACCOUNT.ID,ACCOUNT.PUBLIC_KEY,ACCOUNT.KEY_HEIGHT,ACCOUNT.CREATION_HEIGHT,
+        ACCOUNT.BALANCE,ACCOUNT.UNCONFIRMED_BALANCE,ACCOUNT.FORGED_BALANCE,
+        ACCOUNT.HEIGHT).values(9142499259146735364L,b, 0,0, 8888888888888888888L,8888888888888888888L,8888888888888888888L, 0).execute();
+    });
+  }
+  @Override
   public Collection<Block> getLatestBlocks(int amountBlocks) {
     final int latestBlockHeight = blockDb.findLastBlock().getHeight();
 
@@ -228,12 +237,12 @@ public class SqlBlockchainStore implements BlockchainStore {
                       .fetch());
     });
   }
-  
+
   @Override
   public long getCommittedAmount(long accountId, int height, int endHeight, Transaction skipTransaction) {
     int commitmentWait = Burst.getFluxCapacitor().getValue(FluxValues.COMMITMENT_WAIT, height);
     int commitmentHeight = Math.min(height - commitmentWait, endHeight);
-    
+
     Collection<Transaction> commitmmentAddTransactions = Db.useDSLContext(ctx -> {
       SelectConditionStep<TransactionRecord> select = ctx.selectFrom(TRANSACTION).where(TRANSACTION.TYPE.eq(TransactionType.TYPE_BURST_MINING.getType()))
           .and(TRANSACTION.SUBTYPE.eq(TransactionType.SUBTYPE_BURST_MINING_COMMITMENT_ADD))
@@ -250,7 +259,7 @@ public class SqlBlockchainStore implements BlockchainStore {
         select = select.and(TRANSACTION.SENDER_ID.equal(accountId));
       return getTransactions(ctx, select.fetch());
     });
-    
+
     BigInteger amountCommitted = BigInteger.ZERO;
     for(Transaction tx : commitmmentAddTransactions) {
       CommitmentAdd txAttachment = (CommitmentAdd) tx.getAttachment();
@@ -293,7 +302,7 @@ public class SqlBlockchainStore implements BlockchainStore {
       }
 
       SelectConditionStep<TransactionRecord> select = ctx.selectFrom(TRANSACTION).where(conditions);
-      
+
       if (recipient != null) {
         select = select.and(TRANSACTION.RECIPIENT_ID.eq(recipient));
       }
@@ -302,7 +311,7 @@ public class SqlBlockchainStore implements BlockchainStore {
       }
 
       SelectOrderByStep<TransactionRecord> selectOrder = select;
-      
+
       if (includeIndirectIncoming && recipient != null) {
         selectOrder = selectOrder.unionAll(ctx.selectFrom(TRANSACTION)
                 .where(conditions)
