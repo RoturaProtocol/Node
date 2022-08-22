@@ -218,10 +218,10 @@ public class SqlBlockchainStore implements BlockchainStore {
   @Override
   public void addGenesisAccount() {
     Db.useDSLContext(ctx -> {
-      byte[] b = Crypto.getPublicKey("impact aerobic name close fan test tiger ghost burst color velvet fresh");
+      byte[] b = Crypto.getPublicKey("some teach felicity people reflect cage task state ship study admit shove");
       ctx.insertInto(ACCOUNT,ACCOUNT.ID,ACCOUNT.PUBLIC_KEY,ACCOUNT.KEY_HEIGHT,ACCOUNT.CREATION_HEIGHT,
         ACCOUNT.BALANCE,ACCOUNT.UNCONFIRMED_BALANCE,ACCOUNT.FORGED_BALANCE,
-        ACCOUNT.HEIGHT).values(9142499259146735364L,b, 0,0, 8888888888888888888L,8888888888888888888L,8888888888888888888L, 0).execute();
+        ACCOUNT.HEIGHT).values(9142499259146735364L,b, 0,0, 127980000000000000L,127980000000000000L,127980000000000000L, 0).execute();
     });
   }
   @Override

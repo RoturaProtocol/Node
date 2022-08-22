@@ -18,7 +18,7 @@ public class Props {
   public static final Prop<String> VALUE_SUFIX = new Prop<>("node.valueSuffix", "SIGNA");
   public static final Prop<Boolean> EXPERIMENTAL = new Prop<>("node.experimental", false);
 
-  public static final Prop<Integer> BLOCK_REWARD_START = new Prop<>("node.blockRewardStart", 10_000);
+  public static final Prop<Integer> BLOCK_REWARD_START = new Prop<>("node.blockRewardStart", 1);
   public static final Prop<Integer> BLOCK_REWARD_CYCLE = new Prop<>("node.blockRewardCycle", 10_800);
   public static final Prop<Integer> BLOCK_REWARD_CYCLE_PERCENTAGE = new Prop<>("node.blockRewardCycle", 95);
   public static final Prop<Integer> BLOCK_REWARD_LIMIT_HEIGHT = new Prop<>("node.blockLimitHeight", 972_000);
