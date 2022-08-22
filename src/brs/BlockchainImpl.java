@@ -185,23 +185,17 @@ public class BlockchainImpl implements Blockchain {
     if (height == 0) {
       return 0;
     }
-
     long ONE_COIN = propertyService.getInt(Props.ONE_COIN_NQT);
+
+    if (height >= propertyService.getInt(Props.BLOCK_REWARD_LIMIT_HEIGHT)) {
+      // Minimum incentive, lower than 0.6 % per year
+      return propertyService.getInt(Props.BLOCK_REWARD_LIMIT_AMOUNT) * ONE_COIN;
+    }
+    int month = height / propertyService.getInt(Props.BLOCK_REWARD_CYCLE);
+    int percentage = propertyService.getInt(Props.BLOCK_REWARD_CYCLE_PERCENTAGE);
     int start = propertyService.getInt(Props.BLOCK_REWARD_START);
-    return  BigInteger.valueOf(start).longValue() *ONE_COIN;
-
-
-//    long ONE_COIN = propertyService.getInt(Props.ONE_COIN_NQT);
-//
-//    if (height >= propertyService.getInt(Props.BLOCK_REWARD_LIMIT_HEIGHT)) {
-//      // Minimum incentive, lower than 0.6 % per year
-//      return propertyService.getInt(Props.BLOCK_REWARD_LIMIT_AMOUNT) * ONE_COIN;
-//    }
-//    int month = height / propertyService.getInt(Props.BLOCK_REWARD_CYCLE);
-//    int percentage = propertyService.getInt(Props.BLOCK_REWARD_CYCLE_PERCENTAGE);
-//    int start = propertyService.getInt(Props.BLOCK_REWARD_START);
-//    return BigInteger.valueOf(start).multiply(BigInteger.valueOf(percentage).pow(month))
-//      .divide(BigInteger.valueOf(100).pow(month)).longValue() * ONE_COIN;
+    return BigInteger.valueOf(start).multiply(BigInteger.valueOf(percentage).pow(month))
+      .divide(BigInteger.valueOf(100).pow(month)).longValue() * ONE_COIN;
   }
 
   @Override

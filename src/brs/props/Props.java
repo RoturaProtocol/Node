@@ -10,6 +10,7 @@ public class Props {
   // Structural parameters
   public static final Prop<Integer> BLOCK_TIME = new Prop<>("node.blockTime", 240);
   public static final Prop<Integer> DECIMAL_PLACES = new Prop<>("node.decimalPlaces", 8);
+  //100_000_000 -> 100_00
   public static final Prop<Integer> ONE_COIN_NQT = new Prop<>("node.coinFactor", 100_000_000);
   public static final Prop<Integer> API_PORT = new Prop<>("API.Port", 8125);
   public static final Prop<String> NETWORK_NAME = new Prop<>("node.networkName", "Signum");
@@ -18,7 +19,7 @@ public class Props {
   public static final Prop<String> VALUE_SUFIX = new Prop<>("node.valueSuffix", "SIGNA");
   public static final Prop<Boolean> EXPERIMENTAL = new Prop<>("node.experimental", false);
 
-  public static final Prop<Integer> BLOCK_REWARD_START = new Prop<>("node.blockRewardStart", 1);
+  public static final Prop<Integer> BLOCK_REWARD_START = new Prop<>("node.blockRewardStart", 10_000);
   public static final Prop<Integer> BLOCK_REWARD_CYCLE = new Prop<>("node.blockRewardCycle", 10_800);
   public static final Prop<Integer> BLOCK_REWARD_CYCLE_PERCENTAGE = new Prop<>("node.blockRewardCycle", 95);
   public static final Prop<Integer> BLOCK_REWARD_LIMIT_HEIGHT = new Prop<>("node.blockLimitHeight", 972_000);
