@@ -11,7 +11,7 @@ public class Props {
   public static final Prop<Integer> BLOCK_TIME = new Prop<>("node.blockTime", 240);
   public static final Prop<Integer> DECIMAL_PLACES = new Prop<>("node.decimalPlaces", 8);
   //100_000_000 -> 100_00
-  public static final Prop<Integer> ONE_COIN_NQT = new Prop<>("node.coinFactor", 100_000_000);
+  public static final Prop<Integer> ONE_COIN_NQT = new Prop<>("node.coinFactor", 10000);
   public static final Prop<Integer> API_PORT = new Prop<>("API.Port", 8125);
   public static final Prop<String> NETWORK_NAME = new Prop<>("node.networkName", "Signum");
   public static final Prop<String> GENESIS_BLOCK_ID = new Prop<>("node.genesisBlockId", "3444294670862540038");
