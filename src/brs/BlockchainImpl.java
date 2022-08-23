@@ -13,6 +13,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Supplier;
 
+import java.sql.SQLException;
+import brs.seconddb.Public;
+
+
 public class BlockchainImpl implements Blockchain {
 
   private final TransactionDb transactionDb;
@@ -185,18 +189,39 @@ public class BlockchainImpl implements Blockchain {
     if (height == 0) {
       return 0;
     }
+    long blockReward = 0;
     long ONE_COIN = propertyService.getInt(Props.ONE_COIN_NQT);
-
-    if (height >= propertyService.getInt(Props.BLOCK_REWARD_LIMIT_HEIGHT)) {
-      // Minimum incentive, lower than 0.6 % per year
-      return propertyService.getInt(Props.BLOCK_REWARD_LIMIT_AMOUNT) * ONE_COIN;
+    int month = height / 6307200 + 1;
+    Public p = new Public();
+    int valid_account_numbers = 0;
+    try {
+      valid_account_numbers = p.getAccountNumbers(height-1);
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
-    int month = height / propertyService.getInt(Props.BLOCK_REWARD_CYCLE);
-    int percentage = propertyService.getInt(Props.BLOCK_REWARD_CYCLE_PERCENTAGE);
-    int start = propertyService.getInt(Props.BLOCK_REWARD_START);
-    return BigInteger.valueOf(start).multiply(BigInteger.valueOf(percentage).pow(month))
-      .divide(BigInteger.valueOf(100).pow(month)).longValue() * ONE_COIN;
-  }
+    if(valid_account_numbers<100000){
+      blockReward = valid_account_numbers*ONE_COIN*1000/17280/month;
+    }else{
+      blockReward = 10000*ONE_COIN/month;
+    }
+    return blockReward;
+  }  
+//   public long getBlockReward(int height) {
+//     if (height == 0) {
+//       return 0;
+//     }
+//     long ONE_COIN = propertyService.getInt(Props.ONE_COIN_NQT);
+
+//     if (height >= propertyService.getInt(Props.BLOCK_REWARD_LIMIT_HEIGHT)) {
+//       // Minimum incentive, lower than 0.6 % per year
+//       return propertyService.getInt(Props.BLOCK_REWARD_LIMIT_AMOUNT) * ONE_COIN;
+//     }
+//     int month = height / propertyService.getInt(Props.BLOCK_REWARD_CYCLE);
+//     int percentage = propertyService.getInt(Props.BLOCK_REWARD_CYCLE_PERCENTAGE);
+//     int start = propertyService.getInt(Props.BLOCK_REWARD_START);
+//     return BigInteger.valueOf(start).multiply(BigInteger.valueOf(percentage).pow(month))
+//       .divide(BigInteger.valueOf(100).pow(month)).longValue() * ONE_COIN;
+//   }
 
   @Override
   public long getTotalMined() {
