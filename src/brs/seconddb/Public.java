@@ -42,14 +42,14 @@ public class Public {
 
 
 
-  public static void main(String[] args) {
-    Public test = new Public();
-    try {
-//      System.out.println(test.verifyWhiteList("TS-H9Z5-HYN5-LW8K-FZJLS"));
-      System.out.println(test.getAccountNumbers(14457));
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
+//   public static void main(String[] args) {
+//     Public test = new Public();
+//     try {
+// //      System.out.println(test.verifyWhiteList("TS-H9Z5-HYN5-LW8K-FZJLS"));
+//       System.out.println(test.getAccountNumbers(14457));
+//     } catch (SQLException e) {
+//       e.printStackTrace();
+//     }
 //    try {
 ////      System.out.println(test.verifyWhiteList("TS-H9Z5-HYN5-LW8K-FZJLS"));
 //      for (int i=1; i <= 97300; i++) {
