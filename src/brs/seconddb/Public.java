@@ -12,7 +12,7 @@ public class Public {
         "root", "z1050493759"
       );
       Statement stmt = conn.createStatement();
-      String sql = "select address from white_list where address = '"+address+"'";
+      String sql = "select address from white_list where status = 0 and address = '"+address+"'";
       ResultSet rs = stmt.executeQuery(sql);
       if(rs.next()){
         re = true;
