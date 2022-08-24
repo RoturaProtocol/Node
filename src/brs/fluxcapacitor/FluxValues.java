@@ -22,7 +22,7 @@ public class FluxValues {
     public static final FluxEnable SMART_TOKEN = new FluxEnable(HistoricalMoments.SMART_TOKEN);
     public static final FluxEnable NEXT_FORK = new FluxEnable(HistoricalMoments.NEXT_FORK);
 
-    public static final FluxValue<Integer> BLOCK_TIME = new FluxValue<>(2);
+    public static final FluxValue<Integer> BLOCK_TIME = new FluxValue<>(3);
     public static final FluxValue<Long> FEE_QUANT = new FluxValue<>(
         Constants.ONE_BURST,
         new FluxValue.ValueChange<>(HistoricalMoments.PRE_POC2, Constants.FEE_QUANT_CIP3));
