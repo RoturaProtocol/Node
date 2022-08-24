@@ -38,8 +38,8 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
     super(new APITag[] {APITag.MINING}, SECRET_PHRASE_PARAMETER, NONCE_PARAMETER, ACCOUNT_ID_PARAMETER, BLOCK_HEIGHT_PARAMETER, DEADLINE_PARAMETER);
     BurstCrypto burstCrypto = BurstCrypto.getInstance();
     this.passphrases = propertyService.getStringList(Props.SOLO_MINING_PASSPHRASES)
-            .stream()
-            .collect(Collectors.toMap(passphrase -> burstCrypto.getBurstAddressFromPassphrase(passphrase).getBurstID().getSignedLongId(), Function.identity()));
+      .stream()
+      .collect(Collectors.toMap(passphrase -> burstCrypto.getBurstAddressFromPassphrase(passphrase).getBurstID().getSignedLongId(), Function.identity()));
     this.allowOtherSoloMiners = propertyService.getBoolean(Props.ALLOW_OTHER_SOLO_MINERS);
     this.checkPointHeight = propertyService.getInt(Props.BRS_CHECKPOINT_HEIGHT);
 
@@ -64,8 +64,8 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
       try {
         int height = Integer.parseInt(submissionHeight);
         if (height < checkPointHeight) {
-            response.addProperty("result", "Given block height smaller than the check point height");
-            return response;
+          response.addProperty("result", "Given block height smaller than the check point height");
+          return response;
         }
         if (height != blockchain.getHeight() + 1) {
           response.addProperty("result", "Given block height does not match current blockchain height");
@@ -149,16 +149,16 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
       genAccount = secretAccount;
     }
 
-//    //Committed Balance=BalanceNQT-UnconfirmedBalanceNQT
-//    //100000000000 = 1000
-//    long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
-//
-//    Public p = new Public();
-//    Boolean whiteLicence = p.verifyWhiteList(address.toString());
-//
-//    if (minerLicence < 100000000L && !whiteLicence){
-//      throw new Exception("No mining licence");
-//    }
+    //Committed Balance=BalanceNQT-UnconfirmedBalanceNQT
+    //100000000000 = 1000
+    long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
+
+    Public p = new Public();
+    Boolean whiteLicence = p.verifyWhiteList(address.toString());
+
+    if (minerLicence < 100000000L && !whiteLicence){
+      throw new Exception("No mining licence");
+    }
 
     if (genAccount != null) {
       Account.RewardRecipientAssignment assignment = accountService.getRewardRecipientAssignment(genAccount);
