@@ -26,7 +26,7 @@ public class Public {
   public int getAccountNumbers(int height) throws  SQLException{
     int numbers = 0;
     Connection conn = DriverManager.getConnection(
-      "jdbc:mariadb://43.138.104.154:3306/signum_testnet",
+      "jdbc:mariadb://localhost:3306/signum_testnet",
       "root", "z497688734"
     );
     Statement stmt = conn.createStatement();
