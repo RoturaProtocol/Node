@@ -51,35 +51,10 @@ public class GeneratorImpl implements Generator {
       try {
         long currentBlock = blockchain.getLastBlock().getHeight();
         Iterator<Entry<Long, GeneratorStateImpl>> it = generators.entrySet().iterator();
-        BigInteger smallestHit = BigInteger.valueOf(0);
-
-        //找到最小的smallestHit
-        while (it.hasNext() && !Thread.currentThread().isInterrupted() && ThreadPool.running.get()) {
-          Entry<Long, GeneratorStateImpl> generator = it.next();
-          logger.info("cac hit1 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
-          if (currentBlock < generator.getValue().getBlock()) {
-            logger.info("cac hit2 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
-            if (smallestHit.compareTo(BigInteger.valueOf(0)) == 0){
-              smallestHit = generator.getValue().hit;
-              logger.info("cac hit3 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
-            }
-            if (smallestHit.compareTo(generator.getValue().hit) > 0){
-              logger.info("cac hit4 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
-              smallestHit = generator.getValue().hit;
-            }
-          }
-        }
-
-
-        logger.info("cac hit5 smallestHit={}",smallestHit );
-        it = generators.entrySet().iterator();
-        logger.info("cac hit6 smallestHit={}",smallestHit );
         while (it.hasNext() && !Thread.currentThread().isInterrupted() && ThreadPool.running.get()) {
           Entry<Long, GeneratorStateImpl> generator = it.next();
           if (currentBlock < generator.getValue().getBlock()) {
-            if (generator.getValue().hit.compareTo(smallestHit) == 0 ){
-              generator.getValue().forge(blockchainProcessor);
-            }
+            generator.getValue().forge(blockchainProcessor);
           } else {
             it.remove();
           }
@@ -178,27 +153,40 @@ public class GeneratorImpl implements Generator {
   @Override
   public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
     //return BigInteger.valueOf(5);
-    double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
-    BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
-    double addTime  = Math.log(deadline.doubleValue())/Math.log(50);
-    BigInteger r  = BigInteger.valueOf((long)(addTime + blockTime));
-    logger.info("calculateDeadline3 height{},deadline{},blockTime{},addTime{},r{}",blockHeight,deadline,blockTime,addTime,r);
-    return  r;
-
 //    double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
-//    double lnScale = (blockTime) / Math.log(blockTime);
-//    logger.debug("calculateDeadline1 height{},deadline{},hit{} ,capacityBaseTarget{},commitment{},averageCommitment{},blockTime{}",blockHeight,deadline,hit ,capacityBaseTarget,commitment,averageCommitment,blockTime);
-//    double commitmentFactor = getCommitmentFactor(commitment, averageCommitment, blockHeight);
-//    double nextDeadline = deadline.doubleValue()/commitmentFactor;
-//    logger.debug("calculateDeadline2 height{},deadline{},nextDeadline{},commitmentFactor{}",blockHeight,deadline,nextDeadline,commitmentFactor);
-//    if(nextDeadline > 1) {
-//        // Avoid zero logarithm
-//        //nextDeadline = Math.log(nextDeadline) * lnScale;
-//        nextDeadline = Math.log10(nextDeadline);
-//      }
-//    deadline = BigInteger.valueOf((long)(nextDeadline + blockTime));
-//    logger.debug("calculateDeadline3 height{},nextDeadline{},lnScale{},deadline{}",blockHeight,nextDeadline,lnScale,deadline);
-//    return deadline;
+//    BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
+//    double addTime  = Math.log(deadline.doubleValue())/Math.log(50);
+//    BigInteger r  = BigInteger.valueOf((long)(addTime + blockTime));
+//    logger.info("calculateDeadline3 height{},deadline{},blockTime{},addTime{},r{}",blockHeight,deadline,blockTime,addTime,r);
+//    return  r;
+
+    BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
+
+    double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
+    double lnScale = (blockTime) / Math.log(blockTime);
+
+    if(fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight)) {
+      // private static final double lnScale = 49d; // value that would keep the legacy network size estimation close to real capacity
+
+      double commitmentFactor = getCommitmentFactor(commitment, averageCommitment, blockHeight);
+
+      double nextDeadline = deadline.doubleValue()/commitmentFactor;
+      if(nextDeadline > 0) {
+        // Avoid zero logarithm
+        nextDeadline = Math.log(nextDeadline) * lnScale;
+      }
+      deadline = BigInteger.valueOf((long)(nextDeadline));
+      logger.info("calculateDeadline info1 height{},blockTime{},commitmentFactor{},nextDeadline{},deadline{},lnScale{}",blockHeight,blockTime,commitmentFactor,nextDeadline,deadline,lnScale);
+    }
+    else if(fluxCapacitor.getValue(FluxValues.SODIUM, blockHeight)) {
+      if(deadline.bitLength() < 100 && deadline.longValue() > 0L) {
+        // Avoid the double precision limit for extremely large numbers (of no value) and zero logarithm
+        double sodiumDeadline = Math.log(deadline.doubleValue()) * lnScale;
+        deadline = BigInteger.valueOf((long)sodiumDeadline);
+      }
+    }
+    logger.info("calculateDeadline info2 height{},hit{},capacityBaseTarget{},blockTime{},commitment{},averageCommitment{},deadline{},lnScale{}",blockHeight,hit,capacityBaseTarget,blockTime,commitment,averageCommitment,deadline,lnScale);
+    return deadline;
   }
 
   public class GeneratorStateImpl implements GeneratorState {

@@ -107,7 +107,7 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
         增加verifySecretAccount验证白名单，address唯一标识
         * */
 //        verifySecretAccount(accountService, blockchain, secretAccount, Convert.parseUnsignedLong(accountId));
-        verifySecretAccount(accountService, blockchain, secretAccount, Convert.parseUnsignedLong(accountId),Convert.parseAddress(accountId));        
+        verifySecretAccount(accountService, blockchain, secretAccount, Convert.parseUnsignedLong(accountId),Convert.parseAddress(accountId));
       } catch (Exception e) {
         response.addProperty("result", e.getMessage());
         return response;
@@ -139,7 +139,7 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-  
+
   public static void verifySecretAccount(AccountService accountService, Blockchain blockchain, Account secretAccount, long accountId ,BurstAddress address) throws Exception {
     Account genAccount;
     if (accountId != 0) {
@@ -149,17 +149,17 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
       genAccount = secretAccount;
     }
 
-    //Committed Balance=BalanceNQT-UnconfirmedBalanceNQT
-    //100000000000 = 1000
-    long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
+//    //Committed Balance=BalanceNQT-UnconfirmedBalanceNQT
+//    //100000000000 = 1000
+//    long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
+//
+//    Public p = new Public();
+//    Boolean whiteLicence = p.verifyWhiteList(address.toString());
+//
+//    if (minerLicence < 100000000L && !whiteLicence){
+//      throw new Exception("No mining licence");
+//    }
 
-    Public p = new Public();
-    Boolean whiteLicence = p.verifyWhiteList(address.toString());
-
-    if (minerLicence < 100000000L && !whiteLicence){
-      throw new Exception("No mining licence");
-    }    
-    
     if (genAccount != null) {
       Account.RewardRecipientAssignment assignment = accountService.getRewardRecipientAssignment(genAccount);
       long rewardId;
