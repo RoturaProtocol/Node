@@ -256,6 +256,8 @@ public class GeneratorImpl implements Generator {
       Block lastBlock = blockchain.getLastBlock();
 
       int elapsedTime = timeService.getEpochTime() - lastBlock.getTimestamp();
+      logger.info("forge info1 elapsedTime={},timeService.getEpochTime={},lastBlock.getTimestamp={},deadline={}",elapsedTime,timeService.getEpochTime(),lastBlock.getTimestamp(),deadline);
+
       if (BigInteger.valueOf(elapsedTime).compareTo(deadline) > 0) {
         blockchainProcessor.generateBlock(secretPhrase, publicKey, nonce);
       }
