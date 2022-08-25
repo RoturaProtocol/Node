@@ -164,6 +164,7 @@ public class GeneratorImpl implements Generator {
 
     double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
     double lnScale = (blockTime) / Math.log(blockTime);
+    logger.info("calculateDeadline info0 check{},FluxValues.POC_PLUS{},blockHeight{}",fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight),FluxValues.POC_PLUS.getValueChanges(),blockHeight);
 
     if(fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight)) {
       // private static final double lnScale = 49d; // value that would keep the legacy network size estimation close to real capacity
@@ -176,7 +177,7 @@ public class GeneratorImpl implements Generator {
         nextDeadline = Math.log(nextDeadline) * lnScale;
       }
       deadline = BigInteger.valueOf((long)(nextDeadline));
-      logger.info("calculateDeadline info1 height{},blockTime{},commitmentFactor{},nextDeadline{},deadline{},lnScale{}",blockHeight,blockTime,commitmentFactor,nextDeadline,deadline,lnScale);
+      logger.info("calculateDeadline info1 height{},blockTime{},commitment{},averageCommitment{},commitmentFactor{},nextDeadline{},deadline{},lnScale{}",blockHeight,blockTime,commitment,averageCommitment,commitmentFactor,nextDeadline,deadline,lnScale);
     }
     else if(fluxCapacitor.getValue(FluxValues.SODIUM, blockHeight)) {
       if(deadline.bitLength() < 100 && deadline.longValue() > 0L) {
