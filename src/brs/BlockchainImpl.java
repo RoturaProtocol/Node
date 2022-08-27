@@ -15,6 +15,10 @@ import java.util.function.Supplier;
 
 import java.sql.SQLException;
 import brs.seconddb.Public;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.StampedLock;
+import java.util.function.Supplier;
 
 
 public class BlockchainImpl implements Blockchain {
@@ -235,16 +239,22 @@ public class BlockchainImpl implements Blockchain {
     long LIMIT_AMOUNT = propertyService.getInt(Props.BLOCK_REWARD_LIMIT_AMOUNT) * ONE_COIN;
 
     for (int i=1; i <= height; i++) {
-      if (i >= decreaseStopHeight) {
-        blockReward = LIMIT_AMOUNT;
+//      if (i >= decreaseStopHeight) {
+//        blockReward = LIMIT_AMOUNT;
+//      }
+//      else {
+//        int cycle = i / rewardCycle;
+//        if(cycle != blockMonth) {
+//          blockReward = getBlockReward(i);
+//          blockMonth = cycle;
+//        }
+//      }
+      try {
+        Thread.currentThread().sleep(5);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
       }
-      else {
-        int cycle = i / rewardCycle;
-        if(cycle != blockMonth) {
-          blockReward = getBlockReward(i);
-          blockMonth = cycle;
-        }
-      }
+      blockReward = getBlockReward(i);
       totalMined += blockReward;
     }
 
