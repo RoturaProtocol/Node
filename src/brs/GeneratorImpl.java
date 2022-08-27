@@ -178,7 +178,7 @@ public class GeneratorImpl implements Generator {
     BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
     double addTime  = Math.log(deadline.doubleValue())/Math.log(50);
     BigInteger finalDeadline  = BigInteger.valueOf((long)(addTime + blockTime));
-    logger.info("calculateDeadline info0 height {},hit {},deadline {},blockTime {},addTime {},finalDeadline {}",blockHeight,hit,deadline,blockTime,addTime,finalDeadline);
+    logger.info("calculateDeadline info0 height={},hit={},deadline={},blockTime={},addTime={},finalDeadline={}",blockHeight,hit,deadline,blockTime,addTime,finalDeadline);
     return  finalDeadline;
   }
 
