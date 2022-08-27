@@ -95,7 +95,7 @@ public final class Constants {
     calendar.set(Calendar.YEAR, 2022);
     calendar.set(Calendar.MONTH, Calendar.AUGUST);
     calendar.set(Calendar.DAY_OF_MONTH, 27);
-    calendar.set(Calendar.HOUR_OF_DAY, 18);
+    calendar.set(Calendar.HOUR_OF_DAY, 10);
     calendar.set(Calendar.MINUTE, 0);
     calendar.set(Calendar.SECOND, 0);
     calendar.set(Calendar.MILLISECOND, 0);
