@@ -63,7 +63,7 @@ public class GeneratorImpl implements Generator {
               smallestHit = generator.getValue().hit;
               logger.info("generateBlockThread info3 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
             }
-            if (smallestHit.compareTo(generator.getValue().hit) < 0){
+            if (smallestHit.compareTo(generator.getValue().hit) > 0){
               logger.info("generateBlockThread info4 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
               smallestHit = generator.getValue().hit;
             }
