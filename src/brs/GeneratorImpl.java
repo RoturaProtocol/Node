@@ -56,15 +56,15 @@ public class GeneratorImpl implements Generator {
         //找到最小的smallestHit
         while (it.hasNext() && !Thread.currentThread().isInterrupted() && ThreadPool.running.get()) {
           Entry<Long, GeneratorStateImpl> generator = it.next();
-          logger.info("generateBlockThread info0 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
+          logger.info("generateBlockThread info0 smallestHit={},hit={},accountID={}",smallestHit,generator.getValue().hit,generator.getKey());
           if (currentBlock < generator.getValue().getBlock()) {
-            logger.info("generateBlockThread info1 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
+            logger.info("generateBlockThread info1 smallestHit={},hit={},accountID={}",smallestHit,generator.getValue().hit ,generator.getKey());
             if (smallestHit.compareTo(BigInteger.valueOf(0)) == 0){
               smallestHit = generator.getValue().hit;
-              logger.info("generateBlockThread info3 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
+              logger.info("generateBlockThread info3 smallestHit={},hit={},accountID={}",smallestHit,generator.getValue().hit,generator.getKey());
             }
             if (smallestHit.compareTo(generator.getValue().hit) > 0){
-              logger.info("generateBlockThread info4 smallestHit={},hit={}",smallestHit,generator.getValue().hit );
+              logger.info("generateBlockThread info4 smallestHit={},hit={},accountID={}",smallestHit,generator.getValue().hit ,generator.getKey());
               smallestHit = generator.getValue().hit;
             }
           }
