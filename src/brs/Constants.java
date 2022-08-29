@@ -19,7 +19,7 @@ public final class Constants {
 
   public static final int BLOCK_HEADER_LENGTH = 232;
 
-  public static final long MAX_BALANCE_BURST = 2158812800L;
+  public static final long MAX_BALANCE_BURST = 999999999999999999L;
 
   public static final long FEE_QUANT_CIP3 = 735000;
   public static final long ONE_BURST = 10000;
