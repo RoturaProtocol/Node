@@ -176,7 +176,10 @@ public class GeneratorImpl implements Generator {
   public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
     double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
     BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
-    double addTime  = Math.log(deadline.doubleValue())/Math.log(50);
+    double addTime = 0d;
+    if (deadline.compareTo(BigInteger.valueOf(1)) > 0) {
+      addTime  = Math.log(deadline.doubleValue())/Math.log(50);
+    }
     BigInteger finalDeadline  = BigInteger.valueOf((long)(addTime + blockTime));
     logger.info("calculateDeadline info0 height={},hit={},deadline={},blockTime={},addTime={},finalDeadline={}",blockHeight,hit,deadline,blockTime,addTime,finalDeadline);
     return  finalDeadline;
