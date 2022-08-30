@@ -1,18 +1,42 @@
 package brs.seconddb;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 public class Public {
 
+  private static final String WL_URL;
+  private static final String WL_USER_NAME;
+  private static final String WL_PASSWORD;
+  private static final String WL_TABLENAME;
+  private static final String SIGNUM_URL;
+  private static final String SIGNUM_USER_NAME;
+  private static final String SIGNUM_PASSWORD;
+
+  static {
+    Properties properties = new Properties();
+    try {
+      properties.load(new FileInputStream("conf/seconddb"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    WL_URL = properties.getProperty("wl_url");
+    WL_USER_NAME = properties.getProperty("wl_username");
+    WL_PASSWORD = properties.getProperty("wl_password");
+    WL_TABLENAME = properties.getProperty("wl_tablename");
+    SIGNUM_URL = properties.getProperty("signum_url");
+    SIGNUM_USER_NAME = properties.getProperty("signum_username");
+    SIGNUM_PASSWORD = properties.getProperty("signum_password");
+  }  
+  
   public Boolean verifyWhiteList(String address) throws SQLException{
 
       boolean re;
-      Connection conn = DriverManager.getConnection(
-        "jdbc:mariadb://43.135.44.240:3306/signum_business",
-        "root", "z1050493759"
-      );
+      Connection conn = DriverManager.getConnection(WL_URL,WL_USER_NAME, WL_PASSWORD);
       Statement stmt = conn.createStatement();
-      String sql = "select address from white_list where status = 0 and address = '"+address+"'";
+      String sql = "select address from "+WL_TABLENAME+" where status = 0 and address = '"+address+"'";
       ResultSet rs = stmt.executeQuery(sql);
       if(rs.next()){
         re = true;
@@ -25,10 +49,7 @@ public class Public {
 
   public int getAccountNumbers(int height) throws  SQLException{
     int numbers = 0;
-    Connection conn = DriverManager.getConnection(
-      "jdbc:mariadb://localhost:3306/signum_testnet",
-      "root", "z497688734"
-    );
+    Connection conn = DriverManager.getConnection(SIGNUM_URL,SIGNUM_USER_NAME, SIGNUM_PASSWORD);
     Statement stmt = conn.createStatement();
     String sql = "select (select count(distinct id) from account  where a.height>=height) numbers from account a where a.height='"+height+"'";
     ResultSet rs = stmt.executeQuery(sql);
