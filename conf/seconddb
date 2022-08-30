@@ -1,0 +1,8 @@
+# localhost
+wl_url=jdbc:mariadb://localhost:33306/signum
+wl_username = root
+wl_password = root
+wl_tablename = white_list
+signum_url=jdbc:mariadb://localhost:33306/signum
+signum_username = root
+signum_password = root
