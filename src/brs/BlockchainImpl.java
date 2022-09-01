@@ -204,7 +204,7 @@ public class BlockchainImpl implements Blockchain {
       e.printStackTrace();
     }
     if(valid_account_numbers<100000){
-      blockReward = valid_account_numbers*ONE_COIN*1000/17280/month;
+      blockReward = valid_account_numbers*ONE_COIN*100/17280/month;
     }else{
       blockReward = 10000*ONE_COIN/month;
     }
