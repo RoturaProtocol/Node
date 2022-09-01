@@ -203,10 +203,18 @@ public class BlockchainImpl implements Blockchain {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    if(valid_account_numbers<100000){
-      blockReward = valid_account_numbers*ONE_COIN*100/17280/month;
+    if (height<=28849){
+      if(valid_account_numbers<100000){
+        blockReward = valid_account_numbers*ONE_COIN*1000/17280/month;
+      }else{
+        blockReward = 10000*ONE_COIN/month;
+      }
     }else{
-      blockReward = 10000*ONE_COIN/month;
+      if(valid_account_numbers<100000){
+        blockReward = valid_account_numbers*ONE_COIN*100/17280/month;
+      }else{
+        blockReward = 10000*ONE_COIN/month;
+      }
     }
     return blockReward;
   }
