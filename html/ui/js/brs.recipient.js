@@ -26,25 +26,25 @@ var BRS = (function(BRS, $, undefined) {
     BRS.sendMoneyCalculateTotal = function(element) {
         var current_amount = parseFloat($("#send_money_amount").val(), 10);
         var current_fee = parseFloat($("#send_money_fee").val(), 10);
-        var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
-        var amount = isNaN(current_amount) ? 0.00000001 : (current_amount < 0.00000001 ? 0.00000001 : current_amount);
+        var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
+        var amount = isNaN(current_amount) ? 0.0001 : (current_amount < 0.0001 ? 0.0001 : current_amount);
 
-        $("#send_money_amount").val(amount.toFixed(8));
-        $("#send_money_fee").val(fee.toFixed(8));
+        $("#send_money_amount").val(amount.toFixed(4));
+        $("#send_money_fee").val(fee.toFixed(4));
 
-        $(element).closest(".modal").find(".total_amount_ordinary").html(BRS.formatAmount(BRS.convertToNQT(amount + fee)) + " SIGNA");
+        $(element).closest(".modal").find(".total_amount_ordinary").html(BRS.formatAmount(BRS.convertToNQT((amount + fee)*10000)) + " Peth");
     };
-    
+
     BRS.commitmentCalculateTotal = function(element) {
         var current_amount = parseFloat($("#commitment_amount").val(), 10);
         var current_fee = parseFloat($("#commitment_fee").val(), 10);
-        var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
-        var amount = isNaN(current_amount) ? 0.00000001 : (current_amount < 0.00000001 ? 0.00000001 : current_amount);
+        var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
+        var amount = isNaN(current_amount) ? 0.0001 : (current_amount < 0.0001 ? 0.0001 : current_amount);
 
-        $("#commitment_amount").val(amount.toFixed(8));
-        $("#commitment_fee").val(fee.toFixed(8));
+        $("#commitment_amount").val(amount.toFixed(4));
+        $("#commitment_fee").val(fee.toFixed(4));
 
-        $(element).closest(".modal").find(".total_amount_commitment").html(BRS.formatAmount(BRS.convertToNQT(amount + fee)) + " SIGNA");
+        $(element).closest(".modal").find(".total_amount_commitment").html(BRS.formatAmount(BRS.convertToNQT(amount + fee)) + " Peth");
     };
 
     $("#send_message_modal, #send_money_modal, #add_contact_modal").on("show.bs.modal", function(e) {
@@ -67,7 +67,7 @@ var BRS = (function(BRS, $, undefined) {
         }
         BRS.sendMoneyCalculateTotal($(this));
     });
-    
+
     $("#commitment_modal").on("show.bs.modal", function(e) {
         var $invoker = $(e.relatedTarget);
 
@@ -156,10 +156,9 @@ var BRS = (function(BRS, $, undefined) {
         // ugly hack - serious jquery cancer
         $(this).parent().parent().parent().parent().find(".multi-out-recipient").val($(this).data("contact"));
     });
-
     BRS.forms.sendMoneyComplete = function(response, data) {
         if (!(data._extra && data._extra.convertedAccount) && !(data.recipient in BRS.contacts)) {
-            $.notify($.t("success_send_money") + " <a href='#' data-account='" + BRS.getAccountFormatted(data, "recipient") + "' data-toggle='modal' data-target='#add_contact_modal' style='text-decoration:underline'>" + $.t("add_recipient_to_contacts_q") + "</a>", {
+            $.notify($.t("Peth has been sent") + " <a href='#' data-account='" + BRS.getAccountFormatted(data, "recipient") + "' data-toggle='modal' data-target='#add_contact_modal' style='text-decoration:underline'>" + "</a>", {
                 type: 'success',
                 offset: {
                     x: 5,
@@ -167,7 +166,7 @@ var BRS = (function(BRS, $, undefined) {
                 }
             });
         } else {
-            $.notify($.t("success_send_money"), {
+            $.notify($.t("Peth has been sent"), {
                 type: 'success',
                 offset: {
                     x: 5,
@@ -196,7 +195,7 @@ var BRS = (function(BRS, $, undefined) {
                 callback({
                     "type": "info",
                     "message": $.t("recipient_info", {
-                        "burst": BRS.formatAmount(response.unconfirmedBalanceNQT, false, true)
+                        "burst": BRS.formatAmount(response.unconfirmedBalanceNQT/10000, false, true)
                     }),
                     "account": response
                 });
@@ -271,7 +270,7 @@ var BRS = (function(BRS, $, undefined) {
                   var publicKeyBase36 = account.substr(27 - offset);
                   var publicKey = new BigNumber(publicKeyBase36, 36).toString(16);
                   var checkRS = BRS.getAccountIdFromPublicKey(publicKey, true);
-                  
+
                   if(!checkRS.includes(accountRS.substr(6 - offset))){
                     callout.removeClass(classes).addClass("callout-danger").html($.t("recipient_malformed")).show();
                   }
@@ -286,9 +285,9 @@ var BRS = (function(BRS, $, undefined) {
                       if (response.account && response.account.description) {
                           checkForMerchant(response.account.description, modal);
                       }
-  
+
                       var message = response.message.escapeHTML();
-  
+
                       callout.removeClass(classes).addClass("callout-" + response.type).html(message).show();
                   });
                 }

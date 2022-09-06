@@ -322,7 +322,7 @@
     "error_invalid_seller": "Invalid Seller ID",
     "error_invalid_token": "The token is <strong>NOT VALID<\/strong>. It appears to belong to account __account_link__. It was generated on __timestamp__.",
     "error_issue_asset": "An unknown error occured! Token may or may not be created.",
-    "error_max_amount_warning": "Your amount is higher than __burst__ SIGNA. Are you sure you want to continue? Click the submit button again to confirm.",
+    "error_max_amount_warning": "Your amount is higher than __burst__ PETH. Are you sure you want to continue? Click the submit button again to confirm.",
     "error_max_asset_transfer_warning": "Quantity specified is higher than __qty__. Are you sure you want to continue? Click the submit button again to confirm.",
     "error_max_fee_warning": "Your fee is higher than __burst__ SIGNA. Are you sure you want to continue? Click the submit button again to confirm.",
     "error_max_tags": "A maximum of __nr__ tags is allowed.",

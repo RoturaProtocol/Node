@@ -3,47 +3,49 @@
     <div class="pull-left info">
       <div class="pull-left info">
         <div style="margin-bottom:5px;margin-top:5px;"><a href="#" id="account_name" data-toggle="modal" data-target="#account_info_modal" data-i18n="no_name_set">No Name Set</a></div>
-        <a id="account_id" class="copy_link" role="menuitem" tabindex="-1" href="#" data-type="account_rs" title="Copy"></a>
+<!--        <a id="account_id" class="copy_link" role="menuitem" tabindex="-1" href="#" data-type="account_rs" title="Copy"></a>-->
+<!--        <a class="copy_link" role="menuitem" tabindex="-1" href="#" data-type="account_id"  data-i18n="copy_account_id">Copy Numeric Account ID</a></li>-->
         <div id="account_id_sidebar">
           <ul class="nav nav-pills nav-stacked" role="menu">
-            <li role="presentation"><a class="copy_link" role="menuitem" tabindex="-1" href="#" data-type="account_id"  data-i18n="copy_account_id">Copy Numeric Account ID</a></li>
-            <li role="presentation"><a class="copy_link" role="menuitem" tabindex="-1" href="#" data-type="message_link" data-i18n="copy_send_message_link">Copy "Send Message" Link</a></li>
-            <li role="presentation"><a class="copy_link" role="menuitem" tabindex="-1" href="#" data-type="send_link" data-i18n="copy_send_burst_link">Copy "Send SIGNA" Link</a></li>
+            <li><a class="copy_link" id="accountid" role="menuitem" tabindex="-1" href="#" data-type="account_rs" title="">Copy Account ID</a></li>
+            <li><a class="copy_link" id="naccountid" role="menuitem" tabindex="-1" href="#" data-type="account_id"  data-i18n="copy_account_id" title="" >Copy Numeric Account ID</a></li>
+<!--            <li role="presentation"><a class="copy_link" role="menuitem" tabindex="-1" href="#" data-type="message_link" data-i18n="copy_send_message_link">Copy "Send Message" Link</a></li>-->
+<!--            <li role="presentation"><a class="copy_link" role="menuitem" tabindex="-1" href="#" data-type="send_link" data-i18n="copy_send_burst_link">Copy "Send SIGNA" Link</a></li>-->
           </ul>
         </div>
       </div>
     </div>
   </div>
-  <form action="#" method="get" class="sidebar-form" id="id_search" autocomplete="off">
-    <div class="input-group">
-      <input type="text" name="q" class="form-control" placeholder="Search by ID..." data-i18n="[placeholder]search_by_id">
-      <span class="input-group-btn">
-      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fas fa-search"></i></button>
-      </span>
-    </div>
-  </form>
+<!--  <form action="#" method="get" class="sidebar-form" id="id_search" autocomplete="off">-->
+<!--    <div class="input-group">-->
+<!--      <input type="text" name="q" class="form-control" placeholder="Search by ID..." data-i18n="[placeholder]search_by_id">-->
+<!--      <span class="input-group-btn">-->
+<!--      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fas fa-search"></i></button>-->
+<!--      </span>-->
+<!--    </div>-->
+<!--  </form>-->
   <ul class="sidebar-menu">
     <li class="active" id="dashboard_link"><a href="#" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> <span data-i18n="dashboard">Dashboard</span></a></li>
     <li class="treeview" id="sidebar_transactions">
       <a href="#" data-page="transactions"><i class="fas fa-briefcase"></i> <span data-i18n="transactions">Transactions</span><i class="fa pull-right fa-angle-right" style="padding-top:3px"></i></a>
       <ul class="treeview-menu" style="display: none;">
         <li><a href="#" data-page="transactions"><i class="fas fa-exchange-alt"></i> <span data-i18n="transactions">Transactions</span></a></li>
-        <li><a href="#" data-page="escrow"><i class="fas fa-check-circle"></i> <span data-i18n="escrow">Escrow</span></a></li>
-        <li><a href="#" data-page="subscription"><i class="far fa-handshake"></i> <span data-i18n="subscriptions">Subscriptions</span></a></li>
-        <li><a href="#" data-page="at"><i class="fas fa-laptop"></i> <span data-i18n="ats">ATs (Smart Contracts)</span></a></li>
+<!--        <li><a href="#" data-page="escrow"><i class="fas fa-check-circle"></i> <span data-i18n="escrow">Escrow</span></a></li>-->
+<!--        <li><a href="#" data-page="subscription"><i class="far fa-handshake"></i> <span data-i18n="subscriptions">Subscriptions</span></a></li>-->
+<!--        <li><a href="#" data-page="at"><i class="fas fa-laptop"></i> <span data-i18n="ats">ATs (Smart Contracts)</span></a></li>-->
       </ul>
     </li>
-    <li class="treeview" id="sidebar_asset_exchange">
-      <a href="#" data-page="asset_exchange"><i class="fas fa-chart-area"></i> <span data-i18n="asset_exchange">Asset Exchange</span><i class="fa pull-right fa-angle-right" style="padding-top:3px"></i></a>
-      <ul class="treeview-menu" style="display: none;">
-        <li><a href="#" data-page="asset_exchange"><i class="fas fa-chart-area"></i> <span data-i18n="asset_exchange">Asset Exchange</span></a></li>
-        <li><a href="#" data-page="transfer_history"><i class="fas fa-exchange-alt"></i> <span data-i18n="transfer_history">Transfer History</span></a></li>
-        <li><a href="#" data-page="my_assets"><i class="fas fa-chart-pie"></i> <span data-i18n="my_assets">My Assets</span></a></li>
-        <li><a href="#" data-page="open_orders"><i class="fas fa-pause"></i> <span data-i18n="open_orders">Open Orders</span></a></li>
-        <li><a href="#" data-toggle="modal" data-target="#issue_asset_modal"><i class="fas fa-chart-line"></i> <span data-i18n="issue_asset">Issue Asset</span></a></li>
-        <li><a href="#" data-page="nsv_dividends" id="nsv_div_start"><i class="fas fa-users"></i> Payout Dividends</a></li>
-      </ul>
-    </li>
+<!--    <li class="treeview" id="sidebar_asset_exchange">-->
+<!--      <a href="#" data-page="asset_exchange"><i class="fas fa-chart-area"></i> <span data-i18n="asset_exchange">Asset Exchange</span><i class="fa pull-right fa-angle-right" style="padding-top:3px"></i></a>-->
+<!--      <ul class="treeview-menu" style="display: none;">-->
+<!--        <li><a href="#" data-page="asset_exchange"><i class="fas fa-chart-area"></i> <span data-i18n="asset_exchange">Asset Exchange</span></a></li>-->
+<!--        <li><a href="#" data-page="transfer_history"><i class="fas fa-exchange-alt"></i> <span data-i18n="transfer_history">Transfer History</span></a></li>-->
+<!--        <li><a href="#" data-page="my_assets"><i class="fas fa-chart-pie"></i> <span data-i18n="my_assets">My Assets</span></a></li>-->
+<!--        <li><a href="#" data-page="open_orders"><i class="fas fa-pause"></i> <span data-i18n="open_orders">Open Orders</span></a></li>-->
+<!--        <li><a href="#" data-toggle="modal" data-target="#issue_asset_modal"><i class="fas fa-chart-line"></i> <span data-i18n="issue_asset">Issue Asset</span></a></li>-->
+<!--        <li><a href="#" data-page="nsv_dividends" id="nsv_div_start"><i class="fas fa-users"></i> Payout Dividends</a></li>-->
+<!--      </ul>-->
+<!--    </li>-->
     <!-- Disabled
     <li class="treeview" id="sidebar_crowdfunding">
       <a href="#" data-page="crowdfunding"><i class="fas fa-money-bill-alt"></i> <span data-i18n="crowdfunding_page">Crowdfunding</span><i class="fa pull-right fa-angle-right" style="padding-top:3px"></i></a>
@@ -75,14 +77,14 @@
       <li class="treeview" id="sidebar_burst_services">
         <a href="#"><i class="fas fa-cogs"></i><span>Signum Services</span><i class="fa pull-right fa-angle-right" style="padding-top:3px"></i></a>
         <ul class="treeview-menu" style="display: none;">
-          <li><a href="#" data-page="nsv_dividends" id="nsv_div_start"><i class="fas fa-angle-double-right"></i> Dividends+</a></li> 
+          <li><a href="#" data-page="nsv_dividends" id="nsv_div_start"><i class="fas fa-angle-double-right"></i> Dividends+</a></li>
         </ul>
       </li>
       end Dividends+ code-->
-    <li><a href="#" data-page="contacts"><i class="fas fa-address-book"></i> <span data-i18n="contacts">Contacts</span></a></li>
-    <li><a href="#" data-page="messages"><i class="fas fa-envelope"></i> <span data-i18n="messages">Messages</span></a></li>
-    <li><a href="#" data-page="aliases"><i class="fas fa-address-card"></i> <span data-i18n="aliases">Aliases</span></a></li>
+<!--    <li><a href="#" data-page="contacts"><i class="fas fa-address-book"></i> <span data-i18n="contacts">Contacts</span></a></li>-->
+<!--    <li><a href="#" data-page="messages"><i class="fas fa-envelope"></i> <span data-i18n="messages">Messages</span></a></li>-->
+<!--    <li><a href="#" data-page="aliases"><i class="fas fa-address-card"></i> <span data-i18n="aliases">Aliases</span></a></li>-->
     <li><a href="#" data-page="blocks"><i class="fas fa-list"></i> <span data-i18n="blocks">Blocks</span></a></li>
-    <li><a href="#" data-page="peers"><i class="fab fa-connectdevelop"></i> <span data-i18n="peers">Peers</span></a></li>
+<!--    <li><a href="#" data-page="peers"><i class="fab fa-connectdevelop"></i> <span data-i18n="peers">Peers</span></a></li>-->
   </ul>
 </section>

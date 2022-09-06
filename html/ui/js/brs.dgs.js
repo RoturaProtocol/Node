@@ -44,9 +44,9 @@ var BRS = (function(BRS, $, undefined) {
     BRS.getMarketplaceItemHTML = function(good) {
         return "<tr>" +
             "<td><a href='#' data-goods='" + String(good.goods).escapeHTML() + "' data-toggle='modal' data-target='#dgs_purchase_modal'>" + String(good.name).escapeHTML() +"</a></td>" +
-            "<td>" + BRS.formatAmount(good.priceNQT) + "</td>" + 
+            "<td>" + BRS.formatAmount(good.priceNQT) + "</td>" +
             "<td>" + BRS.format(good.quantity) + "</td>" +
-            "<td><a href='#' data-user='" + BRS.getAccountFormatted(good, "seller") + "' class='user_info'>" + BRS.getAccountTitle(good, "seller") + "</a></td>" + 
+            "<td><a href='#' data-user='" + BRS.getAccountFormatted(good, "seller") + "' class='user_info'>" + BRS.getAccountTitle(good, "seller") + "</a></td>" +
             "<td><a href='#'' data-toggle='modal' data-target='#dgs_product_modal' data-goods='" + String(good.goods).escapeHTML() + "'>" + String(good.goods).escapeHTML() + "</a></td>" +
             "</tr>";
     };
@@ -119,18 +119,18 @@ var BRS = (function(BRS, $, undefined) {
 
         var content = "<table class=\"table table-striped\" id=\"dgs_table\"><thead><tr><th data-i18n=\"dgs_table_product\" align=\"center\">Product</th><th data-i18n=\"dgs_table_price\" width=\"140px\">Price</th><th data-i18n=\"dgs_table_quantity\" width=\"1px\">Quantity</th><th data-i18n=\"dgs_table_seller\" width=\"260px\">Seller</th><th data-i18n=\"dgs_table_product_id\" width=\"150px\">Product ID</th></tr></thead><tbody>";
         var seller = $.trim($(".dgs_search input[name=q]").val());
-        
+
         if (seller) {
-            
+
             if (seller != _currentSeller) {
                 $("#dgs_search_contents").empty();
                 _currentSeller = seller;
             }
-            
+
             $("#dgs_search_results").show();
             $("#dgs_search_center").hide();
             $("#dgs_search_top").show();
-            
+
             BRS.sendRequest("getDGSGoods+", {
                 "seller": seller,
                 "firstIndex": BRS.pageNumber * BRS.itemsPerPage - BRS.itemsPerPage,
@@ -143,50 +143,50 @@ var BRS = (function(BRS, $, undefined) {
                         BRS.hasMorePages = true;
                         response.goods.pop();
                     }
-                    
+
                     for (var i = 0; i < response.goods.length; i++) {
                         content += BRS.getMarketplaceItemHTML(response.goods[i]);
                     }
                     content += "</tbody></table>";
                 }
-                
+
                 BRS.dataLoaded(content);
                 BRS.showMore();
-                
+
                 if (callback) {
                     callback();
                 }
             });
-            
+
         }
         else {
             $("#dgs_search_contents").empty();
             $("#dgs_search_results").show();
             $("#dgs_search_center").hide();
             $("#dgs_search_top").show();
-            
+
             BRS.sendRequest("getDGSGoods+", {
                 "seller": 0,
                 "firstIndex": BRS.pageNumber * BRS.itemsPerPage - BRS.itemsPerPage,
                 "lastIndex": BRS.pageNumber * BRS.itemsPerPage - 1
             }, function(response) {
                 $("#dgs_search_contents").empty();
-                
+
                 if (response.goods && response.goods.length) {
                     if (response.goods.length > BRS.itemsPerPage) {
                         BRS.hasMorePages = true;
                         response.goods.pop();
                     }
-                    
+
                     for (var i = 0; i < response.goods.length; i++) {
                         content += BRS.getMarketplaceItemHTML(response.goods[i]);
                     }
                     content += "</tbody></table>";
                 }
-                
+
                 BRS.dataLoaded(content);
                 BRS.showMore();
-                
+
                 if (callback) {
                     callback();
                 }
@@ -666,7 +666,7 @@ var BRS = (function(BRS, $, undefined) {
             return;
         }
 
-        $("#my_dgs_listings_table tr[data-goods=" + String(data.goods).escapeHTML() + "]").addClass("tentative").find(".price").html(BRS.formatAmount(data.priceNQT) + " SIGNA");
+        $("#my_dgs_listings_table tr[data-goods=" + String(data.goods).escapeHTML() + "]").addClass("tentative").find(".price").html(BRS.formatAmount(data.priceNQT) + " Peth");
     };
 
     BRS.forms.dgsRefundComplete = function(response, data) {
@@ -960,11 +960,11 @@ var BRS = (function(BRS, $, undefined) {
                 $modal.find("input[name=recipient]").val(response.sellerRS);
 
                 $("#dgs_purchase_price").val(String(response.priceNQT).escapeHTML());
-                $("#dgs_total_purchase_price").html(BRS.formatAmount(response.priceNQT) + " SIGNA");
+                $("#dgs_total_purchase_price").html(BRS.formatAmount(response.priceNQT) + " Peth");
 
                 $("#dgs_purchase_quantity").on("change", function() {
                     var totalNQT = new BigInteger(response.priceNQT).multiply(new BigInteger(String($(this).val()))).toString();
-                    $("#dgs_total_purchase_price").html(BRS.formatAmount(totalNQT) + " SIGNA");
+                    $("#dgs_total_purchase_price").html(BRS.formatAmount(totalNQT) + " Peth");
                 });
             }
         }, false);

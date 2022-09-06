@@ -374,10 +374,10 @@ var BRS = (function(BRS, $, undefined) {
 
         if(typeof currency == 'string'){
         currency = parseFloat(currency, 10);
-        currency = currency.toFixed(8);  ///  this fixes rounding issues (for the Total field on modals)
+        currency = currency.toFixed(4);  ///  this fixes rounding issues (for the Total field on modals)
         }
         else
-        currency = currency.toFixed(8);  ///  this fixes rounding issues (for the Total field on modals)
+        currency = currency.toFixed(4);  ///  this fixes rounding issues (for the Total field on modals)
 
         var parts = currency.split(".");
 
@@ -386,17 +386,17 @@ var BRS = (function(BRS, $, undefined) {
         //no fractional part
         var fraction;
         if (parts.length === 1) {
-            fraction = "00000000";
+            fraction = "0000";
         } else if (parts.length === 2) {
-            if (parts[1].length <= 8) {
+            if (parts[1].length <= 4) {
                 fraction = parts[1];
             } else {
-                fraction = parts[1].substring(0, 8);
+                fraction = parts[1].substring(0, 4);
             }
         } else {
             throw "Invalid input";
         }
-        for (var i = fraction.length; i < 8; i++) {
+        for (var i = fraction.length; i < 4; i++) {
             fraction += "0";
         }
 
@@ -578,7 +578,7 @@ var BRS = (function(BRS, $, undefined) {
         if (typeof timestamp === "object") {
             date = timestamp;
         } else {
-            date = new Date(Date.UTC(2014, 7, 11, 2, 0, 0, 0) + timestamp * 1000);
+            date = new Date(Date.UTC(2022, 7, 27, 10, 0, 0, 0) + timestamp * 1000);
         }
         if (!isNaN(date) && typeof(date.getFullYear) == 'function') {
             var d = date.getDate();
@@ -784,13 +784,19 @@ var BRS = (function(BRS, $, undefined) {
     };
 
     BRS.getClipboardText = function(type) {
+
         switch (type) {
             case "account_id":
                 return BRS.account;
             case "account_rs":
-                if(BRS.accountInfo.errorCode)
-                  return BRS.accountRSExtended;
-                return BRS.accountRS;
+                str=BRS.accountRS;
+                if(str.indexOf("T")!==-1)
+                {
+                    return BRS.accountRS
+                }else{
+                    return  'T'+BRS.accountRS
+                }
+                // return  'T'+BRS.accountRS;
             case "message_link":
                 return document.URL.replace(/#.*$/, "") + "#message:" + BRS.account;
             case "send_link":
@@ -806,7 +812,6 @@ var BRS = (function(BRS, $, undefined) {
 
     BRS.setupClipboardFunctionality = function() {
         var $el = $("#asset_id_dropdown .dropdown-menu a, #account_id, #account_id_sidebar li a");
-
         if (BRS.inApp) {
             $el.on("click", function() {
                 parent.postMessage({
@@ -986,7 +991,7 @@ var BRS = (function(BRS, $, undefined) {
                     value = BRS.formatQuantity(value, 0);
                 }
             } else if (key === "price" || key === "total" || key === "amount" || key === "fee" || key === "refund" || key === "discount") {
-                value = BRS.formatAmount(new BigInteger(String(value))) + " SIGNA";
+                value = BRS.formatAmount(new BigInteger(String(value))) + " Peth";
             } else if (key === "sender" || key === "recipient" || key === "account" || key === "seller" || key === "buyer") {
                 value = "<a href='#' data-user='" + String(value).escapeHTML() + "'>" + BRS.getAccountTitle(value) + "</a>";
             } else {
@@ -1173,6 +1178,22 @@ var BRS = (function(BRS, $, undefined) {
             $(".right-side").toggleClass("strech");
         }
     });
+
+    $("#accountid").on('mousemove',function(){
+        str=BRS.accountRS;
+        if(str.indexOf("T")!==-1)
+        {
+            $title=BRS.accountRS;
+        }else{
+            $title='T' + BRS.accountRS;
+        }
+        $("#accountid").attr("title",$title)
+    });
+
+    $("#naccountid").on('mousemove',function(){
+        $title=BRS.account;
+        $("#naccountid").attr("title",$title)
+    })
 
     $.fn.tree = function() {
         return this.each(function() {
@@ -1454,4 +1475,6 @@ var BRS = (function(BRS, $, undefined) {
     };
 
     return BRS;
+
+
 }(BRS || {}, jQuery));

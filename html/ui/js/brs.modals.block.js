@@ -55,9 +55,10 @@ var BRS = (function(BRS, $, undefined) {
 		    transaction.amount = new BigInteger(transaction.amountNQT);
 		    transaction.fee = new BigInteger(transaction.feeNQT);
 		}
+		rows += "<tr><td>" + BRS.formatTime(transaction.timestamp) + "</td><td>" + BRS.formatAmount(transaction.amount) + "</td><td>" + BRS.formatAmount(transaction.fee) + "</td><td>" + BRS.getAccountTitle(transaction, "recipient") + "</td><td>"+BRS.getAccountTitle(transaction, "sender") + "</td></tr>";
+		exit;
 
-		rows += "<tr><td>" + BRS.formatTime(transaction.timestamp) + "</td><td>" + BRS.formatAmount(transaction.amount) + "</td><td>" + BRS.formatAmount(transaction.fee) + "</td><td>" + BRS.getAccountTitle(transaction, "recipient") + "</td><td>" + BRS.getAccountTitle(transaction, "sender") + "</td></tr>";
-	    }
+		}
 
 	    $("#block_info_transactions_table tbody").empty().append(rows);
 	    $("#block_info_modal").modal("show");

@@ -436,7 +436,7 @@ var BRS = (function(BRS, $, undefined) {
         if (data.deadline) {
             data.deadline = String(data.deadline * 60); //hours to minutes
         }
-        
+
         if (data.removeCommitment) {
             requestType = "removeCommitment";
             delete data.removeCommitment;
@@ -625,8 +625,8 @@ var BRS = (function(BRS, $, undefined) {
         var data = {
             secretPhrase: passphrase,
             recipients: multiOutString,
-            amountNQT: BRS.convertToNQT(amount),
-            feeNQT: BRS.convertToNQT(fee),
+            amountNQT: BRS.convertToNQT(amount)/10000,
+            feeNQT: BRS.convertToNQT(fee)/10000,
             deadline: "1440",
         };
 

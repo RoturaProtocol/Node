@@ -59,7 +59,7 @@ var BRS = (function(BRS, $, undefined) {
 
     BRS.hasLocalStorage = true;
     BRS.inApp = false;
-    BRS.appVersion = "";
+    BRS.appVersion = "1.0.0";
     BRS.appPlatform = "";
     BRS.assetTableKeys = [];
 
@@ -125,7 +125,6 @@ var BRS = (function(BRS, $, undefined) {
                         }
                     }
                 }
-
                 $("#show_console").hide();
 
                 parent.postMessage("loaded", "*");
@@ -225,9 +224,8 @@ var BRS = (function(BRS, $, undefined) {
                 var previousLastBlock = (firstTime ? "0" : BRS.state.lastBlock);
 
                 BRS.state = response;
-
                 if (firstTime) {
-                    $("#brs_version, #brs_version_dashboard").html(BRS.state.version).removeClass("loading_dots");
+                    $("#brs_version, #brs_version_dashboard").html('1.0.0').removeClass("loading_dots");
                     BRS.getBlock(BRS.state.lastBlock, BRS.handleInitialBlocks);
                 }
                 else if (BRS.state.isScanning) {
@@ -591,13 +589,6 @@ var BRS = (function(BRS, $, undefined) {
             }
             else {
                 if (BRS.accountRS && BRS.accountInfo.accountRS !== BRS.accountRS) {
-                    $.notify("Generated Reed Solomon address different from the one in the blockchain!", {
-                        type: 'danger',
-                    offset: {
-                        x: 5,
-                        y: 60
-                        }
-                    });
                     BRS.accountRS = BRS.accountInfo.accountRS;
                 }
 
@@ -664,9 +655,13 @@ var BRS = (function(BRS, $, undefined) {
                     }
                 }
 
-                $("#account_balance, #account_balance_sendmoney").html(BRS.formatStyledAmount(response.unconfirmedBalanceNQT));                
+
+                var unconfirmedBalanceNQT=String(response.unconfirmedBalanceNQT*10000);
+                var committedBalanceNQT=String(response.committedBalanceNQT*10000);
+
+                $("#account_balance, #account_balance_sendmoney").html(BRS.formatStyledAmount(unconfirmedBalanceNQT));
                 $("#account_balance_locked, #account_balance_sendmoney").html(BRS.formatStyledAmount((new BigInteger(response.balanceNQT) - new BigInteger(response.unconfirmedBalanceNQT)).toString()));
-                $("#account_committed_balance, #account_balance_sendmoney").html(BRS.formatStyledAmount(response.committedBalanceNQT));
+                $("#account_committed_balance, #account_balance_sendmoney").html(BRS.formatStyledAmount(committedBalanceNQT));
                 $("#account_forged_balance").html(BRS.formatStyledAmount(response.committedBalanceNQT));
 
                 var nr_assets = 0;
@@ -802,6 +797,7 @@ var BRS = (function(BRS, $, undefined) {
     BRS.checkLocationHash = function(password) {
         if (window.location.hash) {
             var hash = window.location.hash.replace("#", "").split(":");
+            console.log(hash)
             var $modal;
             if (hash.length === 2) {
                 if (hash[0] === "message") {
@@ -869,20 +865,6 @@ var BRS = (function(BRS, $, undefined) {
                     }
                 }
             }
-            else {
-
-                onAFork = false;
-            }
-
-            if (onAFork) {
-                $.notify($.t("fork_warning"), {
-                    type: 'danger',
-                    offset: {
-                        x: 5,
-                        y: 60
-                        }
-                });
-            }
         }
     };
 
@@ -893,7 +875,7 @@ var BRS = (function(BRS, $, undefined) {
               if (!response.errorCode) {
                  $(input_fee_field_id).val((response.priority/100000000).toFixed(8));
                  $(input_fee_field_id).trigger("change");
-                 $(response_span_id).html("<span class='margin-left-5' data-i18n='standard_fee'>Standard: <a href='#' class='btn-fee-response' name='suggested_fee_value_"+response_span_id.id+"' data-i18n='[title]click_to_apply'>" +(response.standard/100000000).toFixed(8)+ "</a></span> <span class='margin-left-5' data-i18n='cheap_fee'>Cheap: <a href='#' class='btn-fee-response' name='suggested_fee_value_"+response_span_id.id+"' data-i18n='[title]click_to_apply'>" + (response.cheap/100000000).toFixed(8)+ "</a></span> <span class='margin-left-5' data-i18n='priority_fee'>Priority: <a href='#' class='btn-fee-response' name='suggested_fee_value_"+response_span_id.id+"' data-i18n='[title]click_to_apply'>" +(response.priority/100000000).toFixed(8)+ "</a></span>");
+                 $(response_span_id).html("<span class='margin-left-5' data-i18n='standard_fee'>Standard: <a href='#' class='btn-fee-response' name='suggested_fee_value_"+response_span_id.id+"' data-i18n='[title]click_to_apply'>" +(response.standard/10000).toFixed(4)+ "</a></span> <span class='margin-left-5' data-i18n='cheap_fee'>Cheap: <a href='#' class='btn-fee-response' name='suggested_fee_value_"+response_span_id.id+"' data-i18n='[title]click_to_apply'>" + (response.cheap/10000).toFixed(4)+ "</a></span> <span class='margin-left-5' data-i18n='priority_fee'>Priority: <a href='#' class='btn-fee-response' name='suggested_fee_value_"+response_span_id.id+"' data-i18n='[title]click_to_apply'>" +(response.priority/10000).toFixed(4)+ "</a></span>");
                   $("[name='suggested_fee_value_"+response_span_id.id+"']").i18n(); // apply locale to DOM after ajax call
                   $("[name='suggested_fee_spinner']").addClass("suggested_fee_spinner_display_none");
                   $("[name='suggested_fee_value_"+response_span_id.id+"']").on("click", function(e) {
@@ -902,7 +884,7 @@ var BRS = (function(BRS, $, undefined) {
                             if (fee_id === undefined)
                             $(input_fee_field_id).trigger("change"); //// --> for modals with Total field trigger BRS.sendMoneyCalculateTotal
                             else
-                            $(fee_id).html($(this).text()+ " SIGNA"); /// --> for modals without Total field set Fee field
+                            $(fee_id).html($(this).text()+ " Peth"); /// --> for modals without Total field set Fee field
 
                      });
               }

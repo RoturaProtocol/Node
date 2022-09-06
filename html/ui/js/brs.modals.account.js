@@ -63,7 +63,9 @@ var BRS = (function(BRS, $, undefined) {
 	    $("#user_info_modal_account_balance").html("0");
 	}
         else {
-	    $("#user_info_modal_account_balance").html(BRS.formatAmount(account.unconfirmedBalanceNQT) + " SIGNA");
+		var unconfirmedBalanceNQT=	BRS.formatAmount(account.unconfirmedBalanceNQT)
+		var unconfirmedBalanceNQT=String(unconfirmedBalanceNQT.replace(/,/g,'')*10000)
+	    $("#user_info_modal_account_balance").html(unconfirmedBalanceNQT + " Peth");
 	}
 
 	if (account.name) {
@@ -298,7 +300,9 @@ var BRS = (function(BRS, $, undefined) {
 		    }
 
 		    var account = (receiving ? "sender" : "recipient");
-		    rows += "<tr><td>" + BRS.formatTimestamp(transaction.timestamp) + "</td><td>" + transactionType + "</td><td style='width:5px;padding-right:0;'>" + (transaction.type == 0 ? (receiving ? "<i class='fas fa-plus-circle' style='color:#65C62E'></i>" : "<i class='fas fa-minus-circle' style='color:#E04434'></i>") : "") + "</td><td " + (transaction.type == 0 && receiving ? " style='color:#006400;'" : (!receiving && transaction.amount > 0 ? " style='color:red'" : "")) + ">" + BRS.formatAmount(transaction.amount) + "</td><td " + (!receiving ? " style='color:red'" : "") + ">" + BRS.formatAmount(transaction.fee) + "</td><td>" + BRS.getAccountTitle(transaction, account) + "</td></tr>";
+			var amount=BRS.formatAmount(String(transaction.amount*10000))
+			var fee=BRS.formatAmount(String(transaction.fee*10000))
+		    rows += "<tr><td>" + BRS.formatTimestamp(transaction.timestamp) + "</td><td>" + transactionType + "</td><td style='width:5px;padding-right:0;'>" + (transaction.type == 0 ? (receiving ? "<i class='fas fa-plus-circle' style='color:#65C62E'></i>" : "<i class='fas fa-minus-circle' style='color:#E04434'></i>") : "") + "</td><td " + (transaction.type == 0 && receiving ? " style='color:#006400;'" : (!receiving && transaction.amount > 0 ? " style='color:red'" : "")) + ">" + amount + "</td><td " + (!receiving ? " style='color:red'" : "") + ">" + fee + "</td><td>" + BRS.getAccountTitle(transaction, account) + "</td></tr>";
 		}
 
 		$("#user_info_modal_transactions_table tbody").empty().append(rows);
@@ -373,7 +377,7 @@ var BRS = (function(BRS, $, undefined) {
 		    if (good.name.length > 150) {
 			good.name = good.name.substring(0, 150) + "...";
 		    }
-		    rows += "<tr><td><a href='#' data-goto-goods='" + String(good.goods).escapeHTML() + "' data-seller='" + String(BRS.userInfoModal.user).escapeHTML() + "'>" + String(good.name).escapeHTML() + "</a></td><td>" + BRS.formatAmount(good.priceNQT) + " SIGNA</td><td>" + BRS.format(good.quantity) + "</td></tr>";
+		    rows += "<tr><td><a href='#' data-goto-goods='" + String(good.goods).escapeHTML() + "' data-seller='" + String(BRS.userInfoModal.user).escapeHTML() + "'>" + String(good.name).escapeHTML() + "</a></td><td>" + BRS.formatAmount(good.priceNQT) + " Peth</td><td>" + BRS.format(good.quantity) + "</td></tr>";
 		}
 	    }
 

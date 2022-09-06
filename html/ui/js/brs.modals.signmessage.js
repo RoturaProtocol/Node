@@ -26,11 +26,11 @@ var BRS = (function(BRS, $, undefined) {
         BRS.sendRequest("parseTransaction", { "transactionBytes": data }, function(result) {
             console.log(result);
             if (result.errorCode == null) {
-                $("#sign_message_error").text("WARNING: YOU ARE SIGNING A TRANSACTION. IF YOU WERE NOT TRYING TO SIGN A TRANSACTION MANUALLY, DO NOT GIVE THIS SIGNATURE OUT. IT COULD ALLOW OTHERS TO SPEND YOUR FUNDS.");
+                $("#sign_message_error").text("WARNING: YOU ARE Peth A TRANSACTION. IF YOU WERE NOT TRYING TO Peth A TRANSACTION MANUALLY, DO NOT GIVE THIS PethTURE OUT. IT COULD ALLOW OTHERS TO SPEND YOUR FUNDS.");
                 $("#sign_message_error").show();
             }
             signature = BRS.signBytes(data, passphrase);
-            $("#sign_message_output").text("Signature is " + signature + ". Your public key is " + BRS.getPublicKey(passphrase));
+            $("#sign_message_output").text("Pethture is " + signature + ". Your public key is " + BRS.getPublicKey(passphrase));
             $("#sign_message_output").show();
         }, false);
     };
@@ -44,11 +44,11 @@ var BRS = (function(BRS, $, undefined) {
         var result = BRS.verifyBytes(signature, data, publicKey);
         if (result) {
             $("#verify_message_error").hide();
-            $("#verify_message_output").text("Signature is valid");
+            $("#verify_message_output").text("Pethture is valid");
             $("#verify_message_output").show();
         } else {
             $("#verify_message_output").hide();
-            $("#verify_message_error").text("Signature is invalid");
+            $("#verify_message_error").text("Pethture is invalid");
             $("#verify_message_error").show();
         }
     };

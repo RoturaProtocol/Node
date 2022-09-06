@@ -28,7 +28,6 @@ var BRS = (function(BRS, $, undefined) {
 
 	BRS.database.select("contacts", null, function(error, contacts) {
 	    var rows = "";
-
 	    if (contacts && contacts.length) {
 		contacts.sort(function(a, b) {
 		    if (a.name.toLowerCase() > b.name.toLowerCase()) {
@@ -440,7 +439,7 @@ var BRS = (function(BRS, $, undefined) {
 
 	$.each(imported_contacts, function(index, imported_contact) {
 	    console.log('Importing contact ' + imported_contact.name);
-	    
+
 	    BRS.database.select("contacts", [{
 		"account": imported_contact.account
 	    }, {

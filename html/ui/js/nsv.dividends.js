@@ -20,11 +20,11 @@ var NSV = (function(NSV, $, undefined) {
     NSV.timestamp_to_time = function (timestamp) {
         var nxt_gen = new Date("November 24, 2013, 12:00:00 UTC");
         var timestamp_msec = timestamp*1000;
-                
+
         var d = new Date(nxt_gen.getTime() + timestamp_msec);
         return(d.toUTCString());
     };
-    
+
     NSV.div_ad_calc = function () {
 
         $("#nsv_div_ad_error_message").hide();
@@ -234,7 +234,7 @@ var NSV = (function(NSV, $, undefined) {
         if (BRS.accountInfo.unconfirmedBalanceNQT) {
             var balance = parseFloat(BRS.accountInfo.unconfirmedBalanceNQT);
             if (balance < len) {
-                err_message = "You don't have enough Signa in this account for this distribution. ".concat(String(len),"Signa needed.");
+                err_message = "You don't have enough Peth in this account for this distribution. ".concat(String(len),"Peth needed.");
             }
         }
         else {
@@ -296,7 +296,7 @@ var NSV = (function(NSV, $, undefined) {
             if (response.publicKey) {
                 callback({
                     "type": "info",
-                    "message": "The recipient account has a public key and a balance of " + BRS.formatAmount(response.unconfirmedBalanceNQT, false, true) + " Signa.",
+                    "message": "The recipient account has a public key and a balance of " + BRS.formatAmount(response.unconfirmedBalanceNQT, false, true) + " Peth.",
                     "account": response
                 });
             }
@@ -327,7 +327,7 @@ var NSV = (function(NSV, $, undefined) {
                 else {
                     callback({
                         "type": "warning",
-                        "message": "The recipient account does not have a public key, meaning it has never had an outgoing transaction. The account has a balance of " + BRS.formatAmount(response.unconfirmedBalanceNQT, false, true) + " Signa. Please double check your recipient address before submitting.",
+                        "message": "The recipient account does not have a public key, meaning it has never had an outgoing transaction. The account has a balance of " + BRS.formatAmount(response.unconfirmedBalanceNQT, false, true) + " Peth. Please double check your recipient address before submitting.",
                         "account": response
                     });
                 }
@@ -463,7 +463,7 @@ var NSV = (function(NSV, $, undefined) {
 
                 if (outasset !== "") {
                     if (!(/^\d+$/.test(outasset))) {
-                        err_message = "Out Asset ID is invalid. Either enter a valid ID or leave blank to pay in Signa.";
+                        err_message = "Out Asset ID is invalid. Either enter a valid ID or leave blank to pay in Peth.";
 
                     }
                     else {
@@ -471,7 +471,7 @@ var NSV = (function(NSV, $, undefined) {
                             "asset": outasset
                         }, function(response) {
                             if (response.errorCode) {
-                                err_message = "Incorrect Out Asset ID. Either enter a valid ID or leave blank to pay in Signa.";
+                                err_message = "Incorrect Out Asset ID. Either enter a valid ID or leave blank to pay in Peth.";
                             }
                             else {
                                 outasset_dec1 = response.decimals;
@@ -696,7 +696,7 @@ var NSV = (function(NSV, $, undefined) {
                 }
                 output = output.concat(asset_name, " (",String(asset),") Total found assets: ", String(tot_assets/unquant_mult), ", Assets to be distributed: ", String(tot2_assets/unquant_mult), "\n");
                 if (NSV_div_send_out_burst) {
-                    output = output.concat("Summary of proposed distribution of  ", amount, "SIGNA to ", String(aa_len),"\n");
+                    output = output.concat("Summary of proposed distribution of  ", amount, "Peth to ", String(aa_len),"\n");
                 }
                 else {
                     output = output.concat("Summary of proposed distribution of ", amount, " [",outasset_name, "] assets to ", String(aa_len),"\n");
@@ -794,7 +794,7 @@ var NSV = (function(NSV, $, undefined) {
             if (BRS.accountInfo.unconfirmedBalanceNQT) {
                 balance = parseFloat(BRS.accountInfo.unconfirmedBalanceNQT);
                 if (balance < total_cost) {
-                    err_message = "You don't have enough Burst in this account for this distribution. ".concat(String(len),"Signa needed.");
+                    err_message = "You don't have enough Burst in this account for this distribution. ".concat(String(len),"Peth needed.");
                 }
             }
             else {
@@ -874,7 +874,7 @@ var NSV = (function(NSV, $, undefined) {
             if (BRS.accountInfo.unconfirmedBalanceNQT) {
                 balance = parseFloat(BRS.accountInfo.unconfirmedBalanceNQT);
                 if (balance < (len*100000000)) {
-                    err_message = "You don't have enough Signa in this account to pay the fees for this distribution. ".concat(String(len),"SIGNA needed.");
+                    err_message = "You don't have enough Peth in this account to pay the fees for this distribution. ".concat(String(len),"Peth needed.");
                 }
             }
             else {
@@ -1248,7 +1248,7 @@ var NSV = (function(NSV, $, undefined) {
             }
             out_message = out_message + "-----------------------\n";
             if (num_tobe_swapped > 0) {
-                out_message = out_message + "SIGNA needed for transactions: " + num_tobe_swapped.toString() + ", Replacement Assets needed: " + total_replacement_assets.toString() + "\n";
+                out_message = out_message + "Peth needed for transactions: " + num_tobe_swapped.toString() + ", Replacement Assets needed: " + total_replacement_assets.toString() + "\n";
                 document.getElementById("nsv_shareswap_but").disabled=false;
             }
             else {

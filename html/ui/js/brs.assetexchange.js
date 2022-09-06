@@ -1160,8 +1160,8 @@ var BRS = (function(BRS, $, undefined) {
         }
 
         $("#asset_order_description").html(description);
-        $("#asset_order_total").html(totalNXT + " SIGNA");
-        $("#asset_order_fee_paid").html(BRS.formatAmount(feeNQT) + " SIGNA");
+        $("#asset_order_total").html(totalNXT + " Peth");
+        $("#asset_order_fee_paid").html(BRS.formatAmount(feeNQT) + " Peth");
 
         if (quantity != "1") {
             $("#asset_order_total_tooltip").show();
@@ -1191,7 +1191,7 @@ var BRS = (function(BRS, $, undefined) {
             "errorMessage": $.t("error_order_asset")
         };
     };
-    
+
     BRS.forms.orderAssetComplete = function(response, data) {
         if (response.alreadyProcessed) {
             return;

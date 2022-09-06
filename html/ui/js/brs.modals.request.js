@@ -20,10 +20,11 @@ var BRS = (function(BRS, $, undefined) {
 
         BRS.sendRequest("suggestFee", {
                  }, function(response) {
+            (response.standard/10000).toFixed(4)
                      if (!response.errorCode) {
-                         $("#standard_fee_response").html("<span class='margin-left-5'>(<a href='#' class='btn-fee-response' name='fee_value' data-i18n='[title]click_to_apply'>" +(response.standard/100000000).toFixed(8)+ "</a>)</span>");
-                         $("#cheap_fee_response").html("<span class='margin-left-5'>(<a href='#' class='btn-fee-response' name='fee_value' data-i18n='[title]click_to_apply'>" + (response.cheap/100000000).toFixed(8)+ "</a>)</span>");
-                         $("#priority_fee_response").html("<span class='margin-left-5'>(<a href='#' class='btn-fee-response' name='fee_value' data-i18n='[title]click_to_apply'>" +(response.priority/100000000).toFixed(8)+ "</a>)</span>");
+                         $("#standard_fee_response").html("<span class='margin-left-5'>(<a href='#' class='btn-fee-response' name='fee_value' data-i18n='[title]click_to_apply'>" +(response.standard/10000).toFixed(4)+ "</a>)</span>");
+                         $("#cheap_fee_response").html("<span class='margin-left-5'>(<a href='#' class='btn-fee-response' name='fee_value' data-i18n='[title]click_to_apply'>" + (response.cheap/10000).toFixed(4)+ "</a>)</span>");
+                         $("#priority_fee_response").html("<span class='margin-left-5'>(<a href='#' class='btn-fee-response' name='fee_value' data-i18n='[title]click_to_apply'>" +(response.priority/10000).toFixed(4)+ "</a>)</span>");
                          $("[name='fee_value']").i18n(); // apply locale to DOM after ajax call
                          $("[name='fee_value']").on("click", function(e) {
                                    e.preventDefault();
@@ -39,7 +40,7 @@ var BRS = (function(BRS, $, undefined) {
         $("#request_burst_amount").change(function() {
            var amount = Number($("#request_burst_amount").val());
            $("#request_burst_amount").val(amount);
-           if(amount >= 0.00000001 || (!$("#request_burst_immutable").is(':checked') && (!amount || amount == 0)))
+           if(amount >= 0.0001 || (!$("#request_burst_immutable").is(':checked') && (!amount || amount == 0)))
            {
                $("#request_burst_amount_div").toggleClass("has-error",false);
                $("#request_burst_amount_div").toggleClass("has-success",true);
@@ -54,7 +55,7 @@ var BRS = (function(BRS, $, undefined) {
        $("#request_burst_fee").change(function() {
          var fee = Number($("#request_burst_fee").val());
          $("#request_burst_fee").val(fee);
-         if(fee >= 0.00735)
+         if(fee >= 73.5)
          {
              for(var i = 0; i < radio.length; i++) {
                radio[i].checked = false;
@@ -72,7 +73,7 @@ var BRS = (function(BRS, $, undefined) {
        $('#request_burst_immutable').change(function() {
         var amount = Number($("#request_burst_amount").val());
         if($(this).is(":checked")) {
-             if(amount >= 0.00000001){
+             if(amount >= 0.0001){
                 $("#request_burst_amount_div").toggleClass("has-error",false);
                 $("#request_burst_amount_div").toggleClass("has-success",true);
              }
@@ -85,7 +86,7 @@ var BRS = (function(BRS, $, undefined) {
            }
            else
            {
-            if(amount >= 0.00000001 || (!amount || amount == 0)){
+            if(amount >= 0.0001 || (!amount || amount == 0)){
                 $("#request_burst_amount_div").toggleClass("has-error",false);
                 $("#request_burst_amount_div").toggleClass("has-success",true);
             }
@@ -101,7 +102,7 @@ var BRS = (function(BRS, $, undefined) {
          $("#generate_qr_button").on("click", function(e) {
             e.preventDefault();
             var amount = Number($("#request_burst_amount").val());
-            if(((!amount || amount < 0.00000001) && $("#request_burst_immutable").is(':checked')) || (amount && amount < 0.00000001))
+            if(((!amount || amount < 0.0001) && $("#request_burst_immutable").is(':checked')) || (amount && amount < 0.0001))
             {
               $("#request_burst_amount_div").toggleClass("has-success",false);
               $("#request_burst_amount_div").toggleClass("has-error",true);
@@ -117,7 +118,7 @@ var BRS = (function(BRS, $, undefined) {
               if(radio[i].checked == true)
               var suggested_fee = radio[i].value;
             }
-            if((!fee || fee < 0.00735) && !suggested_fee)
+            if((!fee || fee < 73.5) && !suggested_fee)
             {
               $("#request_burst_fee_div").toggleClass("has-success",false);
               $("#request_burst_fee_div").toggleClass("has-error",true);
@@ -128,8 +129,8 @@ var BRS = (function(BRS, $, undefined) {
               $("#request_burst_fee_div").toggleClass("has-error",false);
               $("#request_burst_fee_div").toggleClass("has-success",true);
             }
-            var amountNQT =  amount * 100000000;
-            var feeNQT = fee * 100000000;
+            var amountNQT =  amount * 10000;
+            var feeNQT = fee * 10000;
             var receiverId = BRS.accountRS;
             if($("#request_burst_immutable").is(':checked')){
                 immutable = "&immutable=true";

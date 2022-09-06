@@ -66,7 +66,7 @@ var BRS = (function(BRS, $, undefined) {
                             if (recipient[0] === BRS.account) {
                                 receiving = true;
                                 amount = recipient[1];
-                            }
+                                                         }
                         }
                     } else if (transaction.subtype === 2) {
                         receiving = false;
@@ -91,8 +91,12 @@ var BRS = (function(BRS, $, undefined) {
                     transaction.fee = new BigInteger(transaction.feeNQT);
                 }
 
-                rows += "<tr class='" + (!transaction.confirmed ? "tentative" : "confirmed") + "'><td><a href='#' data-transaction='" + String(transaction.transaction).escapeHTML() + "' data-timestamp='" + String(transaction.timestamp).escapeHTML() + "'>" + BRS.formatTimestamp(transaction.timestamp) + "</a></td><td>" + transactionType + "</td><td style='width:5px;padding-right:0;'>" + (transaction.type == 0 ? (receiving ? "<i class='fas fa-plus-circle' style='color:#65C62E'></i>" : "<i class='fas fa-minus-circle' style='color:#E04434'></i>") : "") + "</td><td><span" + (transaction.type == 0 && receiving ? " style='color:#006400'" : (!receiving && amount > 0 ? " style='color:red'" : "")) + ">" + BRS.formatAmount(amount) + "</span> <span" + ((!receiving && transaction.type == 0) ? " style='color:red'" : "") + ">+</span> <span" + (!receiving ? " style='color:red'" : "") + ">" + BRS.formatAmount(transaction.fee) + "</span></td><td>" + BRS.getAccountLink(transaction, account) + "</td><td class='confirmations' data-confirmations='" + String(transaction.confirmations).escapeHTML() + "' data-content='" + BRS.formatAmount(transaction.confirmations) + " confirmations' data-container='body' data-initial='true'>" + (transaction.confirmations > 10 ? "10+" : String(transaction.confirmations).escapeHTML()) + "</td></tr>";
+                var fee=BRS.formatAmount(String(transaction.fee*10000))
+                var amount=BRS.formatAmount(String(transaction.amount*10000))
+
+                rows += "<tr class='" + (!transaction.confirmed ? "tentative" : "confirmed") + "'><td><a href='#' data-transaction='" + String(transaction.transaction).escapeHTML() + "' data-timestamp='" + String(transaction.timestamp).escapeHTML() + "'>" + BRS.formatTimestamp(transaction.timestamp) + "</a></td><td>" + transactionType + "</td><td style='width:5px;padding-right:0;'>" + (transaction.type == 0 ? (receiving ? "<i class='fas fa-plus-circle' style='color:#65C62E'></i>" : "<i class='fas fa-minus-circle' style='color:#E04434'></i>") : "") + "</td><td><span" + (transaction.type == 0 && receiving ? " style='color:#006400'" : (!receiving && amount > 0 ? " style='color:red'" : "")) + ">" + amount + "</span> <span" + ((!receiving && transaction.type == 0) ? " style='color:red'" : "") + ">+</span> <span" + (!receiving ? " style='color:red'" : "") + ">" + fee + "</span></td><td>" + BRS.getAccountLink(transaction, account) + "</td><td class='confirmations' data-confirmations='" + String(transaction.confirmations).escapeHTML() + "' data-content='" + BRS.formatAmount(transaction.confirmations) + " confirmations' data-container='body' data-initial='true'>" + (transaction.confirmations > 10 ? "10+" : String(transaction.confirmations).escapeHTML()) + "</td></tr>";
             }
+
 
             $("#dashboard_transactions_table tbody").empty().append(rows);
         }
@@ -310,7 +314,9 @@ var BRS = (function(BRS, $, undefined) {
                     transaction.fee = new BigInteger(transaction.feeNQT);
                 }
 
-                rows += "<tr class='" + (!transaction.confirmed ? "tentative" : "confirmed") + "'><td><a href='#' data-transaction='" + String(transaction.transaction).escapeHTML() + "' data-timestamp='" + String(transaction.timestamp).escapeHTML() + "'>" + BRS.formatTimestamp(transaction.timestamp) + "</a></td><td>" + transactionType + "</td><td style='width:5px;padding-right:0;'>" + (transaction.type == 0 ? (receiving ? "<i class='fas fa-plus-circle' style='color:#65C62E'></i>" : "<i class='fas fa-minus-circle' style='color:#E04434'></i>") : "") + "</td><td><span" + (transaction.type == 0 && receiving ? " style='color:#006400'" : (!receiving && amount > 0 ? " style='color:red'" : "")) + ">" + BRS.formatAmount(amount) + "</span> <span" + ((!receiving && transaction.type == 0) ? " style='color:red'" : "") + ">+</span> <span" + (!receiving ? " style='color:red'" : "") + ">" + BRS.formatAmount(transaction.fee) + "</span></td><td>" + BRS.getAccountLink(transaction, account) + "</td><td class='confirmations' data-confirmations='" + String(transaction.confirmations).escapeHTML() + "' data-content='" + (transaction.confirmed ? BRS.formatAmount(transaction.confirmations) + " " + $.t("confirmations") : $.t("unconfirmed_transaction")) + "' data-container='body' data-initial='true'>" + (transaction.confirmations > 10 ? "10+" : String(transaction.confirmations).escapeHTML()) + "</td></tr>";
+                var fee=BRS.formatAmount(String(transaction.fee*10000))
+                var amount=BRS.formatAmount(String(transaction.amount*10000))
+                rows += "<tr class='" + (!transaction.confirmed ? "tentative" : "confirmed") + "'><td><a href='#' data-transaction='" + String(transaction.transaction).escapeHTML() + "' data-timestamp='" + String(transaction.timestamp).escapeHTML() + "'>" + BRS.formatTimestamp(transaction.timestamp) + "</a></td><td>" + transactionType + "</td><td style='width:5px;padding-right:0;'>" + (transaction.type == 0 ? (receiving ? "<i class='fas fa-plus-circle' style='color:#65C62E'></i>" : "<i class='fas fa-minus-circle' style='color:#E04434'></i>") : "") + "</td><td><span" + (transaction.type == 0 && receiving ? " style='color:#006400'" : (!receiving && amount > 0 ? " style='color:red'" : "")) + ">" + amount + "</span> <span" + ((!receiving && transaction.type == 0) ? " style='color:red'" : "") + ">+</span> <span" + (!receiving ? " style='color:red'" : "") + ">" + fee + "</span></td><td>" + BRS.getAccountLink(transaction, account) + "</td><td class='confirmations' data-confirmations='" + String(transaction.confirmations).escapeHTML() + "' data-content='" + (transaction.confirmed ? BRS.formatAmount(transaction.confirmations) + " " + $.t("confirmations") : $.t("unconfirmed_transaction")) + "' data-container='body' data-initial='true'>" + (transaction.confirmations > 10 ? "10+" : String(transaction.confirmations).escapeHTML()) + "</td></tr>";
             }
 
             if (onlyUnconfirmed) {
@@ -322,7 +328,7 @@ var BRS = (function(BRS, $, undefined) {
             }
 
             var $parent = $("#dashboard_transactions_table").parent();
-
+            //
             if ($parent.hasClass("data-empty")) {
                 $parent.removeClass("data-empty");
                 if ($parent.data("no-padding")) {
@@ -335,7 +341,7 @@ var BRS = (function(BRS, $, undefined) {
         }
     };
 
-    //todo: add to dashboard? 
+    //todo: add to dashboard?
     BRS.addUnconfirmedTransaction = function(transactionId, callback) {
         BRS.sendRequest("getTransaction", {
             "transaction": transactionId
@@ -424,6 +430,8 @@ var BRS = (function(BRS, $, undefined) {
             if (response.transactions && response.transactions.length) {
                 for (var i = 0; i < response.transactions.length; i++) {
                     var transaction = response.transactions[i];
+
+
 
                     transaction.confirmed = true;
 
@@ -648,7 +656,7 @@ var BRS = (function(BRS, $, undefined) {
           }
           else if (transaction.subtype === 2){
             receiving = true;
-            amount = transaction.attachment.amountNQT.toString();            
+            amount = transaction.attachment.amountNQT.toString();
           }
         }
         var account = (receiving ? "sender" : "recipient");
@@ -669,7 +677,9 @@ var BRS = (function(BRS, $, undefined) {
             }
         }
 
-        return "<tr " + (!transaction.confirmed && (transaction.recipient == BRS.account || transaction.sender == BRS.account) ? " class='tentative'" : "") + "><td><a href='#' data-transaction='" + String(transaction.transaction).escapeHTML() + "'>" + String(transaction.transaction).escapeHTML() + "</a></td><td>" + (hasMessage ? "<i class='far fa-envelope-open'></i>&nbsp;" : "/") + "</td><td>" + BRS.formatTimestamp(transaction.timestamp) + "</td><td>" + transactionType + "</td><td style='width:5px;padding-right:0;'>" + (transaction.type == 0 ? (receiving ? "<i class='fas fa-plus-circle' style='color:#65C62E'></i>" : "<i class='fas fa-minus-circle' style='color:#E04434'></i>") : "") + "</td><td " + (transaction.type == 0 && receiving ? " style='color:#006400;'" : (!receiving && amount > 0 ? " style='color:red'" : "")) + ">" + BRS.formatAmount(amount) + "</td><td " + (!receiving ? " style='color:red'" : "") + ">" + BRS.formatAmount(transaction.fee) + "</td><td>" + BRS.getAccountLink(transaction, account) + "</td><td class='confirmations' data-content='" + (transaction.confirmed ? BRS.formatAmount(transaction.confirmations) + " " + $.t("confirmations") : $.t("unconfirmed_transaction")) + "' data-container='body' data-placement='left'>" + (!transaction.confirmed ? "/" : (transaction.confirmations > 1440 ? "1440+" : BRS.formatAmount(transaction.confirmations))) + "</td></tr>";
+        var fee=BRS.formatAmount(String(transaction.fee*10000))
+        var amount=BRS.formatAmount(String(transaction.amount*10000))
+        return "<tr " + (!transaction.confirmed && (transaction.recipient == BRS.account || transaction.sender == BRS.account) ? " class='tentative'" : "") + "><td><a href='#' data-transaction='" + String(transaction.transaction).escapeHTML() + "'>" + String(transaction.transaction).escapeHTML() + "</a></td><td>" + (hasMessage ? "<i class='far fa-envelope-open'></i>&nbsp;" : "/") + "</td><td>" + BRS.formatTimestamp(transaction.timestamp) + "</td><td>" + transactionType + "</td><td style='width:5px;padding-right:0;'>" + (transaction.type == 0 ? (receiving ? "<i class='fas fa-plus-circle' style='color:#65C62E'></i>" : "<i class='fas fa-minus-circle' style='color:#E04434'></i>") : "") + "</td><td " + (transaction.type == 0 && receiving ? " style='color:#006400;'" : (!receiving && amount > 0 ? " style='color:red'" : "")) + ">" + amount + "</td><td " + (!receiving ? " style='color:red'" : "") + ">" + fee + "</td><td>" + BRS.getAccountLink(transaction, account) + "</td><td class='confirmations' data-content='" + (transaction.confirmed ? BRS.formatAmount(transaction.confirmations) + " " + $.t("confirmations") : $.t("unconfirmed_transaction")) + "' data-container='body' data-placement='left'>" + (!transaction.confirmed ? "/" : (transaction.confirmations > 1440 ? "1440+" : BRS.formatAmount(transaction.confirmations))) + "</td></tr>";
     };
 
     $("#transactions_page_type li a").click(function(e) {

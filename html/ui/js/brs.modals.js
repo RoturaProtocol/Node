@@ -98,11 +98,11 @@ var BRS = (function(BRS, $, undefined) {
                 var current_amount = parseFloat($("#multi-out-same-amount").val(), 10);
                 var current_fee = parseFloat($("#multi_out_fee").val(), 10);
 
-                var amount = isNaN(current_amount) ? 0.00000001 : (current_amount < 0.00000001 ? 0.00000001 : current_amount);
-                var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
+                var amount = isNaN(current_amount) ? 0.0001 : (current_amount < 0.0001 ? 0.0001 : current_amount);
+                var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
 
-                $("#multi-out-same-amount").val(amount.toFixed(8));
-                $("#multi_out_fee").val(fee.toFixed(8));
+                $("#multi-out-same-amount").val(amount.toFixed(4));
+                $("#multi_out_fee").val(fee.toFixed(4));
 
                 $(".multi-out-same-recipients .multi-out-recipient").each(function() {
                     amount_total += amount;
@@ -110,7 +110,11 @@ var BRS = (function(BRS, $, undefined) {
 
                 total_multi_out = amount_total + fee;
 
-                $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " SIGNA");
+
+                var total_multi_out=String(BRS.convertToNQT(total_multi_out)*10000)
+
+
+                $(".total_amount_multi_out").html(BRS.formatAmount(total_multi_out) + "Peth");
             }
         } else {
             if (multi_out_recipients < 64) {
@@ -132,19 +136,20 @@ var BRS = (function(BRS, $, undefined) {
             var current_amount = parseFloat($("#multi-out-same-amount").val(), 10);
             var current_fee = parseFloat($("#multi_out_fee").val(), 10);
 
-            var amount = isNaN(current_amount) ? 0.00000001 : (current_amount < 0.00000001 ? 0.00000001 : current_amount);
-            var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
+            var amount = isNaN(current_amount) ? 0.0001 : (current_amount < 0.0001 ? 0.0001 : current_amount);
+            var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
 
-            $("#multi-out-same-amount").val(amount.toFixed(8));
-            $("#multi_out_fee").val(fee.toFixed(8));
+            $("#multi-out-same-amount").val(amount.toFixed(4));
+            $("#multi_out_fee").val(fee.toFixed(4));
 
             $(".multi-out-same-recipients .multi-out-recipient").each(function() {
                 amount_total += amount;
             });
 
-            total_multi_out = amount_total + fee;
+            total_multi_out = (amount_total + fee)*10000;
 
-            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " SIGNA");
+
+            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " Peth");
         } else {
             multi_out_recipients--;
             // get amount for each recipient
@@ -152,17 +157,17 @@ var BRS = (function(BRS, $, undefined) {
             amount_total = 0;
             $(".multi-out .multi-out-amount").each(function() {
                 var current_amount = parseFloat($(this).val(), 10);
-                var amount = isNaN(current_amount) ? 0.00000001 : (current_amount < 0.00000001 ? 0.00000001 : current_amount);
-                $(this).val(amount.toFixed(8));
+                var amount = isNaN(current_amount) ? 0.0001 : (current_amount < 0.0001 ? 0.0001 : current_amount);
+                $(this).val(amount.toFixed(4));
                 amount_total += amount;
             });
 
             var current_fee = parseFloat($("#multi_out_fee").val(), 10);
-            var fee = isNaN(fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
-            $("#multi_out_fee").val(fee.toFixed(8));
-            total_multi_out = amount_total + fee;
+            var fee = isNaN(fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
+            $("#multi_out_fee").val(fee.toFixed(4));
+            total_multi_out = (amount_total + fee)*10000;
 
-            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " SIGNA");
+            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " Peth");
         }
     });
 
@@ -172,17 +177,17 @@ var BRS = (function(BRS, $, undefined) {
         amount_total = 0;
         $(".multi-out .multi-out-amount").each(function() {
             var current_amount = parseFloat($(this).val(), 10);
-            var amount = isNaN(current_amount) ? 0.00000001 : (current_amount < 0.00000001 ? 0.00000001 : current_amount);
-            $(this).val(amount.toFixed(8));
+            var amount = isNaN(current_amount) ? 0.0001 : (current_amount < 0.0001 ? 0.0001 : current_amount);
+            $(this).val(amount.toFixed(4));
             amount_total += amount;
         });
 
         var current_fee = parseFloat($("#multi_out_fee").val(), 10);
-        var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
-        $("#multi_out_fee").val(fee.toFixed(8));
-        total_multi_out = amount_total + fee;
+        var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
+        $("#multi_out_fee").val(fee.toFixed(4));
+        total_multi_out = (amount_total + fee)*10000;
 
-        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " SIGNA");
+        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " Peth");
     });
 
     $("#multi-out-same-amount").on("change", function(e) {
@@ -191,24 +196,24 @@ var BRS = (function(BRS, $, undefined) {
         var current_amount = parseFloat($(this).val(), 10);
         var current_fee = parseFloat($("#multi_out_fee").val(), 10);
 
-        var amount = isNaN(current_amount) ? 0.00000001 : (current_amount < 0.00000001 ? 0.00000001 : current_amount);
-        var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
+        var amount = isNaN(current_amount) ? 0.0001 : (current_amount < 0.0001 ? 0.0001 : current_amount);
+        var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
 
-        $("#multi-out-same-amount").val(amount.toFixed(8));
-        $("#multi_out_fee").val(fee.toFixed(8));
+        $("#multi-out-same-amount").val(amount.toFixed(4));
+        $("#multi_out_fee").val(fee.toFixed(4));
 
         $(".multi-out-same-recipients .multi-out-recipient").each(function() {
             amount_total += amount;
         });
 
-        total_multi_out = amount_total + fee;
+        total_multi_out = (amount_total + fee)*10000;
 
-        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " SIGNA");
+        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " Peth");
     });
 
     $(".same_out_checkbox").on("change", function(e) {
         //amount_total = 0 ///fixing incorrect Total when switch from multi same to multi and fee is changed.
-        $(".total_amount_multi_out").html("0.1 Signa");
+        $(".total_amount_multi_out").html("0.1 Peth");
         if ($(this).is(":checked")) {
             $(".multi-out-same").fadeIn();
             $(".multi-out-ordinary").hide();
@@ -221,10 +226,10 @@ var BRS = (function(BRS, $, undefined) {
                  amount_total += current_amount;
             });
             var current_fee = parseFloat($("#multi_out_fee").val(), 10);
-            var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
-            $("#multi_out_fee").val(fee.toFixed(8));
-            total_multi_out = amount_total + fee;
-            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " SIGNA");
+            var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
+            $("#multi_out_fee").val(fee.toFixed(4));
+                total_multi_out = (amount_total + fee)*10000;
+            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " Peth");
             }
 
         } else {
@@ -239,21 +244,21 @@ var BRS = (function(BRS, $, undefined) {
             });
 
             var current_fee = parseFloat($("#multi_out_fee").val(), 10);
-            var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
-            $("#multi_out_fee").val(fee.toFixed(8));
-            total_multi_out = amount_total + fee;
+            var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
+            $("#multi_out_fee").val(fee.toFixed(4));
+            total_multi_out = (amount_total + fee)*10000;
 
-            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " SIGNA");
+            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " Peth");
         }
     });
 
     $("#multi_out_fee").on("change", function(e) {
         var current_fee = parseFloat($(this).val(), 10);
-        var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
+        var fee = isNaN(current_fee) ? 1 : (current_fee < 73.5 ? 73.5 : current_fee);
 
-        $("#multi_out_fee").val(fee.toFixed(8));
-
-        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(amount_total + fee)) + " SIGNA");
+        $("#multi_out_fee").val(fee.toFixed(4));
+        total_multi_out = (amount_total + fee)*10000;
+        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " Peth");
     });
 
     $("#multi-out-submit").on("click", function(e) {
@@ -490,7 +495,7 @@ var BRS = (function(BRS, $, undefined) {
                 defaultFee = 1;
             }
 
-            $(this).find(".advanced_fee").html(BRS.formatAmount(BRS.convertToNQT(defaultFee)) + " SIGNA");
+            $(this).find(".advanced_fee").html(BRS.formatAmount(BRS.convertToNQT(defaultFee)) + " Peth");
         }
 
         BRS.showedFormWarning = false;
@@ -526,7 +531,7 @@ var BRS = (function(BRS, $, undefined) {
         var $feeInfo = $modal.find(".advanced_fee");
 
         if ($feeInfo.length) {
-            $feeInfo.html(BRS.formatAmount(BRS.convertToNQT($(this).val())) + " SIGNA");
+            $feeInfo.html(BRS.formatAmount(BRS.convertToNQT($(this).val())) + " Peth");
         }
     });
 

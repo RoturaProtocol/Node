@@ -119,7 +119,7 @@ var BRS = (function(BRS, $, undefined) {
 
     BRS.incoming.messages = function(transactions) {
 	if (BRS.hasTransactionUpdates(transactions)) {
-	    //save current scrollTop    	
+	    //save current scrollTop
 	    var activeAccount = $("#messages_sidebar a.active");
 
 	    if (activeAccount.length) {
@@ -234,7 +234,7 @@ var BRS = (function(BRS, $, undefined) {
 		    }
                     else if (extra == "decrypted") {
 			if (type == "payment") {
-			    decoded = "<strong>+" + BRS.formatAmount(messages[i].amountNQT) + " SIGNA</strong><br />" + decoded;
+			    decoded = "<strong>+" + BRS.formatAmount(messages[i].amountNQT) + " Peth</strong><br />" + decoded;
 			}
 
 			decoded = "<i class='fas fa-lock'></i> " + decoded;
@@ -368,9 +368,9 @@ var BRS = (function(BRS, $, undefined) {
 
     $("body").on("click", "a[data-goto-messages-account]", function(e) {
 	e.preventDefault();
-	
+
 	var account = $(this).data("goto-messages-account");
-	
+
 
 	BRS.goToPage("messages", function(){ $('#message_sidebar a[data-account=' + account + ']').trigger('click'); });
     });
@@ -489,7 +489,7 @@ var BRS = (function(BRS, $, undefined) {
 		BRS.addUnconfirmedTransaction(response.transaction, function(alreadyProcessed) {
 		    if (!alreadyProcessed) {
 			$("#message_details dl.chat").append("<dd class='to tentative" + (data.encryptedMessageData ? " decrypted" : "") + "'><p>" + (data.encryptedMessageData ? "<i class='fas fa-lock'></i> " : "") + (!data._extra.message ? $.t("message_empty") : String(data._extra.message).escapeHTML()) + "</p></dd>");
-			$('#messages_page .content-splitter-right-inner').scrollTop($('#messages_page .content-splitter-right-inner')[0].scrollHeight);					
+			$('#messages_page .content-splitter-right-inner').scrollTop($('#messages_page .content-splitter-right-inner')[0].scrollHeight);
 		    }
 		});
 
