@@ -246,26 +246,33 @@ public class BlockchainImpl implements Blockchain {
     long ONE_COIN = propertyService.getInt(Props.ONE_COIN_NQT);
     long LIMIT_AMOUNT = propertyService.getInt(Props.BLOCK_REWARD_LIMIT_AMOUNT) * ONE_COIN;
 
-    for (int i=1; i <= height; i++) {
-//      if (i >= decreaseStopHeight) {
-//        blockReward = LIMIT_AMOUNT;
-//      }
-//      else {
-//        int cycle = i / rewardCycle;
-//        if(cycle != blockMonth) {
-//          blockReward = getBlockReward(i);
-//          blockMonth = cycle;
-//        }
-//      }
-      try {
-        Thread.currentThread().sleep(5);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      blockReward = getBlockReward(i);
-      totalMined += blockReward;
-    }
+//     for (int i=1; i <= height; i++) {
+// //      if (i >= decreaseStopHeight) {
+// //        blockReward = LIMIT_AMOUNT;
+// //      }
+// //      else {
+// //        int cycle = i / rewardCycle;
+// //        if(cycle != blockMonth) {
+// //          blockReward = getBlockReward(i);
+// //          blockMonth = cycle;
+// //        }
+// //      }
+//       try {
+//         Thread.currentThread().sleep(5);
+//       } catch (InterruptedException e) {
+//         e.printStackTrace();
+//       }
+//       blockReward = getBlockReward(i);
+//       totalMined += blockReward;
+//     }
 
+    Public p = new Public();
+    try {
+      totalMined  = p.getALLAccountNumbers();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }    
+    
     return totalMined;
   }
 
