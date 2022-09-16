@@ -52,7 +52,7 @@ public class Public {
     Connection conn = DriverManager.getConnection(SIGNUM_URL,SIGNUM_USER_NAME, SIGNUM_PASSWORD);
     Statement stmt = conn.createStatement();
 //     String sql = "select (select count(distinct id) from account  where a.height>=height) numbers from account a where a.height='"+height+"'";
-    String sql = "select count(distinct id) numbers from account a where a.height<='"+height+"'";    
+    String sql = "select count(distinct id) numbers from account a where a.creation_height<'"+height+"'";    
     ResultSet rs = stmt.executeQuery(sql);
     if(rs.next()){
       numbers = rs.getInt("numbers");
@@ -61,7 +61,18 @@ public class Public {
     return numbers;
   }
 
-
+  public long getALLAccountNumbers() throws  SQLException{
+    long totalMined = 0;
+    Connection conn = DriverManager.getConnection(SIGNUM_URL,SIGNUM_USER_NAME, SIGNUM_PASSWORD);
+    Statement stmt = conn.createStatement();
+    String sql = "select sum(BALANCE) totalMined from account where LATEST=1";
+    ResultSet rs = stmt.executeQuery(sql);
+    if(rs.next()){
+      totalMined = rs.getLong("totalMined");
+    }
+    conn.close();
+    return totalMined;
+  }
 
 
 //   public static void main(String[] args) {
