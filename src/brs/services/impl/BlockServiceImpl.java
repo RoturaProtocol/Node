@@ -258,7 +258,8 @@ public class BlockServiceImpl implements BlockService {
     } else if (block.getHeight() < 4) {
       block.setBaseTarget(Constants.INITIAL_BASE_TARGET);
       block.setCumulativeDifficulty(previousBlock.getCumulativeDifficulty().add(Convert.two64.divide(BigInteger.valueOf(Constants.INITIAL_BASE_TARGET))));
-    } else if (block.getHeight() < Constants.BURST_DIFF_ADJUST_CHANGE_BLOCK && !Burst.getFluxCapacitor().getValue(FluxValues.SODIUM)) {
+      //} else if (block.getHeight() < Constants.BURST_DIFF_ADJUST_CHANGE_BLOCK && !Burst.getFluxCapacitor().getValue(FluxValues.SODIUM)) {
+    }else if(false){
       Block itBlock = previousBlock;
       BigInteger avgBaseTarget = BigInteger.valueOf(itBlock.getBaseTarget());
       do {
@@ -287,6 +288,7 @@ public class BlockServiceImpl implements BlockService {
       if (newBaseTarget > twofoldCurBaseTarget) {
         newBaseTarget = twofoldCurBaseTarget;
       }
+      logger.info("calculateBaseTarget info4 height={},newBaseTarget={}", block.getHeight(),newBaseTarget);
       block.setBaseTarget(newBaseTarget);
       block.setCumulativeDifficulty(previousBlock.getCumulativeDifficulty().add(Convert.two64.divide(BigInteger.valueOf(newBaseTarget))));
     } else {
@@ -309,6 +311,8 @@ public class BlockServiceImpl implements BlockService {
       } while (blockCounter < 24);
       long difTime = (long) block.getTimestamp() - itBlock.getTimestamp();
       long targetTimespan = blockCounter * blockTime;
+
+      logger.info("calculateBaseTarget info7 height={},difTime={},targetTimespan={}", block.getHeight(),difTime,targetTimespan);
 
       if (difTime < targetTimespan / 2) {
         difTime = targetTimespan / 2;
@@ -350,6 +354,7 @@ public class BlockServiceImpl implements BlockService {
 
         long avgCommitmentWindow = Burst.getFluxCapacitor().getValue(FluxValues.AVERAGE_COMMITMENT_WINDOW, block.getHeight());
         long newAvgCommitment = (curCommitment*(avgCommitmentWindow - 1L) + block.getCommitment())/avgCommitmentWindow;
+        logger.info("calculateBaseTarget info19 height={},avgCommitmentWindow={},curCommitment={},newAvgCommitment={}", block.getHeight(),avgCommitmentWindow,curCommitment,newAvgCommitment);
 
         // avoid changing more than 20% in a single block
         if (newAvgCommitment < curCommitment * 8 / 10) {
@@ -361,6 +366,8 @@ public class BlockServiceImpl implements BlockService {
 
         // assuming a minimum value of 1 coin
         newAvgCommitment = Math.max(newAvgCommitment, Burst.getPropertyService().getInt(Props.ONE_COIN_NQT));
+        logger.info("calculateBaseTarget info20 height={},newBaseTarget={},newAvgCommitment={}", block.getHeight(),newBaseTarget,newAvgCommitment);
+
         block.setBaseTarget(newBaseTarget, newAvgCommitment);
 
         if(block.getPeer()!=null && peerBaseTarget != 0L && peerBaseTarget != block.getBaseTarget()) {

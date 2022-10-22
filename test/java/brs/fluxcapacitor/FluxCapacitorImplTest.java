@@ -104,4 +104,15 @@ public class FluxCapacitorImplTest {
     assertEquals((Integer) 255, t.getValue(FluxValues.MAX_NUMBER_TRANSACTIONS, 12344));
     assertEquals((Integer) 1020, t.getValue(FluxValues.MAX_NUMBER_TRANSACTIONS, 12345));
   }
+
+  @DisplayName("FluxInt on TestNet test fee")
+  @Test
+  public void fluxTestFee() {
+
+    when(blockchainMock.getHeight()).thenReturn(1);
+    t = new FluxCapacitorImpl(blockchainMock, propertyServiceMock);
+    when(propertyServiceMock.getInt(eq(Props.POC_PLUS_HEIGHT))).thenReturn(10);
+    System.out.println(t.getValue(FluxValues.POC_PLUS,11));
+
+  }
 }
