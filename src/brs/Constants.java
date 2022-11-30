@@ -21,7 +21,7 @@ public final class Constants {
 
   public static final long MAX_BALANCE_BURST = 999999999999999999L;
 
-  public static final long FEE_QUANT_CIP3 = 735000;
+  public static final long FEE_QUANT_CIP3 = 10000;
   public static final long ONE_BURST = 10000;
   public static final long INITIAL_COMMITMENT = 1000 * ONE_BURST;
   public static final int COMMITMENT_WAIT = 60;
