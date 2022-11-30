@@ -27,7 +27,7 @@ public class FeeSuggestionCalculator {
       Block lastBlock = Burst.getBlockchain().getLastBlock();
       if(lastBlock != null) {
         standard = Math.max(2, lastBlock.getTransactions().size()-2);
-        priority = lastBlock.getTransactions().size()+2;
+        priority = lastBlock.getTransactions().size()+3;
       }
     }
 
