@@ -18,10 +18,10 @@ public class FeeSuggestionCalculator {
   public FeeSuggestionCalculator(BlockchainProcessor blockchainProcessor, UnconfirmedTransactionStore unconfirmedTransactionStore) {
     this.unconfirmedTransactionStore = unconfirmedTransactionStore;
     blockchainProcessor.addListener(this::newBlockApplied, Event.AFTER_BLOCK_APPLY);
-    
+
     // Just an initial guess until we have the unconfirmed transactions information
     long cheap = 1;
-    long standard = 1;
+    long standard = 2;
     long priority = 3;
     if(Burst.getBlockchain() != null) {
       Block lastBlock = Burst.getBlockchain().getLastBlock();
@@ -30,7 +30,7 @@ public class FeeSuggestionCalculator {
         priority = lastBlock.getTransactions().size()+2;
       }
     }
-    
+
     long FEE_QUANT = Burst.getFluxCapacitor().getValue(FluxValues.FEE_QUANT);
     feeSuggestion.set(new FeeSuggestion(cheap * FEE_QUANT, standard * FEE_QUANT, priority * FEE_QUANT));
   }
