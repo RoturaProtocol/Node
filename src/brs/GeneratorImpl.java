@@ -156,32 +156,27 @@ public class GeneratorImpl implements Generator {
 
     double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
     double lnScale = (blockTime) / Math.log(blockTime);
-    System.out.println("#########111" + deadline);
-
     if(fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight)) {
       // private static final double lnScale = 49d; // value that would keep the legacy network size estimation close to real capacity
 
       double commitmentFactor = getCommitmentFactor(commitment, averageCommitment, blockHeight);
 
       double nextDeadline = deadline.doubleValue()/commitmentFactor;
+      double nextDeadlineOrigin = nextDeadline;
       if(nextDeadline > 0) {
         // Avoid zero logarithm
         nextDeadline = Math.log(nextDeadline) * lnScale;
       }
       deadline = BigInteger.valueOf((long)(nextDeadline));
-      logger.info("calculateDeadline info2 height={},commitment={},averageCommitment={},commitmentFactor={},lnScale={},deadline={}", blockHeight,commitment,averageCommitment,commitmentFactor,lnScale,deadline);
+      logger.info("calculateDeadline info2 height={},commitment={},averageCommitment={},commitmentFactor={},lnScale={},deadline={},nextDeadlineOrigin={},nextDeadline={},hit={},capacityBaseTarget={}", blockHeight,commitment,averageCommitment,commitmentFactor,lnScale,deadline,nextDeadlineOrigin,nextDeadline,hit,capacityBaseTarget);
     }
     else if(fluxCapacitor.getValue(FluxValues.SODIUM, blockHeight)) {
       if(deadline.bitLength() < 100 && deadline.longValue() > 0L) {
         // Avoid the double precision limit for extremely large numbers (of no value) and zero logarithm
         double sodiumDeadline = Math.log(deadline.doubleValue()) * lnScale;
         deadline = BigInteger.valueOf((long)sodiumDeadline);
-        System.out.println("#########333" + deadline);
-
+        logger.info("calculateDeadline info3 height={},commitment={},averageCommitment={},lnScale={},deadline={},hit={},capacityBaseTarget={}", blockHeight,commitment,averageCommitment,lnScale,deadline,hit,capacityBaseTarget);
       }
-
-      System.out.println("#########444" + deadline);
-
     }
     return deadline;
   }
