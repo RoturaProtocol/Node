@@ -84,4 +84,14 @@ public class BlockImplTest {
       e.printStackTrace();
     }
   }
+
+
+  @Test
+  public void getAverageCommitment_2() {
+    baseTarget
+    float commitmentBaseTargetFloat = Float.intBitsToFloat((int)((baseTarget) >> 32));
+    System.out.println(commitmentBaseTargetFloat);
+  }
+
 }
+
