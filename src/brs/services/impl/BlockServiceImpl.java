@@ -252,7 +252,7 @@ public class BlockServiceImpl implements BlockService {
   public void calculateBaseTarget(Block block, Block previousBlock) throws BlockOutOfOrderException {
     long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
     //[liuhaoyang 20220311]
-    if (block.getHeight() > 288390){
+    if (block.getHeight() > 288387){
         blockTime = 20;
     }
     if (block.getId() == Genesis.GENESIS_BLOCK_ID && block.getPreviousBlockId() == 0) {
