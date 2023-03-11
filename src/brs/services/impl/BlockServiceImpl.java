@@ -251,7 +251,10 @@ public class BlockServiceImpl implements BlockService {
   @Override
   public void calculateBaseTarget(Block block, Block previousBlock) throws BlockOutOfOrderException {
     long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
-
+    //[liuhaoyang 20220311]
+    if (block.getHeight() > 288303){
+        blockTime = 20;
+    }
     if (block.getId() == Genesis.GENESIS_BLOCK_ID && block.getPreviousBlockId() == 0) {
       block.setBaseTarget(Constants.INITIAL_BASE_TARGET);
       block.setCumulativeDifficulty(BigInteger.ZERO);
@@ -343,6 +346,7 @@ public class BlockServiceImpl implements BlockService {
       }
 
       long peerBaseTarget = block.getBaseTarget();
+      logger.info("calculateBaseTarget info8 height={},difTime={},targetTimespan={},curBaseTarget={},newBaseTarget={},peerBaseTarget={}", block.getHeight(),difTime,targetTimespan,curBaseTarget,newBaseTarget,peerBaseTarget);
       block.setBaseTarget(newBaseTarget);
       BigInteger difficulty = Convert.two64.divide(BigInteger.valueOf(newBaseTarget));
 
