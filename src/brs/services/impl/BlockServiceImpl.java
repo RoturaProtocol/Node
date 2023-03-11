@@ -94,7 +94,7 @@ public class BlockServiceImpl implements BlockService {
       }
       int elapsedTime = block.getTimestamp() - previousBlock.getTimestamp();
       BigInteger hit = block.getPocTime();
-      BigInteger pTime = generator.calculateDeadline(hit, previousBlock.getCapacityBaseTarget(), block.getCommitment(), previousBlock.getAverageCommitment(), block.getHeight());
+      BigInteger pTime = generator.calculateDeadline(hit, previousBlock.getCapacityBaseTarget(), block.getCommitment(), previousBlock.getAverageCommitment(), block.getHeight(),0);
       if(BigInteger.valueOf(elapsedTime).compareTo(pTime) <= 0) {
         logger.info("Elapsed time {} should be higher than the deadline {}", elapsedTime, pTime);
       }

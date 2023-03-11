@@ -66,21 +66,21 @@ public class GeneratorImplTest {
       System.out.println(addTime);
 
     	BigInteger hit = generator.calculateHit(TestConstants.TEST_ACCOUNT_NUMERIC_ID_PARSED, 0, exampleGenSig, generator.calculateScoop(exampleGenSig, exampleHeight), exampleHeight);
-        BigInteger deadline = generator.calculateDeadline(hit, exampleBaseTarget, 0, 0, exampleHeight);
+        BigInteger deadline = generator.calculateDeadline(hit, exampleBaseTarget, 0, 0, exampleHeight,0);
         assertEquals(BigInteger.valueOf(7157291745432L), deadline);
     }
 
     @Test
     public void testGeneratorCalculateSodiumDeadline() {
         BigInteger hit = generatorLnTime.calculateHit(TestConstants.TEST_ACCOUNT_NUMERIC_ID_PARSED, 0, exampleGenSig, generator.calculateScoop(exampleGenSig, exampleHeight), exampleHeight);
-        BigInteger deadline = generatorLnTime.calculateDeadline(hit, exampleBaseTarget, 0, 0, exampleHeight);
+        BigInteger deadline = generatorLnTime.calculateDeadline(hit, exampleBaseTarget, 0, 0, exampleHeight,0);
         assertEquals(BigInteger.valueOf(1296L), deadline);
     }
 
     @Test
     public void testGeneratorCalculateNextDeadline() {
         BigInteger hit = generatorPocPlus.calculateHit(TestConstants.TEST_ACCOUNT_NUMERIC_ID_PARSED, 0, exampleGenSig, generator.calculateScoop(exampleGenSig, exampleHeight), exampleHeight);
-        BigInteger deadline = generatorPocPlus.calculateDeadline(hit, exampleBaseTarget, 100*exampleAverageCommitment, exampleAverageCommitment, exampleHeight);
+        BigInteger deadline = generatorPocPlus.calculateDeadline(hit, exampleBaseTarget, 100*exampleAverageCommitment, exampleAverageCommitment, exampleHeight,0);
         assertEquals(BigInteger.valueOf(1205L), deadline);
     }
 

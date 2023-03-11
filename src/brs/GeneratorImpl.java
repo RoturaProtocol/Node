@@ -151,7 +151,7 @@ public class GeneratorImpl implements Generator {
   }
 
   @Override
-  public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
+  public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight ,long accountID) {
     BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
 
     double blockTime = fluxCapacitor.getValue(FluxValues.BLOCK_TIME);
@@ -168,14 +168,14 @@ public class GeneratorImpl implements Generator {
         nextDeadline = Math.log(nextDeadline) * lnScale;
       }
       deadline = BigInteger.valueOf((long)(nextDeadline));
-      logger.info("calculateDeadline info2 height={},commitment={},averageCommitment={},commitmentFactor={},lnScale={},deadline={},nextDeadlineOrigin={},nextDeadline={},hit={},capacityBaseTarget={}", blockHeight,commitment,averageCommitment,commitmentFactor,lnScale,deadline,nextDeadlineOrigin,nextDeadline,hit,capacityBaseTarget);
+      logger.info("calculateDeadline info2 height={},commitment={},averageCommitment={},commitmentFactor={},lnScale={},deadline={},nextDeadlineOrigin={},nextDeadline={},hit={},capacityBaseTarget={},accountID={}", blockHeight,commitment,averageCommitment,commitmentFactor,lnScale,deadline,nextDeadlineOrigin,nextDeadline,hit,capacityBaseTarget,accountID);
     }
     else if(fluxCapacitor.getValue(FluxValues.SODIUM, blockHeight)) {
       if(deadline.bitLength() < 100 && deadline.longValue() > 0L) {
         // Avoid the double precision limit for extremely large numbers (of no value) and zero logarithm
         double sodiumDeadline = Math.log(deadline.doubleValue()) * lnScale;
         deadline = BigInteger.valueOf((long)sodiumDeadline);
-        logger.info("calculateDeadline info3 height={},commitment={},averageCommitment={},lnScale={},deadline={},hit={},capacityBaseTarget={}", blockHeight,commitment,averageCommitment,lnScale,deadline,hit,capacityBaseTarget);
+        logger.info("calculateDeadline info3 height={},commitment={},averageCommitment={},lnScale={},deadline={},hit={},capacityBaseTarget={}", blockHeight,commitment,averageCommitment,lnScale,deadline,hit,capacityBaseTarget,accountID);
       }
     }
     return deadline;
@@ -216,7 +216,7 @@ public class GeneratorImpl implements Generator {
         commitmment = estimateCommitment(accountId, lastBlock);
       }
 
-      deadline = calculateDeadline(hit, baseTarget, commitmment, lastBlock.getAverageCommitment(), lastBlock.getHeight() + 1);
+      deadline = calculateDeadline(hit, baseTarget, commitmment, lastBlock.getAverageCommitment(), lastBlock.getHeight() + 1,accountId);
     }
 
     @Override
@@ -274,7 +274,7 @@ public class GeneratorImpl implements Generator {
     }
 
     @Override
-    public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
+    public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight,long accountID) {
       return BigInteger.valueOf(propertyService.getInt(Props.DEV_MOCK_MINING_DEADLINE));
     }
   }

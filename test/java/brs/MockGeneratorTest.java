@@ -53,7 +53,7 @@ public class MockGeneratorTest {
     @Test
     public void testGeneratorCalculateDeadline() {
         BigInteger hit = generator.calculateHit(TestConstants.TEST_ACCOUNT_NUMERIC_ID_PARSED, 0, exampleGenSig, generator.calculateScoop(exampleGenSig, exampleHeight), exampleHeight);
-        BigInteger deadline = generator.calculateDeadline(hit, exampleBaseTarget, 0, 0, exampleHeight);
+        BigInteger deadline = generator.calculateDeadline(hit, exampleBaseTarget, 0, 0, exampleHeight,0);
         assertEquals(BigInteger.valueOf(1000L), deadline);
     }
 
