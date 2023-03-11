@@ -346,7 +346,7 @@ public class BlockServiceImpl implements BlockService {
       }
 
       long peerBaseTarget = block.getBaseTarget();
-      logger.info("calculateBaseTarget info8 height={},difTime={},targetTimespan={},curBaseTarget={},newBaseTarget={},peerBaseTarget={}", block.getHeight(),difTime,targetTimespan,curBaseTarget,newBaseTarget,peerBaseTarget);
+      logger.info("calculateBaseTarget info8 height={},difTime={},targetTimespan={},curBaseTarget={},newBaseTarget={},peerBaseTarget={},blockTime={}", block.getHeight(),difTime,targetTimespan,curBaseTarget,newBaseTarget,peerBaseTarget,blockTime);
       block.setBaseTarget(newBaseTarget);
       BigInteger difficulty = Convert.two64.divide(BigInteger.valueOf(newBaseTarget));
 
