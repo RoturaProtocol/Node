@@ -28,13 +28,13 @@ public final class AddCommitment extends CreateTransaction {
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
-	
+
   @Override
   protected
   JsonElement processRequest(HttpServletRequest req) throws BurstException {
     final Account account = parameterService.getSenderAccount(req);
     long amountNQT = ParameterParser.getAmountNQT(req);
-    
+
     long minimumFeeNQT = Burst.getFluxCapacitor().getValue(FluxValues.FEE_QUANT);
     long feeNQT = ParameterParser.getFeeNQT(req);
     if (feeNQT < minimumFeeNQT) {
@@ -48,8 +48,12 @@ public final class AddCommitment extends CreateTransaction {
     } catch (ArithmeticException e) {
       return NOT_ENOUGH_FUNDS;
     }
-    
+
     Attachment attachment = new Attachment.CommitmentAdd(amountNQT, blockchain.getHeight());
+    System.out.println("AddCommitment_account");
+    System.out.println(account);
+    System.out.println(amountNQT);
+    System.out.println(feeNQT);
     return createTransaction(req, account, attachment);
   }
 

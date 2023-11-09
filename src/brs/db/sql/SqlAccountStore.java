@@ -29,6 +29,13 @@ public class SqlAccountStore implements AccountStore {
         return (DbKey) account.nxtKey;
       }
   };
+  private static final DbKey.LongKeyFactory<Account.AccountStableCoin> accountStableCoinDbKeyFactory = new DbKey.LongKeyFactory<Account.AccountStableCoin>(ACCOUNT_STABLECOIN.ID) {
+    @Override
+    public DbKey newKey(Account.AccountStableCoin account) {
+      return (DbKey) account.nxtKey;
+    }
+  };
+
   private static final DbKey.LongKeyFactory<Account.RewardRecipientAssignment> rewardRecipientAssignmentDbKeyFactory
     = new DbKey.LongKeyFactory<Account.RewardRecipientAssignment>(REWARD_RECIP_ASSIGN.ACCOUNT_ID) {
         @Override
@@ -115,6 +122,39 @@ public class SqlAccountStore implements AccountStore {
         ctx.batch(accountQueries).execute();
       }
     };
+//
+//    accountStableCoinTable = new VersionedBatchEntitySqlTable<Account.AccountStableCoin>("account_stablecoin", ACCOUNT_STABLECOIN, accountStableCoinDbKeyFactory, derivedTableManager, dbCacheManager, Account.AccountStableCoin.class) {
+//      @Override
+//      protected void bulkInsert(DSLContext ctx, Collection<Account.AccountStableCoin> accountscs) {
+//        List<Query> accountQueries = new ArrayList<>();
+//
+//        for (Account.AccountStableCoin asc: accountscs) {
+//          if (asc == null) continue;
+//          accountQueries.add(
+//            ctx.mergeInto(ACCOUNT_STABLECOIN, ACCOUNT_STABLECOIN.ID, ACCOUNT_STABLECOIN.CREATION_HEIGHT, ACCOUNT_STABLECOIN.PUBLIC_KEY
+//                , ACCOUNT_STABLECOIN.PLEDGE_BALANCE, ACCOUNT_STABLECOIN.STABLECOIN_BALANCE, ACCOUNT_STABLECOIN.DEBT_STABLECOIN_BALANCE)
+//            .values(asc.getId(),
+//              asc.getCreationHeight(),
+//              asc.getPublicKey(),
+//              asc.getPledgeBalance(),
+//              asc.getStablecoinBalance(),
+//              asc.getDebtStablecoinBalance()
+//            )
+//
+//          );
+//        }
+//        ctx.batch(accountQueries).execute();
+//      }
+//
+//      @Override
+//      protected Account.AccountStableCoin load(DSLContext ctx, Record rs) {
+//        return new SQLAccountStableCoin(rs);
+//      }
+//
+//
+//    };
+
+
   }
 
   private static Condition getAccountsWithRewardRecipientClause(final long id, final int height) {
@@ -126,6 +166,8 @@ public class SqlAccountStore implements AccountStore {
   private final VersionedEntityTable<Account.RewardRecipientAssignment> rewardRecipientAssignmentTable;
 
   private final VersionedBatchEntityTable<Account> accountTable;
+
+  //private final VersionedBatchEntityTable<Account.AccountStableCoin> accountStableCoinTable;
 
   @Override
   public VersionedBatchEntityTable<Account> getAccountTable() {
@@ -151,7 +193,7 @@ public class SqlAccountStore implements AccountStore {
   public VersionedEntityTable<Account.AccountAsset> getAccountAssetTable() {
     return accountAssetTable;
   }
-  
+
   @Override
   public long getAllAccountsBalance() {
     return Db.useDSLContext(ctx -> {
@@ -159,11 +201,11 @@ public class SqlAccountStore implements AccountStore {
           .fetchOneInto(long.class);
     });
   }
-  
+
   @Override
   public int getAssetAccountsCount(Asset asset, long minimumQuantity, boolean ignoreTreasury) {
     return Db.useDSLContext(ctx -> {
-      
+
       SelectConditionStep<Record1<Integer>> select = ctx.selectCount().from(ACCOUNT_ASSET)
           .where(ACCOUNT_ASSET.ASSET_ID.eq(asset.getId())).and(ACCOUNT_ASSET.LATEST.isTrue())
           .and(ACCOUNT_ASSET.ACCOUNT_ID.ne(0L));
@@ -183,15 +225,15 @@ public class SqlAccountStore implements AccountStore {
       return select.fetchOne(0, int.class);
     });
   }
-  
+
   @Override
   public long getAssetCirculatingSupply(Asset asset, boolean ignoreTreasury) {
     return Db.useDSLContext(ctx -> {
-      
+
       SelectConditionStep<Record1<BigDecimal>> select = ctx.select(DSL.sum(ACCOUNT_ASSET.QUANTITY)).from(ACCOUNT_ASSET).where(ACCOUNT_ASSET.ASSET_ID.eq(asset.getId()))
           .and(ACCOUNT_ASSET.LATEST.isTrue())
           .and(ACCOUNT_ASSET.ACCOUNT_ID.ne(0L));
-      
+
       if(ignoreTreasury) {
         Transaction transaction = Burst.getBlockchain().getTransaction(asset.getId());
         List<Long> ignoredAccounts = ctx.select(TRANSACTION.RECIPIENT_ID).from(TRANSACTION)
@@ -202,7 +244,7 @@ public class SqlAccountStore implements AccountStore {
               .fetch().getValues(TRANSACTION.RECIPIENT_ID);
         select = select.and(ACCOUNT_ASSET.ACCOUNT_ID.notIn(ignoredAccounts));
       }
-      
+
       return select.fetchOne(0, long.class);
     });
   }
@@ -227,14 +269,14 @@ public class SqlAccountStore implements AccountStore {
     List<SortField<?>> sort = new ArrayList<>();
     sort.add(ACCOUNT_ASSET.field("quantity", Long.class).desc());
     sort.add(ACCOUNT_ASSET.field("account_id", Long.class).asc());
-    
+
     Condition condition = ACCOUNT_ASSET.ASSET_ID.eq(asset.getId());
     if(minimumQuantity > 0L) {
       condition = condition.and(ACCOUNT_ASSET.QUANTITY.ge(minimumQuantity));
     }
     if(ignoreTreasury) {
       Transaction transaction = Burst.getBlockchain().getTransaction(asset.getId());
-      
+
       List<Long> treasuryAccounts = Db.useDSLContext(ctx -> {
       return ctx.select(TRANSACTION.RECIPIENT_ID).from(TRANSACTION).where(TRANSACTION.SENDER_ID.eq(asset.getAccountId()))
             .and(TRANSACTION.TYPE.eq(TransactionType.TYPE_COLORED_COINS.getType()))
@@ -309,6 +351,21 @@ public class SqlAccountStore implements AccountStore {
       this.description = record.get(ACCOUNT.DESCRIPTION);
     }
   }
+
+  static class SQLAccountStableCoin extends Account.AccountStableCoin {
+    SQLAccountStableCoin(Record rs) {
+      super(rs.get(ACCOUNT_STABLECOIN.ID),
+        accountDbKeyFactory.newKey(rs.get(ACCOUNT_STABLECOIN.ID)),
+        rs.get(ACCOUNT_STABLECOIN.CREATION_HEIGHT),
+        rs.get(ACCOUNT_STABLECOIN.PUBLIC_KEY),
+        rs.get(ACCOUNT_STABLECOIN.PLEDGE_BALANCE),
+        rs.get(ACCOUNT_STABLECOIN.STABLECOIN_BALANCE),
+        rs.get(ACCOUNT_STABLECOIN.DEBT_STABLECOIN_BALANCE)
+
+      );
+    }
+  }
+
 
   class SqlRewardRecipientAssignment extends Account.RewardRecipientAssignment {
     SqlRewardRecipientAssignment(Record record) {

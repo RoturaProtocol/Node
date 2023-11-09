@@ -278,7 +278,7 @@ public class Transaction implements Comparable<Transaction> {
   public long getFeeNQT() {
     return feeNQT;
   }
-  
+
   public long getFeeNQTPerByte() {
     return feeNQT/getSize();
   }
@@ -499,6 +499,15 @@ public class Transaction implements Comparable<Transaction> {
       if (transactionType.hasRecipient()) {
         builder.recipientId(recipientId);
       }
+      System.out.println("parseTransaction***");
+      System.out.println(type);
+      System.out.println(subtype);
+      System.out.println(recipientId);
+      System.out.println(referencedTransactionFullHashBytes);
+      System.out.println(flags);
+      System.out.println(ecBlockHeight);
+      System.out.println(ecBlockId);
+
 
       transactionType.parseAppendices(builder, flags, version, buffer);
 

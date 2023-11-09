@@ -209,14 +209,42 @@ public class BlockchainImpl implements Blockchain {
       }else{
         blockReward = 10000*ONE_COIN/month;
       }
+      return blockReward;
+    }else if (height >= 487516){
+      Block lastblock = getLastBlock();
+      int avg_commitment_height;
+      if (height <= lastblock.getHeight()) {
+        avg_commitment_height = height - 1;
+      }else{
+        avg_commitment_height = height;
+      }
+      Block block = getBlockAtHeight(avg_commitment_height);
+      int sixmonth = ((height-487516+1576800)/1576800) -1;
+      int percentage = (int)Math.pow(2,sixmonth);
+      if(percentage <= 0){
+        percentage = 1;
+      }
+  
+      double avgcommitment = ((double) block.getAverageCommitment())/10000;
+      if(avgcommitment <= 0){
+        avgcommitment = 1;
+      }
+      double factor = 42.98;
+      double blockreward_d = avgcommitment * factor / 4320 / percentage;
+      if (blockreward_d>=2000){
+        blockreward_d = 2000;
+      }else if (blockreward_d <= 1) {
+        blockreward_d = 1;
+      }
+      return Math.round(blockreward_d)*ONE_COIN;
     }else{
       if(valid_account_numbers<100000){
         blockReward = valid_account_numbers*ONE_COIN*100/17280/month;
       }else{
         blockReward = 10000*ONE_COIN/month;
       }
+      return blockReward;
     }
-    return blockReward;
   }
 //    public long getBlockReward(int height) {
 //      if (height == 0) {

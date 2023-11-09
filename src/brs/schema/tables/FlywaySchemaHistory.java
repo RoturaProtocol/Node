@@ -58,7 +58,7 @@ public class FlywaySchemaHistory extends TableImpl<FlywaySchemaHistoryRecord> {
     /**
      * The column <code>DB.flyway_schema_history.version</code>.
      */
-    public final TableField<FlywaySchemaHistoryRecord, String> VERSION = createField(DSL.name("version"), SQLDataType.VARCHAR(50).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
+    public final TableField<FlywaySchemaHistoryRecord, String> VERSION = createField(DSL.name("version"), SQLDataType.VARCHAR(50), this, "");
 
     /**
      * The column <code>DB.flyway_schema_history.description</code>.
@@ -78,7 +78,7 @@ public class FlywaySchemaHistory extends TableImpl<FlywaySchemaHistoryRecord> {
     /**
      * The column <code>DB.flyway_schema_history.checksum</code>.
      */
-    public final TableField<FlywaySchemaHistoryRecord, Integer> CHECKSUM = createField(DSL.name("checksum"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
+    public final TableField<FlywaySchemaHistoryRecord, Integer> CHECKSUM = createField(DSL.name("checksum"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>DB.flyway_schema_history.installed_by</code>.
@@ -88,7 +88,7 @@ public class FlywaySchemaHistory extends TableImpl<FlywaySchemaHistoryRecord> {
     /**
      * The column <code>DB.flyway_schema_history.installed_on</code>.
      */
-    public final TableField<FlywaySchemaHistoryRecord, LocalDateTime> INSTALLED_ON = createField(DSL.name("installed_on"), SQLDataType.LOCALDATETIME(0).nullable(false).defaultValue(DSL.field("current_timestamp()", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<FlywaySchemaHistoryRecord, LocalDateTime> INSTALLED_ON = createField(DSL.name("installed_on"), SQLDataType.LOCALDATETIME(0).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>DB.flyway_schema_history.execution_time</code>.
@@ -135,22 +135,17 @@ public class FlywaySchemaHistory extends TableImpl<FlywaySchemaHistoryRecord> {
 
     @Override
     public Schema getSchema() {
-        return Db.DB;
+        return aliased() ? null : Db.DB;
     }
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.FLYWAY_SCHEMA_HISTORY_FLYWAY_SCHEMA_HISTORY_S_IDX);
+        return Arrays.asList(Indexes.FLYWAY_SCHEMA_HISTORY_FLYWAY_SCHEMA_HISTORY_S_IDX);
     }
 
     @Override
     public UniqueKey<FlywaySchemaHistoryRecord> getPrimaryKey() {
         return Keys.KEY_FLYWAY_SCHEMA_HISTORY_PRIMARY;
-    }
-
-    @Override
-    public List<UniqueKey<FlywaySchemaHistoryRecord>> getKeys() {
-        return Arrays.<UniqueKey<FlywaySchemaHistoryRecord>>asList(Keys.KEY_FLYWAY_SCHEMA_HISTORY_PRIMARY);
     }
 
     @Override

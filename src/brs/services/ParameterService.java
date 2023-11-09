@@ -12,6 +12,8 @@ public interface ParameterService {
 
   Account getAccount(HttpServletRequest req) throws BurstException;
 
+  Account getAccountStableCoin(HttpServletRequest req) throws BurstException;
+
   List<Account> getAccounts(HttpServletRequest req) throws ParameterException;
 
   Account getSenderAccount(HttpServletRequest req) throws ParameterException;
@@ -39,7 +41,7 @@ public interface ParameterService {
   AT getAT(HttpServletRequest req) throws ParameterException;
 
   boolean getIncludeIndirect(HttpServletRequest req);
-  
+
   boolean getEstimateCommitment(HttpServletRequest req);
 
   boolean getAmountCommitted(HttpServletRequest req);

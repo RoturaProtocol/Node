@@ -48,16 +48,31 @@ public class Public {
   }
 
   public int getAccountNumbers(int height) throws  SQLException{
+//    int numbers = 0;
+//    Connection conn = DriverManager.getConnection(SIGNUM_URL,SIGNUM_USER_NAME, SIGNUM_PASSWORD);
+//    Statement stmt = conn.createStatement();
+////     String sql = "select (select count(distinct id) from account  where a.height>=height) numbers from account a where a.height='"+height+"'";
+//    String sql = "select count(distinct id) numbers from account a where a.creation_height<'"+height+"'";    
+//    ResultSet rs = stmt.executeQuery(sql);
+//    if(rs.next()){
+//      numbers = rs.getInt("numbers");
+//    }
+//    conn.close();
+//    return 573;
     int numbers = 0;
-    Connection conn = DriverManager.getConnection(SIGNUM_URL,SIGNUM_USER_NAME, SIGNUM_PASSWORD);
-    Statement stmt = conn.createStatement();
-//     String sql = "select (select count(distinct id) from account  where a.height>=height) numbers from account a where a.height='"+height+"'";
-    String sql = "select count(distinct id) numbers from account a where a.creation_height<'"+height+"'";    
-    ResultSet rs = stmt.executeQuery(sql);
-    if(rs.next()){
-      numbers = rs.getInt("numbers");
+
+    if (height >= 288146) {
+      numbers = 573;
+    } else {
+      Connection conn = DriverManager.getConnection(SIGNUM_URL,SIGNUM_USER_NAME, SIGNUM_PASSWORD);
+      Statement stmt = conn.createStatement();
+      String sql = "select count(distinct id) numbers from account a where a.creation_height<'"+height+"'";
+      ResultSet rs = stmt.executeQuery(sql);
+      if(rs.next()){
+        numbers = rs.getInt("numbers");
+      }
+      conn.close();
     }
-    conn.close();
     return numbers;
   }
 

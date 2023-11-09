@@ -1,0 +1,261 @@
+1、查询account信息
+CryptoAccount.getAccount获取当前账户信息
+获取 公钥，私钥，1交易费，精度为4的费用值1.0000
+
+2、构建未加密数据：
+byte[] unsigned = CryptoUtil.addCommitment(network, public_key, amount, fee);
+HTTP body：
+l.add(new BasicNameValuePair("deadline", "1440"));
+l.add(new BasicNameValuePair("broadcast", "false")); //广播
+l.add(new BasicNameValuePair("amountNQT", toSignumValue(network, amount).toNQT().toString()));  //交易币数量
+l.add(new BasicNameValuePair("feeNQT", toSignumValue(network, fee).toNQT().toString())); //交易费1.0000
+l.add(new BasicNameValuePair("publicKey", Hex.toHexString(public_key)));  //转化为16进制，Hex数组和16进制之间的转换
+
+
+3、钱包向主网addCommitment API发送请求
+removeCommitment
+
+
+4、主网api处理
+
+    public TransactionType getTransactionType() {
+      return TransactionType.BurstMining.COMMITMENT_REMOVE;
+    }
+    public static final TransactionType COMMITMENT_REMOVE = new BurstMining() {
+
+
+account = accountService.getAccount(Convert.parseHexString(publicKeyString));
+从缓存（没细看，还有其他？）中获取账户account信息
+
+long amountNQT = ParameterParser.getAmountNQT(req);
+获取long类型的amountNQT
+
+Attachment attachment = new Attachment.CommitmentAdd(amountNQT, blockchain.getHeight());
+创建附加物信息
+用于获取在特定高度（height）下的FluxValue的值。
+
+
+return createTransaction(req, account, attachment);
+创建交易
+包含block高、blockID
+this.version = version;
+this.timestamp = timestamp;
+this.deadline = deadline;
+this.senderPublicKey = senderPublicKey;
+this.amountNQT = amountNQT;
+this.feeNQT = feeNQT;
+this.attachment = attachment;
+this.type = attachment.getTransactionType();
+this.blockId = blockId;
+this.height = height;
+type = Mining
+创建交易
+Builder builder = transactionProcessor.newTransactionBuilder(publicKey, amountNQT, feeNQT, deadline, attachment).referencedTransactionFullHash(referencedTransactionFullHash);
+Transaction transaction = builder.build();
+
+验证交易
+transactionService.validate(transaction);
+验证的是交易费用：
+验证交易费是否低于当前块高的最低费用
+交易费用%d低于高度%d的最低费用%d
+
+获取
+type
+timestamp
+deadline
+senderPublicKey
+recipientId  = 0
+amountNQT
+feeNQT
+referencedTransactionFullHash 为null
+amountNQT / 10000
+feeNQT / Constants.ONE_BURST
+flags
+ecBlockHeight
+ecBlockId
+在对byte数组往后64位加64个0
+
+5、主网返回未签名数据
+
+6、钱包开始处理签名数据
+byte[] signed = CryptoUtil.signTransaction(network, private_key, unsigned);
+对数据进行两次加密
+
+7、对数据进行广播
+CryptoUtil.broadcastTransaction(network, signed);
+调用broadcastTransaction API，发送加密后的数据
+
+8、主网接受到加密数据，对数据进行处理
+生成交易
+Transaction transaction = parameterService.parseTransaction(transactionBytes, transactionJSON);
+
+transactionService.validate(transaction);
+验证的是交易费用：
+验证交易费是否低于当前块高的最低费用
+交易费用%d低于高度%d的最低费用%d
+
+广播交易
+response.addProperty(NUMBER_PEERS_SENT_TO_RESPONSE, transactionProcessor.broadcast(transaction));
+先验证签名
+transaction.verifySignature()
+验证本次交易是否已经在dbs数据库中
+dbs.getTransactionDb().hasTransaction(transaction.getId())
+未确认的交易store是否包含本次交易 事务{}已在未经确认的池中，将不会再次广播
+unconfirmedTransactionStore.exists(transaction.getId())
+
+处理交易
+processedTransactions = processTransactions(Collections.singleton(transaction), null);
+同步锁：synchronized (unconfirmedTransactionsSyncObj) 确保在同一时间只有一个线程能够进入该同步块，从而实现对共享资源的互斥访问。
+
+db Connection连接
+localConnection
+
+如果db或者未确认的交易store包含本次交易，数据库commit
+
+if (dbs.getTransactionDb().hasTransaction(transaction.getId()) || unconfirmedTransactionStore.exists(transaction.getId())) {
+  stores.commitTransaction();
+  unconfirmedTransactionStore.markFingerPrintsOf(peer, Collections.singletonList(transaction));
+  continue;
+}
+
+验证交易
+if (!(transaction.verifySignature() && transactionService.verifyPublicKey(transaction))) {
+    if (accountService.getAccount(transaction.getSenderId()) != null && logger.isDebugEnabled()) {
+      logger.debug("Transaction {} failed to verify", JSON.toJsonString(transaction.getJsonObject()));
+    }
+    stores.commitTransaction();
+    continue;
+}
+
+添加到未确认的交易store
+unconfirmedTransactionStore.put(transaction, peer)
+
+检查
+transactionIsCurrentlyNotExpired(transaction): 检查交易是否尚未过期。
+!cacheFullAndTransactionCheaperThanAllTheRest(transaction): 检查缓存是否已满并且当前交易是否比缓存中的所有其他交易都更便宜。
+!tooManyTransactionsWithReferencedFullHash(transaction): 检查是否存在参考完整哈希的交易数量过多。
+!tooManyTransactionsForSlotSize(transaction): 检查是否对于槽大小而言交易数量过多。
+
+获取sender账户信息
+Account senderAccount = null;
+senderAccount = accountStore.getAccountTable().get(accountStore.getAccountKeyFactory().newKey(transaction.getSenderId()));
+
+预留
+reservedBalanceCache.put(transaction.getSenderId(), amountNQT);
+为什么要 amountNQT > senderAccount.getUnconfirmedBalanceNQT
+
+根据交易费或其他加速因素，计算出金额槽，根据槽的大小来优先处理交易
+将金额槽和交易列表放入internalStore
+一分钟清除一次internalStore里面的 超时的交易 或 已经存在交易数据库里面的交易
+private final SortedMap<Long, List<Transaction>> internalStore;
+
+交易处理完成之后，对数据进行点对点的广播
+return broadcastToPeers(true);
+
+向活跃的节点广播交易
+getAllFor(Peer peer)方法用于获取要发送给指定节点的交易数据列表。在该方法内部，根据指纹信息（fingerprints）过滤出未被该节点处理过的交易，并根据空闲空间限制选择合适数量的交易添加到结果列表中。
+markFingerPrintsOf(Peer peer, List<Transaction> transactions)方法用于标记已经发送给指定节点的交易的指纹信息。在该方法内部，遍历交易列表，并将每个交易对应的指纹信息添加到存储中
+
+
+API结束
+
+generateBlock
+
+在打造新块的同时，将内存里面所有的交易放入到块里面。
+blockchainprocess的pushBlock方法，
+对数据库进行修改
+accountService.flushAccountTable();
+
+
+git remote rm origin
+git remote add origin https://github.com/Mrliu4215/pearletj.git
+git branch -M main
+git push -u origin main
+git push origin master
+
+
+
+
+
+
+
+将交易数据广播到peers之后呢？
+使用监听器，执行几种方法，将数据传入几种方法里面。
+
+AT（Automated Transactions）
+
+BurstKey是dbkey继承的
+
+http://testnet.peth.world:6876/api-doc
+
+
+质押的数量是算出来的
+获取当前account所有的交易，通过计算
+
+    Attachment attachment = new Attachment.CommitmentRemove(amountNQT, blockchain.getHeight());
+
+
+
+
+
+
+account_stablecoin
+db_id                         bigint
+id                            bigint
+creation_height               int
+public_key                    varbinary
+pledge_balance                bigint 抵押的tura数量
+stablecoin_balance            double 稳定币余额
+debt_stablecoin_balance       double 债务需还的稳定币
+
+
+
+account_stablecoin
+GetAccountStableCoin
+
+gradlew build -x test -DgenerateSchema=true --rerun-tasks
+
+accountId.getID()转化为id
+Convert.parseAddress(accountId); id转化为地址TS-CYDH-RWCM-8K8X-4RZSF
+accountAddress.getSignedLongId() 地址转化为id
+
+
+accountBurstKeyFactory
+
+
+DROP TABLE IF EXISTS `account_stablecoin`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `account_stablecoin` (
+                         `db_id` bigint(20) NOT NULL AUTO_INCREMENT,
+                         `id` bigint(20) NOT NULL,
+                         `creation_height` int(11) NOT NULL,
+                         `public_key` varbinary(32) DEFAULT NULL,
+                         `pledge_balance` bigint(20) NOT NULL,
+                         `stablecoin_balance` double NOT NULL,
+                         `debt_stablecoin_balance` double NOT NULL,
+                         PRIMARY KEY (`db_id`),
+                         UNIQUE KEY `account_id_height_idx` (`db_id`,`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `account`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `account` (
+  `db_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
+  `creation_height` int(11) NOT NULL,
+  `public_key` varbinary(32) DEFAULT NULL,
+  `key_height` int(11) DEFAULT NULL,
+  `balance` bigint(20) NOT NULL,
+  `unconfirmed_balance` bigint(20) NOT NULL,
+  `forged_balance` bigint(20) NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `height` int(11) NOT NULL,
+  `latest` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`db_id`),
+  UNIQUE KEY `account_id_height_idx` (`id`,`height`),
+  KEY `account_id_balance_height_idx` (`id`,`balance`,`height`),
+  KEY `account_id_latest_idx` (`id`,`latest`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

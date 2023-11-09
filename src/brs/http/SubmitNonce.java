@@ -151,14 +151,14 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
 
     //Committed Balance=BalanceNQT-UnconfirmedBalanceNQT
     //100000000000 = 1000
-    long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
-
-    Public p = new Public();
-    Boolean whiteLicence = p.verifyWhiteList(address.toString());
-
-    if (minerLicence < 100000000L && !whiteLicence){
-      throw new Exception("No mining licence");
-    }
+//    long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
+//
+//    Public p = new Public();
+//    Boolean whiteLicence = p.verifyWhiteList(address.toString());
+//
+//    if (minerLicence < 100000000L && !whiteLicence){
+//      throw new Exception("No mining licence");
+//    }
 
     if (genAccount != null) {
       Account.RewardRecipientAssignment assignment = accountService.getRewardRecipientAssignment(genAccount);

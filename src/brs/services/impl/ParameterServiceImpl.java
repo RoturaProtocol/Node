@@ -53,6 +53,59 @@ public class ParameterServiceImpl implements ParameterService {
   }
 
   @Override
+  public Account getAccountStableCoin(HttpServletRequest req) throws BurstException {
+    String accountId = Convert.emptyToNull(req.getParameter(ACCOUNT_PARAMETER));
+    String heightValue = Convert.emptyToNull(req.getParameter(HEIGHT_PARAMETER));
+    if (accountId == null) {
+      throw new ParameterException(MISSING_ACCOUNT);
+    }
+    int height = -1;
+    if (heightValue != null) {
+      try {
+        height = Integer.parseInt(heightValue);
+        if (height < 0 || height > blockchain.getHeight())
+          throw new ParameterException(INCORRECT_HEIGHT);
+      } catch (RuntimeException e) {
+        throw new ParameterException(INCORRECT_HEIGHT);
+      }
+    }
+
+    try {
+      BurstAddress accountAddress = Convert.parseAddress(accountId);
+      Account account = height >= 0 ? accountService.getAccount(accountAddress.getSignedLongId(), height)
+        : accountService.getAccount(accountAddress.getSignedLongId());
+
+//      System.out.println("getAccount");
+//      System.out.println(accountId);
+//      System.out.println(heightValue);
+//      System.out.println(accountAddress);
+//      System.out.println(accountAddress.getSignedLongId());
+
+      if(account == null && accountAddress.getPublicKey() == null) {
+        throw new ParameterException(UNKNOWN_ACCOUNT);
+      }
+      if(account == null) {
+        account = new Account(accountAddress.getSignedLongId());
+        account.setPublicKey(accountAddress.getPublicKey());
+      }
+      if(account.getPublicKey() == null && accountAddress.getPublicKey() != null) {
+        account.setPublicKey(accountAddress.getPublicKey());
+      }
+
+      if(accountAddress.getPublicKey() != null && account.getPublicKey() != null && !Arrays.equals(account.getPublicKey(), accountAddress.getPublicKey())) {
+        throw new ParameterException(INCORRECT_ACCOUNT);
+      }
+
+      return account;
+    } catch (RuntimeException e) {
+      throw new ParameterException(INCORRECT_ACCOUNT);
+    }
+  }
+
+
+
+
+  @Override
   public Account getAccount(HttpServletRequest req) throws BurstException {
     String accountId = Convert.emptyToNull(req.getParameter(ACCOUNT_PARAMETER));
     String heightValue = Convert.emptyToNull(req.getParameter(HEIGHT_PARAMETER));
@@ -69,12 +122,18 @@ public class ParameterServiceImpl implements ParameterService {
         throw new ParameterException(INCORRECT_HEIGHT);
       }
     }
-    
+
     try {
       BurstAddress accountAddress = Convert.parseAddress(accountId);
       Account account = height >= 0 ? accountService.getAccount(accountAddress.getSignedLongId(), height)
           : accountService.getAccount(accountAddress.getSignedLongId());
-      
+
+//      System.out.println("getAccount");
+//      System.out.println(accountId);
+//      System.out.println(heightValue);
+//      System.out.println(accountAddress);
+//      System.out.println(accountAddress.getSignedLongId());
+
       if(account == null && accountAddress.getPublicKey() == null) {
         throw new ParameterException(UNKNOWN_ACCOUNT);
       }
@@ -85,11 +144,11 @@ public class ParameterServiceImpl implements ParameterService {
       if(account.getPublicKey() == null && accountAddress.getPublicKey() != null) {
         account.setPublicKey(accountAddress.getPublicKey());
       }
-      
+
       if(accountAddress.getPublicKey() != null && account.getPublicKey() != null && !Arrays.equals(account.getPublicKey(), accountAddress.getPublicKey())) {
         throw new ParameterException(INCORRECT_ACCOUNT);
       }
-      
+
       return account;
     } catch (RuntimeException e) {
       throw new ParameterException(INCORRECT_ACCOUNT);
@@ -332,6 +391,8 @@ public class ParameterServiceImpl implements ParameterService {
     if (transactionBytes != null) {
       try {
         byte[] bytes = Convert.parseHexString(transactionBytes);
+        System.out.println("parseTransaction");
+        System.out.println(bytes);
         return transactionProcessor.parseTransaction(bytes);
       } catch (BurstException.ValidationException | RuntimeException e) {
           logger.debug(e.getMessage(), e); // TODO remove?
@@ -388,12 +449,12 @@ public class ParameterServiceImpl implements ParameterService {
   public boolean getIncludeIndirect(HttpServletRequest req) {
     return Boolean.parseBoolean(req.getParameter(INCLUDE_INDIRECT_PARAMETER));
   }
-  
+
   @Override
   public boolean getAmountCommitted(HttpServletRequest req) {
     return Boolean.parseBoolean(req.getParameter(GET_COMMITTED_AMOUNT_PARAMETER));
   }
-  
+
   @Override
   public boolean getEstimateCommitment(HttpServletRequest req) {
     return Boolean.parseBoolean(req.getParameter(ESTIMATE_COMMITMENT_PARAMETER));

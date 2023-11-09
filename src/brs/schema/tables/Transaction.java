@@ -72,7 +72,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
     /**
      * The column <code>DB.transaction.recipient_id</code>.
      */
-    public final TableField<TransactionRecord, Long> RECIPIENT_ID = createField(DSL.name("recipient_id"), SQLDataType.BIGINT.defaultValue(DSL.field("NULL", SQLDataType.BIGINT)), this, "");
+    public final TableField<TransactionRecord, Long> RECIPIENT_ID = createField(DSL.name("recipient_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>DB.transaction.amount</code>.
@@ -97,7 +97,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
     /**
      * The column <code>DB.transaction.signature</code>.
      */
-    public final TableField<TransactionRecord, byte[]> SIGNATURE = createField(DSL.name("signature"), SQLDataType.VARBINARY(64).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
+    public final TableField<TransactionRecord, byte[]> SIGNATURE = createField(DSL.name("signature"), SQLDataType.VARBINARY(64), this, "");
 
     /**
      * The column <code>DB.transaction.timestamp</code>.
@@ -132,12 +132,12 @@ public class Transaction extends TableImpl<TransactionRecord> {
     /**
      * The column <code>DB.transaction.referenced_transaction_fullhash</code>.
      */
-    public final TableField<TransactionRecord, byte[]> REFERENCED_TRANSACTION_FULLHASH = createField(DSL.name("referenced_transaction_fullhash"), SQLDataType.VARBINARY(32).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
+    public final TableField<TransactionRecord, byte[]> REFERENCED_TRANSACTION_FULLHASH = createField(DSL.name("referenced_transaction_fullhash"), SQLDataType.VARBINARY(32), this, "");
 
     /**
      * The column <code>DB.transaction.attachment_bytes</code>.
      */
-    public final TableField<TransactionRecord, byte[]> ATTACHMENT_BYTES = createField(DSL.name("attachment_bytes"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
+    public final TableField<TransactionRecord, byte[]> ATTACHMENT_BYTES = createField(DSL.name("attachment_bytes"), SQLDataType.BLOB, this, "");
 
     /**
      * The column <code>DB.transaction.version</code>.
@@ -162,12 +162,12 @@ public class Transaction extends TableImpl<TransactionRecord> {
     /**
      * The column <code>DB.transaction.ec_block_height</code>.
      */
-    public final TableField<TransactionRecord, Integer> EC_BLOCK_HEIGHT = createField(DSL.name("ec_block_height"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
+    public final TableField<TransactionRecord, Integer> EC_BLOCK_HEIGHT = createField(DSL.name("ec_block_height"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>DB.transaction.ec_block_id</code>.
      */
-    public final TableField<TransactionRecord, Long> EC_BLOCK_ID = createField(DSL.name("ec_block_id"), SQLDataType.BIGINT.defaultValue(DSL.field("NULL", SQLDataType.BIGINT)), this, "");
+    public final TableField<TransactionRecord, Long> EC_BLOCK_ID = createField(DSL.name("ec_block_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>DB.transaction.has_encrypttoself_message</code>.
@@ -209,12 +209,12 @@ public class Transaction extends TableImpl<TransactionRecord> {
 
     @Override
     public Schema getSchema() {
-        return Db.DB;
+        return aliased() ? null : Db.DB;
     }
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.TRANSACTION_TRANSACTION_BLOCK_TIMESTAMP_IDX, Indexes.TRANSACTION_TRANSACTION_RECIPIENT_ID_AMOUNT_HEIGHT_IDX, Indexes.TRANSACTION_TRANSACTION_RECIPIENT_ID_IDX, Indexes.TRANSACTION_TRANSACTION_SENDER_ID_IDX);
+        return Arrays.asList(Indexes.TRANSACTION_TRANSACTION_BLOCK_TIMESTAMP_IDX, Indexes.TRANSACTION_TRANSACTION_RECIPIENT_ID_AMOUNT_HEIGHT_IDX, Indexes.TRANSACTION_TRANSACTION_RECIPIENT_ID_IDX, Indexes.TRANSACTION_TRANSACTION_SENDER_ID_IDX, Indexes.TRANSACTION_TX_SENDER_TYPE);
     }
 
     @Override
@@ -228,22 +228,8 @@ public class Transaction extends TableImpl<TransactionRecord> {
     }
 
     @Override
-    public List<UniqueKey<TransactionRecord>> getKeys() {
-        return Arrays.<UniqueKey<TransactionRecord>>asList(Keys.KEY_TRANSACTION_PRIMARY, Keys.KEY_TRANSACTION_TRANSACTION_ID_IDX, Keys.KEY_TRANSACTION_TRANSACTION_FULL_HASH_IDX);
-    }
-
-    @Override
-    public List<ForeignKey<TransactionRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<TransactionRecord, ?>>asList(Keys.CONSTRAINT_FF);
-    }
-
-    private transient Block _block;
-
-    public Block block() {
-        if (_block == null)
-            _block = new Block(this, Keys.CONSTRAINT_FF);
-
-        return _block;
+    public List<UniqueKey<TransactionRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.KEY_TRANSACTION_TRANSACTION_ID_IDX, Keys.KEY_TRANSACTION_TRANSACTION_FULL_HASH_IDX);
     }
 
     @Override

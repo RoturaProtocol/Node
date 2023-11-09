@@ -6,6 +6,7 @@ package brs.schema;
 
 import brs.schema.tables.Account;
 import brs.schema.tables.AccountAsset;
+import brs.schema.tables.AccountStablecoin;
 import brs.schema.tables.Alias;
 import brs.schema.tables.AliasOffer;
 import brs.schema.tables.AskOrder;
@@ -31,6 +32,7 @@ import brs.schema.tables.Transaction;
 import brs.schema.tables.UnconfirmedTransaction;
 import brs.schema.tables.records.AccountAssetRecord;
 import brs.schema.tables.records.AccountRecord;
+import brs.schema.tables.records.AccountStablecoinRecord;
 import brs.schema.tables.records.AliasOfferRecord;
 import brs.schema.tables.records.AliasRecord;
 import brs.schema.tables.records.AskOrderRecord;
@@ -55,7 +57,6 @@ import brs.schema.tables.records.TradeRecord;
 import brs.schema.tables.records.TransactionRecord;
 import brs.schema.tables.records.UnconfirmedTransactionRecord;
 
-import org.jooq.ForeignKey;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
@@ -63,8 +64,7 @@ import org.jooq.impl.Internal;
 
 
 /**
- * A class modelling foreign key relationships and constraints of tables in 
- * DB.
+ * A class modelling foreign key relationships and constraints of tables in DB.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Keys {
@@ -77,6 +77,8 @@ public class Keys {
     public static final UniqueKey<AccountRecord> KEY_ACCOUNT_PRIMARY = Internal.createUniqueKey(Account.ACCOUNT, DSL.name("KEY_account_PRIMARY"), new TableField[] { Account.ACCOUNT.DB_ID }, true);
     public static final UniqueKey<AccountAssetRecord> KEY_ACCOUNT_ASSET_ACCOUNT_ASSET_ID_HEIGHT_IDX = Internal.createUniqueKey(AccountAsset.ACCOUNT_ASSET, DSL.name("KEY_account_asset_account_asset_id_height_idx"), new TableField[] { AccountAsset.ACCOUNT_ASSET.ACCOUNT_ID, AccountAsset.ACCOUNT_ASSET.ASSET_ID, AccountAsset.ACCOUNT_ASSET.HEIGHT }, true);
     public static final UniqueKey<AccountAssetRecord> KEY_ACCOUNT_ASSET_PRIMARY = Internal.createUniqueKey(AccountAsset.ACCOUNT_ASSET, DSL.name("KEY_account_asset_PRIMARY"), new TableField[] { AccountAsset.ACCOUNT_ASSET.DB_ID }, true);
+    public static final UniqueKey<AccountStablecoinRecord> KEY_ACCOUNT_STABLECOIN_ACCOUNT_ID_HEIGHT_IDX = Internal.createUniqueKey(AccountStablecoin.ACCOUNT_STABLECOIN, DSL.name("KEY_account_stablecoin_account_id_height_idx"), new TableField[] { AccountStablecoin.ACCOUNT_STABLECOIN.DB_ID, AccountStablecoin.ACCOUNT_STABLECOIN.ID }, true);
+    public static final UniqueKey<AccountStablecoinRecord> KEY_ACCOUNT_STABLECOIN_PRIMARY = Internal.createUniqueKey(AccountStablecoin.ACCOUNT_STABLECOIN, DSL.name("KEY_account_stablecoin_PRIMARY"), new TableField[] { AccountStablecoin.ACCOUNT_STABLECOIN.DB_ID }, true);
     public static final UniqueKey<AliasRecord> KEY_ALIAS_ALIAS_ID_HEIGHT_IDX = Internal.createUniqueKey(Alias.ALIAS, DSL.name("KEY_alias_alias_id_height_idx"), new TableField[] { Alias.ALIAS.ID, Alias.ALIAS.HEIGHT }, true);
     public static final UniqueKey<AliasRecord> KEY_ALIAS_PRIMARY = Internal.createUniqueKey(Alias.ALIAS, DSL.name("KEY_alias_PRIMARY"), new TableField[] { Alias.ALIAS.DB_ID }, true);
     public static final UniqueKey<AliasOfferRecord> KEY_ALIAS_OFFER_ALIAS_OFFER_ID_HEIGHT_IDX = Internal.createUniqueKey(AliasOffer.ALIAS_OFFER, DSL.name("KEY_alias_offer_alias_offer_id_height_idx"), new TableField[] { AliasOffer.ALIAS_OFFER.ID, AliasOffer.ALIAS_OFFER.HEIGHT }, true);
@@ -122,12 +124,4 @@ public class Keys {
     public static final UniqueKey<TransactionRecord> KEY_TRANSACTION_TRANSACTION_ID_IDX = Internal.createUniqueKey(Transaction.TRANSACTION, DSL.name("KEY_transaction_transaction_id_idx"), new TableField[] { Transaction.TRANSACTION.ID }, true);
     public static final UniqueKey<UnconfirmedTransactionRecord> KEY_UNCONFIRMED_TRANSACTION_PRIMARY = Internal.createUniqueKey(UnconfirmedTransaction.UNCONFIRMED_TRANSACTION, DSL.name("KEY_unconfirmed_transaction_PRIMARY"), new TableField[] { UnconfirmedTransaction.UNCONFIRMED_TRANSACTION.DB_ID }, true);
     public static final UniqueKey<UnconfirmedTransactionRecord> KEY_UNCONFIRMED_TRANSACTION_UNCONFIRMED_TRANSACTION_ID_IDX = Internal.createUniqueKey(UnconfirmedTransaction.UNCONFIRMED_TRANSACTION, DSL.name("KEY_unconfirmed_transaction_unconfirmed_transaction_id_idx"), new TableField[] { UnconfirmedTransaction.UNCONFIRMED_TRANSACTION.ID }, true);
-
-    // -------------------------------------------------------------------------
-    // FOREIGN KEY definitions
-    // -------------------------------------------------------------------------
-
-    public static final ForeignKey<BlockRecord, BlockRecord> CONSTRAINT_3C = Internal.createForeignKey(Block.BLOCK, DSL.name("constraint_3c"), new TableField[] { Block.BLOCK.PREVIOUS_BLOCK_ID }, Keys.KEY_BLOCK_BLOCK_ID_IDX, new TableField[] { Block.BLOCK.ID }, true);
-    public static final ForeignKey<BlockRecord, BlockRecord> CONSTRAINT_3C5 = Internal.createForeignKey(Block.BLOCK, DSL.name("constraint_3c5"), new TableField[] { Block.BLOCK.NEXT_BLOCK_ID }, Keys.KEY_BLOCK_BLOCK_ID_IDX, new TableField[] { Block.BLOCK.ID }, true);
-    public static final ForeignKey<TransactionRecord, BlockRecord> CONSTRAINT_FF = Internal.createForeignKey(Transaction.TRANSACTION, DSL.name("constraint_ff"), new TableField[] { Transaction.TRANSACTION.BLOCK_ID }, Keys.KEY_BLOCK_BLOCK_ID_IDX, new TableField[] { Block.BLOCK.ID }, true);
 }

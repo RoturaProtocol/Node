@@ -129,6 +129,7 @@ public class APITransactionManagerImpl implements APITransactionManager {
     byte[] publicKey = secretPhrase != null ? Crypto.getPublicKey(secretPhrase) : Convert.parseHexString(publicKeyValue);
 
     try {
+
       Builder builder = transactionProcessor.newTransactionBuilder(publicKey, amountNQT, feeNQT, deadline, attachment).referencedTransactionFullHash(referencedTransactionFullHash);
       if (attachment.getTransactionType().hasRecipient()) {
         builder.recipientId(recipientId);
@@ -165,6 +166,7 @@ public class APITransactionManagerImpl implements APITransactionManager {
         response.addProperty(BROADCASTED_RESPONSE, false);
       }
       response.addProperty(UNSIGNED_TRANSACTION_BYTES_RESPONSE, Convert.toHexString(transaction.getUnsignedBytes()));
+
       response.add(TRANSACTION_JSON_RESPONSE, JSONData.unconfirmedTransaction(transaction));
 
     } catch (BurstException.NotYetEnabledException e) {

@@ -73,7 +73,7 @@ public class Block extends TableImpl<BlockRecord> {
     /**
      * The column <code>DB.block.previous_block_id</code>.
      */
-    public final TableField<BlockRecord, Long> PREVIOUS_BLOCK_ID = createField(DSL.name("previous_block_id"), SQLDataType.BIGINT.defaultValue(DSL.field("NULL", SQLDataType.BIGINT)), this, "");
+    public final TableField<BlockRecord, Long> PREVIOUS_BLOCK_ID = createField(DSL.name("previous_block_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>DB.block.total_amount</code>.
@@ -98,7 +98,7 @@ public class Block extends TableImpl<BlockRecord> {
     /**
      * The column <code>DB.block.previous_block_hash</code>.
      */
-    public final TableField<BlockRecord, byte[]> PREVIOUS_BLOCK_HASH = createField(DSL.name("previous_block_hash"), SQLDataType.VARBINARY(32).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
+    public final TableField<BlockRecord, byte[]> PREVIOUS_BLOCK_HASH = createField(DSL.name("previous_block_hash"), SQLDataType.VARBINARY(32), this, "");
 
     /**
      * The column <code>DB.block.cumulative_difficulty</code>.
@@ -113,7 +113,7 @@ public class Block extends TableImpl<BlockRecord> {
     /**
      * The column <code>DB.block.next_block_id</code>.
      */
-    public final TableField<BlockRecord, Long> NEXT_BLOCK_ID = createField(DSL.name("next_block_id"), SQLDataType.BIGINT.defaultValue(DSL.field("NULL", SQLDataType.BIGINT)), this, "");
+    public final TableField<BlockRecord, Long> NEXT_BLOCK_ID = createField(DSL.name("next_block_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>DB.block.height</code>.
@@ -148,7 +148,7 @@ public class Block extends TableImpl<BlockRecord> {
     /**
      * The column <code>DB.block.ats</code>.
      */
-    public final TableField<BlockRecord, byte[]> ATS = createField(DSL.name("ats"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
+    public final TableField<BlockRecord, byte[]> ATS = createField(DSL.name("ats"), SQLDataType.BLOB, this, "");
 
     private Block(Name alias, Table<BlockRecord> aliased) {
         this(alias, aliased, null);
@@ -185,12 +185,12 @@ public class Block extends TableImpl<BlockRecord> {
 
     @Override
     public Schema getSchema() {
-        return Db.DB;
+        return aliased() ? null : Db.DB;
     }
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.BLOCK_BLOCK_GENERATOR_ID_IDX);
+        return Arrays.asList(Indexes.BLOCK_BLOCK_GENERATOR_ID_IDX);
     }
 
     @Override
@@ -204,30 +204,8 @@ public class Block extends TableImpl<BlockRecord> {
     }
 
     @Override
-    public List<UniqueKey<BlockRecord>> getKeys() {
-        return Arrays.<UniqueKey<BlockRecord>>asList(Keys.KEY_BLOCK_PRIMARY, Keys.KEY_BLOCK_BLOCK_ID_IDX, Keys.KEY_BLOCK_BLOCK_TIMESTAMP_IDX, Keys.KEY_BLOCK_BLOCK_HEIGHT_IDX);
-    }
-
-    @Override
-    public List<ForeignKey<BlockRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<BlockRecord, ?>>asList(Keys.CONSTRAINT_3C, Keys.CONSTRAINT_3C5);
-    }
-
-    private transient Block _constraint_3c;
-    private transient Block _constraint_3c5;
-
-    public Block constraint_3c() {
-        if (_constraint_3c == null)
-            _constraint_3c = new Block(this, Keys.CONSTRAINT_3C);
-
-        return _constraint_3c;
-    }
-
-    public Block constraint_3c5() {
-        if (_constraint_3c5 == null)
-            _constraint_3c5 = new Block(this, Keys.CONSTRAINT_3C5);
-
-        return _constraint_3c5;
+    public List<UniqueKey<BlockRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.KEY_BLOCK_BLOCK_ID_IDX, Keys.KEY_BLOCK_BLOCK_TIMESTAMP_IDX, Keys.KEY_BLOCK_BLOCK_HEIGHT_IDX);
     }
 
     @Override

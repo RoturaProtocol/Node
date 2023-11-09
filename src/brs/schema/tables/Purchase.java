@@ -93,12 +93,12 @@ public class Purchase extends TableImpl<PurchaseRecord> {
     /**
      * The column <code>DB.purchase.note</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> NOTE = createField(DSL.name("note"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
+    public final TableField<PurchaseRecord, byte[]> NOTE = createField(DSL.name("note"), SQLDataType.BLOB, this, "");
 
     /**
      * The column <code>DB.purchase.nonce</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> NONCE = createField(DSL.name("nonce"), SQLDataType.VARBINARY(32).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
+    public final TableField<PurchaseRecord, byte[]> NONCE = createField(DSL.name("nonce"), SQLDataType.VARBINARY(32), this, "");
 
     /**
      * The column <code>DB.purchase.timestamp</code>.
@@ -113,22 +113,22 @@ public class Purchase extends TableImpl<PurchaseRecord> {
     /**
      * The column <code>DB.purchase.goods</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> GOODS = createField(DSL.name("goods"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
+    public final TableField<PurchaseRecord, byte[]> GOODS = createField(DSL.name("goods"), SQLDataType.BLOB, this, "");
 
     /**
      * The column <code>DB.purchase.goods_nonce</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> GOODS_NONCE = createField(DSL.name("goods_nonce"), SQLDataType.VARBINARY(32).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
+    public final TableField<PurchaseRecord, byte[]> GOODS_NONCE = createField(DSL.name("goods_nonce"), SQLDataType.VARBINARY(32), this, "");
 
     /**
      * The column <code>DB.purchase.refund_note</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> REFUND_NOTE = createField(DSL.name("refund_note"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
+    public final TableField<PurchaseRecord, byte[]> REFUND_NOTE = createField(DSL.name("refund_note"), SQLDataType.BLOB, this, "");
 
     /**
      * The column <code>DB.purchase.refund_nonce</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> REFUND_NONCE = createField(DSL.name("refund_nonce"), SQLDataType.VARBINARY(32).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
+    public final TableField<PurchaseRecord, byte[]> REFUND_NONCE = createField(DSL.name("refund_nonce"), SQLDataType.VARBINARY(32), this, "");
 
     /**
      * The column <code>DB.purchase.has_feedback_notes</code>.
@@ -195,12 +195,12 @@ public class Purchase extends TableImpl<PurchaseRecord> {
 
     @Override
     public Schema getSchema() {
-        return Db.DB;
+        return aliased() ? null : Db.DB;
     }
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PURCHASE_PURCHASE_BUYER_ID_HEIGHT_IDX, Indexes.PURCHASE_PURCHASE_DEADLINE_IDX, Indexes.PURCHASE_PURCHASE_SELLER_ID_HEIGHT_IDX, Indexes.PURCHASE_PURCHASE_TIMESTAMP_IDX);
+        return Arrays.asList(Indexes.PURCHASE_PURCHASE_BUYER_ID_HEIGHT_IDX, Indexes.PURCHASE_PURCHASE_DEADLINE_IDX, Indexes.PURCHASE_PURCHASE_SELLER_ID_HEIGHT_IDX, Indexes.PURCHASE_PURCHASE_TIMESTAMP_IDX);
     }
 
     @Override
@@ -214,8 +214,8 @@ public class Purchase extends TableImpl<PurchaseRecord> {
     }
 
     @Override
-    public List<UniqueKey<PurchaseRecord>> getKeys() {
-        return Arrays.<UniqueKey<PurchaseRecord>>asList(Keys.KEY_PURCHASE_PRIMARY, Keys.KEY_PURCHASE_PURCHASE_ID_HEIGHT_IDX);
+    public List<UniqueKey<PurchaseRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.KEY_PURCHASE_PURCHASE_ID_HEIGHT_IDX);
     }
 
     @Override

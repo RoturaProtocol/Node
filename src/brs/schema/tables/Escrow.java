@@ -78,7 +78,7 @@ public class Escrow extends TableImpl<EscrowRecord> {
     /**
      * The column <code>DB.escrow.required_signers</code>.
      */
-    public final TableField<EscrowRecord, Integer> REQUIRED_SIGNERS = createField(DSL.name("required_signers"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
+    public final TableField<EscrowRecord, Integer> REQUIRED_SIGNERS = createField(DSL.name("required_signers"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>DB.escrow.deadline</code>.
@@ -135,12 +135,12 @@ public class Escrow extends TableImpl<EscrowRecord> {
 
     @Override
     public Schema getSchema() {
-        return Db.DB;
+        return aliased() ? null : Db.DB;
     }
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ESCROW_ESCROW_DEADLINE_HEIGHT_IDX, Indexes.ESCROW_ESCROW_RECIPIENT_ID_HEIGHT_IDX, Indexes.ESCROW_ESCROW_SENDER_ID_HEIGHT_IDX);
+        return Arrays.asList(Indexes.ESCROW_ESCROW_DEADLINE_HEIGHT_IDX, Indexes.ESCROW_ESCROW_RECIPIENT_ID_HEIGHT_IDX, Indexes.ESCROW_ESCROW_SENDER_ID_HEIGHT_IDX);
     }
 
     @Override
@@ -154,8 +154,8 @@ public class Escrow extends TableImpl<EscrowRecord> {
     }
 
     @Override
-    public List<UniqueKey<EscrowRecord>> getKeys() {
-        return Arrays.<UniqueKey<EscrowRecord>>asList(Keys.KEY_ESCROW_PRIMARY, Keys.KEY_ESCROW_ESCROW_ID_HEIGHT_IDX);
+    public List<UniqueKey<EscrowRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.KEY_ESCROW_ESCROW_ID_HEIGHT_IDX);
     }
 
     @Override
