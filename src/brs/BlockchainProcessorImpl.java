@@ -1226,7 +1226,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                 .filter(transaction -> preCheckUnconfirmedTransaction(transactionDuplicatesChecker, unconfirmedTransactionStore, transaction)); // Extra check for transactions that are to be considered
 
         if (Burst.getFluxCapacitor().getValue(FluxValues.PRE_POC2) && !Burst.getFluxCapacitor().getValue(FluxValues.SPEEDWAY)) {
-          // In this step we get all unconfirmed transactions and then sort them by slot, followed by priority
+          // n this step we get all unconfirmed transactions and then sort them by slot, followed by priorityI
           Map<Long, TreeMap<Long, Transaction>> unconfirmedTransactionsOrderedBySlotThenPriority = new HashMap<>();
             inclusionCandidates.collect(Collectors.toMap(Function.identity(), priorityCalculator::applyAsLong)).forEach((transaction, priority) -> {
             long slot = (transaction.getFeeNQT() - (transaction.getFeeNQT() % FEE_QUANT_CIP3)) / FEE_QUANT_CIP3;

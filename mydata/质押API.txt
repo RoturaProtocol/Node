@@ -173,8 +173,11 @@ git branch -M main
 git push -u origin main
 git push origin master
 
-
-
+pushBlock这里可能有预留，防止多花
+        blockService.setPrevious(block, previousLastBlock);
+        blockListeners.notify(block, Event.BEFORE_BLOCK_ACCEPT);
+        transactionProcessor.removeForgedTransactions(block.getTransactions());
+        transactionProcessor.requeueAllUnconfirmedTransactions();
 
 
 

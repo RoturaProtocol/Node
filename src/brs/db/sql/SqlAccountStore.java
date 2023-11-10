@@ -110,6 +110,9 @@ public class SqlAccountStore implements AccountStore {
         List<Query> accountQueries = new ArrayList<>();
         int height = Burst.getBlockchain().getHeight();
         for (Account account: accounts) {
+          System.out.println("bulkInsert");
+          System.out.println(account.getId());
+          System.out.println(account.getPublicKey());
           if (account == null) continue;
           accountQueries.add(
                   ctx.mergeInto(ACCOUNT, ACCOUNT.ID, ACCOUNT.HEIGHT, ACCOUNT.CREATION_HEIGHT, ACCOUNT.PUBLIC_KEY, ACCOUNT.KEY_HEIGHT, ACCOUNT.BALANCE,

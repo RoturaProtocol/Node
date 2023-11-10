@@ -20,7 +20,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
     this.dbCacheManager = dbCacheManager;
     this.tClass = tClass;
   }
-  
+
   private void assertInTransaction() {
     if(Db.isInTransaction()) {
       throw new IllegalStateException("Cannot use in batch table transaction");
@@ -74,7 +74,24 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
     if (keySet.isEmpty()) {
       return;
     }
+//    System.out.println("finish");
+//    for (BurstKey burstKey : keySet) {
+//      System.out.println("burstKey");
+//      System.out.println(burstKey);
+//      System.out.println("**");
+//      for (long pkValue : burstKey.getPKValues()) {
+//        System.out.println(pkValue);
+//      }
+//    }
 
+//    for (String idColumn : dbKeyFactory.getPKColumns()) {
+//      System.out.println("idColumn");
+//      System.out.println(idColumn);
+//
+//    }
+
+//    System.out.println("getBatch().values()");
+//    System.out.println(getBatch().values());
     Db.useDSLContext(ctx -> {
       UpdateQuery updateQuery = ctx.updateQuery(tableClass);
       updateQuery.addValue(latestField, false);
@@ -90,6 +107,8 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
         for (long pkValue : dbKey.getPKValues()) {
           bindArgs.add(pkValue);
         }
+//        System.out.println("bindArgs.toArray()");
+//        System.out.println(bindArgs.toArray());
         updateBatch.bind(bindArgs.toArray());
       }
       updateBatch.execute();
