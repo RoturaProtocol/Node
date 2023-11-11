@@ -927,6 +927,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                 + ", current time is " + curTime + ", block timestamp is " + block.getTimestamp(),
                 transaction);
           }
+          //至此，block中的交易还未放入数据库中
           if (transactionDb.hasTransaction(transaction.getId())) {
             throw new TransactionNotAcceptedException(
                 "Transaction " + transaction.getStringId() + " is already in the blockchain",
@@ -1008,7 +1009,9 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
 
         blockService.setPrevious(block, previousLastBlock);
         blockListeners.notify(block, Event.BEFORE_BLOCK_ACCEPT);
+        //删除块里面包含的交易。
         transactionProcessor.removeForgedTransactions(block.getTransactions());
+        //对每个交易中每个发送者账户进行预留，将预留失败的交易从internalStore删除掉
         transactionProcessor.requeueAllUnconfirmedTransactions();
         accountService.flushAccountTable();
         addBlock(block);

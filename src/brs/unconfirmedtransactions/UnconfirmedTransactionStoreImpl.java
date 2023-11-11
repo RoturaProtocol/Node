@@ -204,7 +204,9 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
   @Override
   public void resetAccountBalances() {
     synchronized (internalStore) {
+      //对每个发送者账户进行预留，返回预留失败的交易
       for(Transaction insufficientFundsTransactions: reservedBalanceCache.rebuild(getAll())) {
+        //在internalStore删除预留失败的交易
         this.removeTransaction(insufficientFundsTransactions);
       }
     }

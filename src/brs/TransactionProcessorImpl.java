@@ -243,7 +243,7 @@ public class TransactionProcessorImpl implements TransactionProcessor {
   public Transaction parseTransaction(JsonObject transactionData) throws BurstException.NotValidException {
     return Transaction.parseTransaction(transactionData, blockchain.getHeight());
   }
-    
+
   @Override
   public void clearUnconfirmedTransactions() {
     synchronized (unconfirmedTransactionsSyncObj) {
