@@ -66,7 +66,7 @@ public class AliasOffer extends TableImpl<AliasOfferRecord> {
     /**
      * The column <code>DB.alias_offer.buyer_id</code>.
      */
-    public final TableField<AliasOfferRecord, Long> BUYER_ID = createField(DSL.name("buyer_id"), SQLDataType.BIGINT, this, "");
+    public final TableField<AliasOfferRecord, Long> BUYER_ID = createField(DSL.name("buyer_id"), SQLDataType.BIGINT.defaultValue(DSL.field("NULL", SQLDataType.BIGINT)), this, "");
 
     /**
      * The column <code>DB.alias_offer.height</code>.

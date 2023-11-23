@@ -13,7 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import static brs.http.JSONResponses.NOT_ENOUGH_FUNDS;
 import static brs.http.JSONResponses.ERROR_NOT_ALLOWED;
+import static brs.http.JSONResponses.DEBT_COMMIT;
 import static brs.http.common.Parameters.AMOUNT_NQT_PARAMETER;
+
+
 
 public final class RemoveCommitment extends CreateTransaction {
 
@@ -25,25 +28,29 @@ public final class RemoveCommitment extends CreateTransaction {
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
-	
   @Override
   protected
   JsonElement processRequest(HttpServletRequest req) throws BurstException {
     final Account account = parameterService.getSenderAccount(req);
     long amountNQT = ParameterParser.getAmountNQT(req);
-    
+
     int nBlocksMined = blockchain.getBlocksCount(account.getId(), blockchain.getHeight() - Constants.MAX_ROLLBACK, blockchain.getHeight());
     if(nBlocksMined > 0) {
       // need to wait since the last block mined to remove any commitment
       return ERROR_NOT_ALLOWED;
     }
-    
+
     long committedAmountNQT = blockchain.getCommittedAmount(account.getId(), blockchain.getHeight(), blockchain.getHeight(), null);
     if (committedAmountNQT < amountNQT) {
       return NOT_ENOUGH_FUNDS;
     }
+    if (committedAmountNQT - amountNQT < account.getPledgeBalanceNQT()){
+      return DEBT_COMMIT;
+    }
+
     Attachment attachment = new Attachment.CommitmentRemove(amountNQT, blockchain.getHeight());
     return createTransaction(req, account, attachment);
   }
+
 
 }

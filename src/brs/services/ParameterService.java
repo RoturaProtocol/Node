@@ -12,7 +12,7 @@ public interface ParameterService {
 
   Account getAccount(HttpServletRequest req) throws BurstException;
 
-  Account getAccountStableCoin(HttpServletRequest req) throws BurstException;
+//  Account.AccountStableCoin getAccountStableCoin(HttpServletRequest req) throws BurstException;
 
   List<Account> getAccounts(HttpServletRequest req) throws ParameterException;
 

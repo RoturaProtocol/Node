@@ -45,6 +45,7 @@ public final class JSON {
     }
 
     public static void writeTo(JsonElement jsonElement, Writer writer) throws IOException {
+
         writer.write(toJsonString(jsonElement));
         writer.flush();
     }

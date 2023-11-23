@@ -68,12 +68,12 @@ public class At extends TableImpl<AtRecord> {
     /**
      * The column <code>DB.at.name</code>.
      */
-    public final TableField<AtRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(30), this, "");
+    public final TableField<AtRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(30).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>DB.at.description</code>.
      */
-    public final TableField<AtRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
+    public final TableField<AtRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB.defaultValue(DSL.field("NULL", SQLDataType.CLOB)), this, "");
 
     /**
      * The column <code>DB.at.version</code>.
@@ -108,7 +108,7 @@ public class At extends TableImpl<AtRecord> {
     /**
      * The column <code>DB.at.ap_code</code>.
      */
-    public final TableField<AtRecord, byte[]> AP_CODE = createField(DSL.name("ap_code"), SQLDataType.BLOB, this, "");
+    public final TableField<AtRecord, byte[]> AP_CODE = createField(DSL.name("ap_code"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
 
     /**
      * The column <code>DB.at.height</code>.
@@ -123,7 +123,7 @@ public class At extends TableImpl<AtRecord> {
     /**
      * The column <code>DB.at.ap_code_hash_id</code>.
      */
-    public final TableField<AtRecord, Long> AP_CODE_HASH_ID = createField(DSL.name("ap_code_hash_id"), SQLDataType.BIGINT, this, "");
+    public final TableField<AtRecord, Long> AP_CODE_HASH_ID = createField(DSL.name("ap_code_hash_id"), SQLDataType.BIGINT.defaultValue(DSL.field("NULL", SQLDataType.BIGINT)), this, "");
 
     private At(Name alias, Table<AtRecord> aliased) {
         this(alias, aliased, null);

@@ -46,23 +46,25 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
     Account account = parameterService.getAccount(req);
 
     JsonObject response = JSONData.accountBalance(account);
-    
+
+//    System.out.println("getaccount");
+//    System.out.println(account.getDebtStablecoinBalance());
     int height = parameterService.getHeight(req);
     if(height < 0) {
       height = blockchain.getHeight();
     }
-    
+
     if(parameterService.getAmountCommitted(req)) {
       long committedAmount = Burst.getBlockchain().getCommittedAmount(account.getId(), height+Constants.COMMITMENT_WAIT, height, null);
       response.addProperty(COMMITTED_NQT_RESPONSE, Convert.toUnsignedLong(committedAmount));
     }
-    
+
     if(parameterService.getEstimateCommitment(req)) {
       Block block = blockchain.getBlockAtHeight(height);
       long commitment = generator.estimateCommitment(account.getId(), block);
       response.addProperty(COMMITMENT_NQT_RESPONSE, Convert.toUnsignedLong(commitment));
     }
-    
+
     JSONData.putAccount(response, ACCOUNT_RESPONSE, account.getId());
 
     if (account.getPublicKey() != null) {
@@ -100,7 +102,6 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
         response.add(UNCONFIRMED_ASSET_BALANCES_RESPONSE, unconfirmedAssetBalances);
       }
     }
-
     return response;
   }
 

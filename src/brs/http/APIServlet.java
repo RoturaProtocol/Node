@@ -171,10 +171,11 @@ public final class APIServlet extends HttpServlet {
     map.put("fullReset", new FullReset(blockchainProcessor, propertyService));
     map.put("popOff", new PopOff(blockchainProcessor, blockchain, blockService, propertyService));
     map.put("backupDB", new BackupDB(propertyService));
-    //AccountStableCoin table
-    //map.put("getAccountStableCoin", new GetAccountStableCoin(parameterService, accountService, blockchain, generator));
-
-
+    //StableCoin api
+//    map.put("getAccountStableCoin", new GetAccountStableCoin(parameterService, accountService, blockchain, generator));
+    map.put("addDebt", new AddDebt(parameterService, blockchain, accountService, apiTransactionManager));
+    map.put("removeDebt", new RemoveDebt(parameterService, blockchain, accountService, apiTransactionManager));
+    map.put("sendUSDMoney", new SendUSDMoney(parameterService, apiTransactionManager));
 
     // Extra api for the custom network parameters
     if(params != null) {
@@ -203,6 +204,7 @@ public final class APIServlet extends HttpServlet {
         logger.debug("Error processing API request", e);
         response = ERROR_INCORRECT_REQUEST;
       }
+
 
       if (response instanceof JsonObject) {
         JSON.getAsJsonObject(response).addProperty("requestProcessingTime", System.currentTimeMillis() - startTime);

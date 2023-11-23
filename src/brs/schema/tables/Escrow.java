@@ -78,7 +78,7 @@ public class Escrow extends TableImpl<EscrowRecord> {
     /**
      * The column <code>DB.escrow.required_signers</code>.
      */
-    public final TableField<EscrowRecord, Integer> REQUIRED_SIGNERS = createField(DSL.name("required_signers"), SQLDataType.INTEGER, this, "");
+    public final TableField<EscrowRecord, Integer> REQUIRED_SIGNERS = createField(DSL.name("required_signers"), SQLDataType.INTEGER.defaultValue(DSL.field("NULL", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>DB.escrow.deadline</code>.

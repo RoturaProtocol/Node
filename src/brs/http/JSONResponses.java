@@ -115,6 +115,52 @@ public final class JSONResponses {
   public static final JsonElement FEE_SUGGESTION_TYPE_INVALID = incorrect(FEE_SUGGESTION_TYPE_PARAMETER, "feeSuggestionType is not valid");
   public static final JsonElement INCORRECT_MESSAGE_LENGTH = incorrect(MESSAGE_PARAMETER, "Message can have a max length of " + Constants.MAX_ARBITRARY_MESSAGE_LENGTH);
 
+
+  //stablecoin coin error
+  public static final JsonElement UNABLE_TO_BE_REPESTED_DEBT;
+  static {
+    JsonObject response = new JsonObject();
+    response.addProperty(ERROR_CODE_RESPONSE, 30);
+    response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Unable to be repeated debt");
+    UNABLE_TO_BE_REPESTED_DEBT = response;
+  }
+
+  //stablecoin coin error
+  public static final JsonElement COMMIT_NOT_ENOUGH_FUNDS;
+  static {
+    JsonObject response = new JsonObject();
+    response.addProperty(ERROR_CODE_RESPONSE, 30);
+    response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Commit not enough funds");
+    COMMIT_NOT_ENOUGH_FUNDS = response;
+  }
+
+  //stablecoin coin error
+  public static final JsonElement STABLECOIN_NOT_ENOUGH_FUNDS;
+  static {
+    JsonObject response = new JsonObject();
+    response.addProperty(ERROR_CODE_RESPONSE, 30);
+    response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Stablecoin not enough funds");
+    STABLECOIN_NOT_ENOUGH_FUNDS = response;
+  }
+
+  //stablecoin coin error
+  public static final JsonElement DEBT_COMMIT;
+  static {
+    JsonObject response = new JsonObject();
+    response.addProperty(ERROR_CODE_RESPONSE, 30);
+    response.addProperty(ERROR_DESCRIPTION_RESPONSE, "The Debt must retain sufficient Commit");
+    DEBT_COMMIT = response;
+  }
+
+  //stablecoin coin error
+  public static final JsonElement REPAY_ALL_DEBT;
+  static {
+    JsonObject response = new JsonObject();
+    response.addProperty(ERROR_CODE_RESPONSE, 30);
+    response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Repay all debt");
+    REPAY_ALL_DEBT = response;
+  }
+
   public static final JsonElement NOT_ENOUGH_FUNDS;
   static {
     JsonObject response = new JsonObject();

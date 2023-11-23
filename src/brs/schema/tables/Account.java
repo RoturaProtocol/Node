@@ -18,7 +18,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row12;
+import org.jooq.Row15;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -91,6 +91,21 @@ public class Account extends TableImpl<AccountRecord> {
     public final TableField<AccountRecord, Long> FORGED_BALANCE = createField(DSL.name("forged_balance"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
+     * The column <code>DB.account.pledge_balance</code>.
+     */
+    public final TableField<AccountRecord, Long> PLEDGE_BALANCE = createField(DSL.name("pledge_balance"), SQLDataType.BIGINT.defaultValue(DSL.field("1000000", SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>DB.account.stablecoin_balance</code>.
+     */
+    public final TableField<AccountRecord, Double> STABLECOIN_BALANCE = createField(DSL.name("stablecoin_balance"), SQLDataType.DOUBLE.defaultValue(DSL.field("50", SQLDataType.DOUBLE)), this, "");
+
+    /**
+     * The column <code>DB.account.debt_stablecoin_balance</code>.
+     */
+    public final TableField<AccountRecord, Double> DEBT_STABLECOIN_BALANCE = createField(DSL.name("debt_stablecoin_balance"), SQLDataType.DOUBLE.defaultValue(DSL.field("50", SQLDataType.DOUBLE)), this, "");
+
+    /**
      * The column <code>DB.account.name</code>.
      */
     public final TableField<AccountRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(100).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
@@ -145,12 +160,12 @@ public class Account extends TableImpl<AccountRecord> {
 
     @Override
     public Schema getSchema() {
-        return Db.DB;
+        return aliased() ? null : Db.DB;
     }
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ACCOUNT_ACCOUNT_ID_BALANCE_HEIGHT_IDX, Indexes.ACCOUNT_ACCOUNT_ID_LATEST_IDX);
+        return Arrays.asList(Indexes.ACCOUNT_ACCOUNT_ID_BALANCE_HEIGHT_IDX, Indexes.ACCOUNT_ACCOUNT_ID_LATEST_IDX);
     }
 
     @Override
@@ -164,8 +179,8 @@ public class Account extends TableImpl<AccountRecord> {
     }
 
     @Override
-    public List<UniqueKey<AccountRecord>> getKeys() {
-        return Arrays.<UniqueKey<AccountRecord>>asList(Keys.KEY_ACCOUNT_PRIMARY, Keys.KEY_ACCOUNT_ACCOUNT_ID_HEIGHT_IDX);
+    public List<UniqueKey<AccountRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.KEY_ACCOUNT_ACCOUNT_ID_HEIGHT_IDX);
     }
 
     @Override
@@ -195,11 +210,11 @@ public class Account extends TableImpl<AccountRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row12 type methods
+    // Row15 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row12<Long, Long, Integer, byte[], Integer, Long, Long, Long, String, String, Integer, Boolean> fieldsRow() {
-        return (Row12) super.fieldsRow();
+    public Row15<Long, Long, Integer, byte[], Integer, Long, Long, Long, Long, Double, Double, String, String, Integer, Boolean> fieldsRow() {
+        return (Row15) super.fieldsRow();
     }
 }

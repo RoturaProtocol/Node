@@ -6,7 +6,6 @@ package brs.schema;
 
 import brs.schema.tables.Account;
 import brs.schema.tables.AccountAsset;
-import brs.schema.tables.AccountStablecoin;
 import brs.schema.tables.Alias;
 import brs.schema.tables.AliasOffer;
 import brs.schema.tables.AskOrder;
@@ -47,11 +46,6 @@ public class Tables {
      * The table <code>DB.account_asset</code>.
      */
     public static final AccountAsset ACCOUNT_ASSET = AccountAsset.ACCOUNT_ASSET;
-
-    /**
-     * The table <code>DB.account_stablecoin</code>.
-     */
-    public static final AccountStablecoin ACCOUNT_STABLECOIN = AccountStablecoin.ACCOUNT_STABLECOIN;
 
     /**
      * The table <code>DB.alias</code>.

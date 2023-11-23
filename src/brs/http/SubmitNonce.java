@@ -1,8 +1,6 @@
 package brs.http;
 
-import brs.Account;
-import brs.Blockchain;
-import brs.Generator;
+import brs.*;
 import brs.crypto.Crypto;
 import brs.props.PropertyService;
 import brs.props.Props;
@@ -149,14 +147,22 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
       genAccount = secretAccount;
     }
 
-    //Committed Balance=BalanceNQT-UnconfirmedBalanceNQT
-    //100000000000 = 1000
-//    long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
-//
-//    Public p = new Public();
-//    Boolean whiteLicence = p.verifyWhiteList(address.toString());
-//
-//    if (minerLicence < 100000000L && !whiteLicence){
+//    Committed Balance=BalanceNQT-UnconfirmedBalanceNQT
+//    100000000000 = 1000
+    long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
+
+    Public p = new Public();
+    Boolean whiteLicence = p.verifyWhiteList(address.toString());
+
+    if (minerLicence < 100000000000L && !whiteLicence){
+      throw new Exception("No mining licence");
+    }
+//    int height = blockchain.getHeight();
+//    long committedAmountNOT = Burst.getBlockchain().getCommittedAmount(genAccount.getId(), height+ Constants.COMMITMENT_WAIT, height, null);
+
+//    long astrict = 1000000000000000L;
+//    long astrict = 100000000000L;
+//    if (committedAmountNOT < astrict){
 //      throw new Exception("No mining licence");
 //    }
 

@@ -29,6 +29,7 @@ public class AccountServiceImpl implements AccountService {
 
   private final AccountStore accountStore;
   private final VersionedBatchEntityTable<Account> accountTable;
+//  private final VersionedBatchEntityTable<Account.AccountStableCoin> accountStableCoinTable;
   private final LongKeyFactory<Account> accountBurstKeyFactory;
   private final VersionedEntityTable<AccountAsset> accountAssetTable;
   private final LinkKeyFactory<AccountAsset> accountAssetKeyFactory;
@@ -43,6 +44,7 @@ public class AccountServiceImpl implements AccountService {
   public AccountServiceImpl(AccountStore accountStore, AssetTransferStore assetTransferStore) {
     this.accountStore = accountStore;
     this.accountTable = accountStore.getAccountTable();
+//    this.accountStableCoinTable = accountStore.getAccountStableCoinTable();
     this.accountBurstKeyFactory = accountStore.getAccountKeyFactory();
     this.assetTransferStore = assetTransferStore;
     this.accountAssetTable = accountStore.getAccountAssetTable();
@@ -65,7 +67,7 @@ public class AccountServiceImpl implements AccountService {
   public Account getAccount(long id) {
     return id == 0 ? null : accountTable.get(accountBurstKeyFactory.newKey(id));
   }
-  
+
   @Override
   public Account getNullAccount() {
     return accountTable.get(accountBurstKeyFactory.newKey(0L));
@@ -75,6 +77,12 @@ public class AccountServiceImpl implements AccountService {
   public Account getAccount(long id, int height) {
     return id == 0 ? null : accountTable.get(accountBurstKeyFactory.newKey(id), height);
   }
+
+//  @Override
+//  public Account.AccountStableCoin getAccountStableCoin(long id) {
+//    return id == 0 ? null : accountStableCoinTable.getStableCoin(accountBurstKeyFactory.newKey(id));
+//  }
+
 
   @Override
   public Account getAccount(byte[] publicKey) {
@@ -116,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
   public Collection<Account> getAllAccounts(int from, int to) {
     return accountTable.getAll(from, to);
   }
-  
+
   @Override
   public long getAllAccountsBalance() {
     return accountStore.getAllAccountsBalance();
@@ -146,7 +154,7 @@ public class AccountServiceImpl implements AccountService {
   public int getCount() {
     return accountTable.getCount();
   }
-  
+
   @Override
   public int getBatchedAccountsCount() {
     return accountTable.getBatch().size();
@@ -256,6 +264,42 @@ public class AccountServiceImpl implements AccountService {
     listeners.notify(account, Event.UNCONFIRMED_BALANCE);
   }
 
+
+  @Override
+  public void addToPledgeBalanceNQT(Account account, long amountNQT) {
+    if (amountNQT == 0) {
+      return;
+    }
+    account.setPledgeBalanceNQT(Convert.safeAdd(account.getPledgeBalanceNQT(), amountNQT));
+    account.checkBalance();
+    accountTable.insert(account);
+  }
+
+  @Override
+  public void addToStablecoinBalance(Account account, double stablecoinBalance) {
+    if (stablecoinBalance == 0) {
+      return;
+    }
+    account.setStablecoinBalance(account.getStablecoinBalance()+stablecoinBalance);
+    account.checkBalance();
+    accountTable.insert(account);
+    listeners.notify(account, Event.UNCONFIRMED_BALANCE);
+  }
+
+  @Override
+  public void addToDebtStablecoinBalance(Account account, double debtStablecoinBalance) {
+    if (debtStablecoinBalance == 0) {
+      return;
+    }
+    account.setDebtStablecoinBalance(account.getDebtStablecoinBalance()+debtStablecoinBalance);
+    account.checkBalance();
+    accountTable.insert(account);
+    listeners.notify(account, Event.UNCONFIRMED_BALANCE);
+  }
+
+
+
+
   @Override
   public void addToBalanceAndUnconfirmedBalanceNQT(Account account, long amountNQT) {
     if (amountNQT == 0) {
@@ -268,6 +312,7 @@ public class AccountServiceImpl implements AccountService {
     listeners.notify(account, Event.BALANCE);
     listeners.notify(account, Event.UNCONFIRMED_BALANCE);
   }
+
 
   @Override
   public RewardRecipientAssignment getRewardRecipientAssignment(Account account) {

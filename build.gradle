@@ -82,6 +82,9 @@ dependencies {
   testImplementation 'org.powermock:powermock-module-junit4:2.0.2'
   testImplementation 'org.powermock:powermock-api-mockito2:2.0.2'
 
+  // Spark
+//  implementation   'org.apache.spark:spark-core_2.11:2.3.3'
+//  implementation 'org.apache.spark:spark-sql_2.11:2.3.3'
   // Needed for build script so "compile" needed
   compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.4.1'
 
@@ -90,6 +93,11 @@ dependencies {
 test {
   useJUnitPlatform()
 }
+
+//task runSparkJob(type: JavaExec) {
+//  main = 'your.package.YourSparkJobClass' // 替换成你的 Spark 任务的入口类
+//  classpath = sourceSets.main.runtimeClasspath
+//}
 
 sourceSets {
   main {
@@ -180,6 +188,7 @@ jar {
 
 shadowJar{
   archiveName = "${baseName}-${classifier}.${extension}"
+  zip64 true
 }
 
 

@@ -73,7 +73,7 @@ public class Asset extends TableImpl<AssetRecord> {
     /**
      * The column <code>DB.asset.description</code>.
      */
-    public final TableField<AssetRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
+    public final TableField<AssetRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB.defaultValue(DSL.field("NULL", SQLDataType.CLOB)), this, "");
 
     /**
      * The column <code>DB.asset.quantity</code>.

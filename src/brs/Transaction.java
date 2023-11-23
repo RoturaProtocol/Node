@@ -470,6 +470,12 @@ public class Transaction implements Comparable<Transaction> {
       byte[] senderPublicKey = new byte[32];
       buffer.get(senderPublicKey);
       long recipientId = buffer.getLong();
+
+//      if (subtype == 101 || subtype == 102){
+//        buffer.getDouble();
+//      }
+
+
       long amountNQT = buffer.getLong();
       long feeNQT = buffer.getLong();
       String referencedTransactionFullHash = null;
@@ -490,27 +496,28 @@ public class Transaction implements Comparable<Transaction> {
         ecBlockId = buffer.getLong();
       }
       TransactionType transactionType = TransactionType.findTransactionType(type, subtype);
+      Attachment.AbstractAttachment abstractAttachment = transactionType.parseAttachment(buffer, version);
+//      Transaction.Builder builder = new Transaction.Builder(version, senderPublicKey, amountNQT, feeNQT,
+//                                                                            timestamp, deadline, transactionType.parseAttachment(buffer, version))
       Transaction.Builder builder = new Transaction.Builder(version, senderPublicKey, amountNQT, feeNQT,
-                                                                            timestamp, deadline, transactionType.parseAttachment(buffer, version))
+                                                                            timestamp, deadline, abstractAttachment)
           .referencedTransactionFullHash(referencedTransactionFullHash)
           .signature(signature)
           .ecBlockHeight(ecBlockHeight)
           .ecBlockId(ecBlockId);
+
       if (transactionType.hasRecipient()) {
         builder.recipientId(recipientId);
       }
-      System.out.println("parseTransaction***");
-      System.out.println(type);
-      System.out.println(subtype);
-      System.out.println(recipientId);
-      System.out.println(referencedTransactionFullHashBytes);
-      System.out.println(flags);
-      System.out.println(ecBlockHeight);
-      System.out.println(ecBlockId);
-
-
+//      System.out.println("parseTransaction***");
+//      System.out.println(type);
+//      System.out.println(subtype);
+//      System.out.println(recipientId);
+//      System.out.println(referencedTransactionFullHashBytes);
+//      System.out.println(flags);
+//      System.out.println(ecBlockHeight);
+//      System.out.println(ecBlockId);
       transactionType.parseAppendices(builder, flags, version, buffer);
-
       return builder.build();
     } catch (BurstException.NotValidException|RuntimeException e) {
       if (logger.isDebugEnabled()) {
@@ -640,6 +647,9 @@ public class Transaction implements Comparable<Transaction> {
   }
 
   private int signatureOffset() {
+//    if (isDebtTransaction()){
+//      return 1 + 1 + 4 + 2 + 32 + 8 + (useNQT() ? 8+8+8+ 8 + 8 + 32 : 8+8+8+ 4 + 4 + 8);
+//    }
     return 1 + 1 + 4 + 2 + 32 + 8 + (useNQT() ? 8 + 8 + 32 : 4 + 4 + 8);
   }
 
@@ -655,6 +665,13 @@ public class Transaction implements Comparable<Transaction> {
       data[i] = 0;
     }
     return data;
+  }
+
+  private boolean isDebtTransaction(){
+      if (this.type.getSubtype() == 101 || type.getSubtype() == 102 ){
+        return true;
+    }
+      return false;
   }
 
   private int getFlags() {

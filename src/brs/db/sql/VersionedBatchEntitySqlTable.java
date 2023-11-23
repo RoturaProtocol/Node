@@ -59,18 +59,27 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
     return item;
   }
 
+  public T getStableCoin(BurstKey dbKey) {
+    T item = super.getStableCoin(dbKey);
+    return item;
+  }
+
+
+
   @Override
   public void insert(T t) {
     assertNotInTransaction();
     BurstKey key = dbKeyFactory.newKey(t);
     getBatch().put(key, t);
     getCache().put(key, t);
+
   }
 
   @Override
   public void finish() {
     assertNotInTransaction();
     Set<BurstKey> keySet = getBatch().keySet();
+
     if (keySet.isEmpty()) {
       return;
     }

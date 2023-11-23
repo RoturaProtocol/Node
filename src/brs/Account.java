@@ -22,11 +22,40 @@ public class Account {
   protected long unconfirmedBalanceNQT;
   protected long forgedBalanceNQT;
 
+  protected long pledgeBalanceNQT;
+  protected double stablecoinBalance;
+  protected double debtStablecoinBalance;
+
+
   protected String name;
   protected String description;
 
+  public void setPledgeBalanceNQT(long pledgeBalanceNQT) {
+    this.pledgeBalanceNQT = pledgeBalanceNQT;
+  }
+
+  public void setStablecoinBalance(double stablecoinBalance) {
+    this.stablecoinBalance = stablecoinBalance;
+  }
+
+  public void setDebtStablecoinBalance(double debtStablecoinBalance) {
+    this.debtStablecoinBalance = debtStablecoinBalance;
+  }
+
   public void setForgedBalanceNQT(long forgedBalanceNQT) {
     this.forgedBalanceNQT = forgedBalanceNQT;
+  }
+
+  public long getPledgeBalanceNQT() {
+    return pledgeBalanceNQT;
+  }
+
+  public double getStablecoinBalance() {
+    return stablecoinBalance;
+  }
+
+  public double getDebtStablecoinBalance() {
+    return debtStablecoinBalance;
   }
 
   public void setName(String name) {
@@ -124,51 +153,52 @@ public class Account {
   }
 
 
-  public static class AccountStableCoin {
-    public final long id;
-    public final BurstKey nxtKey;
-    private final int creationHeight;
-    private byte[] publicKey;
-    protected long pledge_balance;
-    protected double stablecoin_balance;
-    protected double debt_stablecoin_balance;
-
-
-    protected AccountStableCoin(long id, BurstKey nxtKey, int creationHeight, byte[] publicKey, long pledge_balance, double stablecoin_balance
-    , double debt_stablecoin_balance) {
-      this.id = id;
-      this.nxtKey = nxtKey;
-      this.creationHeight = creationHeight;
-      this.publicKey = publicKey;
-      this.pledge_balance = pledge_balance;
-      this.stablecoin_balance = stablecoin_balance;
-      this.debt_stablecoin_balance = debt_stablecoin_balance;
-    }
-
-
-
-    public long getId() { return id; }
-    public BurstKey getNxtKey() { return nxtKey; }
-    public int getCreationHeight() { return creationHeight; }
-    public byte[] getPublicKey() { return publicKey; }
-    public long getPledgeBalance() { return pledge_balance; }
-    public double getStablecoinBalance() { return stablecoin_balance; }
-    public double getDebtStablecoinBalance() { return debt_stablecoin_balance; }
-
-    @Override
-    public String toString() {
-      return "AccountStableCoin id: "
-        + Convert.toUnsignedLong(id)
-        + " pledge_balance: "
-        + pledge_balance
-        + " stablecoin_balance: "
-        + stablecoin_balance
-        + " debt_stablecoin_balance: "
-        + debt_stablecoin_balance;
-    }
-
-
-  }
+//  public static class AccountStableCoin {
+//    public final long id;
+//    public final BurstKey nxtKey;
+//    private final int creationHeight;
+//    private byte[] publicKey;
+//    protected long pledge_balance;
+//    protected double stablecoin_balance;
+//    protected double debt_stablecoin_balance;
+//
+//
+//    public AccountStableCoin(long id, BurstKey nxtKey, int creationHeight, byte[] publicKey, long pledge_balance, double stablecoin_balance
+//    , double debt_stablecoin_balance) {
+//      this.id = id;
+//      this.nxtKey = nxtKey;
+//      this.creationHeight = creationHeight;
+//      this.publicKey = publicKey;
+//      this.pledge_balance = pledge_balance;
+//      this.stablecoin_balance = stablecoin_balance;
+//      this.debt_stablecoin_balance = debt_stablecoin_balance;
+//    }
+//
+//
+//
+//
+//    public long getId() { return id; }
+//    public BurstKey getNxtKey() { return nxtKey; }
+//    public int getCreationHeight() { return creationHeight; }
+//    public byte[] getPublicKey() { return publicKey; }
+//    public long getPledgeBalance() { return pledge_balance; }
+//    public double getStablecoinBalance() { return stablecoin_balance; }
+//    public double getDebtStablecoinBalance() { return debt_stablecoin_balance; }
+//
+//    @Override
+//    public String toString() {
+//      return "AccountStableCoin id: "
+//        + Convert.toUnsignedLong(id)
+//        + " pledge_balance: "
+//        + pledge_balance
+//        + " stablecoin_balance: "
+//        + stablecoin_balance
+//        + " debt_stablecoin_balance: "
+//        + debt_stablecoin_balance;
+//    }
+//
+//
+//  }
 
 
 

@@ -17,22 +17,27 @@ DROP TABLE IF EXISTS `account`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account` (
-  `db_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `id` bigint(20) NOT NULL,
-  `creation_height` int(11) NOT NULL,
-  `public_key` varbinary(32) DEFAULT NULL,
-  `key_height` int(11) DEFAULT NULL,
-  `balance` bigint(20) NOT NULL,
-  `unconfirmed_balance` bigint(20) NOT NULL,
-  `forged_balance` bigint(20) NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `height` int(11) NOT NULL,
-  `latest` tinyint(1) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`db_id`),
-  UNIQUE KEY `account_id_height_idx` (`id`,`height`),
-  KEY `account_id_balance_height_idx` (`id`,`balance`,`height`),
-  KEY `account_id_latest_idx` (`id`,`latest`)
+                         `db_id` bigint(20) NOT NULL AUTO_INCREMENT,
+                         `id` bigint(20) NOT NULL,
+                         `creation_height` int(11) NOT NULL,
+                         `public_key` varbinary(32) DEFAULT NULL,
+                         `key_height` int(11) DEFAULT NULL,
+                         `balance` bigint(20) NOT NULL,
+                         `unconfirmed_balance` bigint(20) NOT NULL,
+                         `forged_balance` bigint(20) NOT NULL,
+
+                         `pledge_balance` bigint(20) DEFAULT 0,
+                         `stablecoin_balance` double DEFAULT 0,
+                         `debt_stablecoin_balance` double DEFAULT 0,
+
+                         `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                         `description` text COLLATE utf8mb4_unicode_ci,
+                         `height` int(11) NOT NULL,
+                         `latest` tinyint(1) NOT NULL DEFAULT '1',
+                         PRIMARY KEY (`db_id`),
+                         UNIQUE KEY `account_id_height_idx` (`id`,`height`),
+                         KEY `account_id_balance_height_idx` (`id`,`balance`,`height`),
+                         KEY `account_id_latest_idx` (`id`,`latest`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -40,20 +45,23 @@ CREATE TABLE `account` (
 -- Table structure for table `account_asset`
 --
 
-DROP TABLE IF EXISTS `account_stablecoin`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `account_stablecoin` (
-                                    `db_id` bigint(20) NOT NULL AUTO_INCREMENT,
-                                    `id` bigint(20) NOT NULL,
-                                    `creation_height` int(11) NOT NULL,
-                                    `public_key` varbinary(32) DEFAULT NULL,
-                                    `pledge_balance` bigint(20) NOT NULL,
-                                    `stablecoin_balance` double NOT NULL,
-                                    `debt_stablecoin_balance` double NOT NULL,
-                                    PRIMARY KEY (`db_id`),
-                                    UNIQUE KEY `account_id_height_idx` (`db_id`,`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- DROP TABLE IF EXISTS `account_stablecoin`;
+-- /*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- /*!40101 SET character_set_client = utf8 */;
+-- CREATE TABLE `account_stablecoin` (
+--                                     `db_id` bigint(20) NOT NULL AUTO_INCREMENT,
+--                                     `id` bigint(20) NOT NULL,
+--                                     `creation_height` int(11) NOT NULL,
+--                                     `public_key` varbinary(32) DEFAULT NULL,
+--                                     `pledge_balance` bigint(20) NOT NULL,
+--                                     `stablecoin_balance` double NOT NULL,
+--                                     `debt_stablecoin_balance` double NOT NULL,
+--                                     `height` int(11) NOT NULL,
+--                                     `latest` tinyint(1) NOT NULL DEFAULT '1',
+--                                     PRIMARY KEY (`db_id`),
+--                                     UNIQUE KEY `account_id_height_idx` (`db_id`,`id`),
+--                                     KEY `account_id_latest_idx` (`id`,`latest`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 

@@ -73,12 +73,12 @@ public class Goods extends TableImpl<GoodsRecord> {
     /**
      * The column <code>DB.goods.description</code>.
      */
-    public final TableField<GoodsRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
+    public final TableField<GoodsRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB.defaultValue(DSL.field("NULL", SQLDataType.CLOB)), this, "");
 
     /**
      * The column <code>DB.goods.tags</code>.
      */
-    public final TableField<GoodsRecord, String> TAGS = createField(DSL.name("tags"), SQLDataType.VARCHAR(100), this, "");
+    public final TableField<GoodsRecord, String> TAGS = createField(DSL.name("tags"), SQLDataType.VARCHAR(100).defaultValue(DSL.field("NULL", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>DB.goods.timestamp</code>.

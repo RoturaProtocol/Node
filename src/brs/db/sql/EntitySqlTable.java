@@ -84,9 +84,29 @@ public abstract class EntitySqlTable<T> extends DerivedSqlTable implements Entit
       }
       query.addLimit(1);
 
+      //return get(ctx, query, true);
       return get(ctx, query, true);
     });
   }
+
+  @Override
+  public T getStableCoin(BurstKey nxtKey) {
+    DbKey dbKey = (DbKey) nxtKey;
+
+    return Db.useDSLContext(ctx -> {
+      SelectQuery<Record> query = ctx.selectQuery();
+      query.addFrom(tableClass);
+      query.addConditions(dbKey.getPKConditions(tableClass));
+      if ( multiversion ) {
+        query.addConditions(latestField.isTrue());
+      }
+      query.addLimit(1);
+
+      return get(ctx, query, false);
+    });
+  }
+
+
 
   @Override
   public T get(BurstKey nxtKey, int height) {
@@ -149,6 +169,7 @@ public abstract class EntitySqlTable<T> extends DerivedSqlTable implements Entit
   private T get(DSLContext ctx, SelectQuery<Record> query, boolean cache) {
     final boolean doCache = cache && Db.isInTransaction();
     Record record = query.fetchOne();
+
     if (record == null) return null;
     T t = null;
     DbKey dbKey = null;

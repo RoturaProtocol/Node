@@ -24,6 +24,8 @@ import static brs.http.common.Parameters.*;
 import static brs.http.common.ResultFields.*;
 import static brs.http.common.ResultFields.FULL_HASH_RESPONSE;
 
+
+
 public class APITransactionManagerImpl implements APITransactionManager {
 
   private final ParameterService parameterService;
@@ -46,15 +48,22 @@ public class APITransactionManagerImpl implements APITransactionManager {
   public JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT, Attachment attachment, long minimumFeeNQT) throws BurstException {
     int blockchainHeight = blockchain.getHeight();
     String deadlineValue = req.getParameter(DEADLINE_PARAMETER);
+    //无传入
     String referencedTransactionFullHash = Convert.emptyToNull(req.getParameter(REFERENCED_TRANSACTION_FULL_HASH_PARAMETER));
+    //无传入
     String referencedTransactionId = Convert.emptyToNull(req.getParameter(REFERENCED_TRANSACTION_PARAMETER));
+    //无传入
     String secretPhrase = Convert.emptyToNull(req.getParameter(SECRET_PHRASE_PARAMETER));
+
     String publicKeyValue = Convert.emptyToNull(req.getParameter(PUBLIC_KEY_PARAMETER));
+
     String recipientPublicKeyValue = Convert.emptyToNull(ParameterParser.getRecipientPublicKey(req));
+    //false
     boolean broadcast = !Parameters.isFalse(req.getParameter(BROADCAST_PARAMETER));
 
+    //encryptedMessage is null
     EncryptedMessage encryptedMessage = null;
-
+    //attachment.getTransactionType().hasRecipient() is false
     if (attachment.getTransactionType().hasRecipient()) {
       EncryptedData encryptedData = parameterService.getEncryptedMessage(req, accountService.getAccount(recipientId), Convert.parseHexString(recipientPublicKeyValue));
       if (encryptedData != null) {
@@ -62,11 +71,13 @@ public class APITransactionManagerImpl implements APITransactionManager {
       }
     }
 
+    //encryptToSelfMessage is null
     EncryptToSelfMessage encryptToSelfMessage = null;
     EncryptedData encryptedToSelfData = parameterService.getEncryptToSelfMessage(req);
     if (encryptedToSelfData != null) {
       encryptToSelfMessage = new EncryptToSelfMessage(encryptedToSelfData, !Parameters.isFalse(req.getParameter(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER)), blockchainHeight);
     }
+    //message is null
     Message message = null;
     String messageValue = Convert.emptyToNull(req.getParameter(MESSAGE_PARAMETER));
     if (messageValue != null) {
@@ -85,10 +96,15 @@ public class APITransactionManagerImpl implements APITransactionManager {
     } else if (attachment == Attachment.ARBITRARY_MESSAGE && ! Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)) {
       message = new Message(new byte[0], blockchainHeight);
     }
+
+
+    //is null
     PublicKeyAnnouncement publicKeyAnnouncement = null;
     if (recipientPublicKeyValue != null && Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)) {
       publicKeyAnnouncement = new PublicKeyAnnouncement(Convert.parseHexString(recipientPublicKeyValue), blockchainHeight);
     }
+//    System.out.println("publicKeyAnnouncement");
+//    System.out.println(publicKeyAnnouncement);
 
     if (secretPhrase == null && publicKeyValue == null) {
       return MISSING_SECRET_PHRASE;
@@ -112,8 +128,16 @@ public class APITransactionManagerImpl implements APITransactionManager {
     }
 
     try {
-      if (Convert.safeAdd(amountNQT, feeNQT) > senderAccount.getUnconfirmedBalanceNQT()) {
-        return NOT_ENOUGH_FUNDS;
+      String description = attachment.getTransactionType().getDescription();
+      if (description == "TUSD Payment") {
+        //处理稳定币转账质押的余额和账户费用是否充足
+        if (feeNQT  >  senderAccount.getUnconfirmedBalanceNQT() ){
+          return NOT_ENOUGH_FUNDS;
+        }
+      } else {
+        if (Convert.safeAdd(amountNQT, feeNQT) > senderAccount.getUnconfirmedBalanceNQT()) {
+          return NOT_ENOUGH_FUNDS;
+        }
       }
     } catch (ArithmeticException e) {
       return NOT_ENOUGH_FUNDS;
@@ -165,6 +189,7 @@ public class APITransactionManagerImpl implements APITransactionManager {
       } else {
         response.addProperty(BROADCASTED_RESPONSE, false);
       }
+      //钱包接受的是这个
       response.addProperty(UNSIGNED_TRANSACTION_BYTES_RESPONSE, Convert.toHexString(transaction.getUnsignedBytes()));
 
       response.add(TRANSACTION_JSON_RESPONSE, JSONData.unconfirmedTransaction(transaction));

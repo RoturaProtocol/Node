@@ -93,12 +93,12 @@ public class Purchase extends TableImpl<PurchaseRecord> {
     /**
      * The column <code>DB.purchase.note</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> NOTE = createField(DSL.name("note"), SQLDataType.BLOB, this, "");
+    public final TableField<PurchaseRecord, byte[]> NOTE = createField(DSL.name("note"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
 
     /**
      * The column <code>DB.purchase.nonce</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> NONCE = createField(DSL.name("nonce"), SQLDataType.VARBINARY(32), this, "");
+    public final TableField<PurchaseRecord, byte[]> NONCE = createField(DSL.name("nonce"), SQLDataType.VARBINARY(32).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
 
     /**
      * The column <code>DB.purchase.timestamp</code>.
@@ -113,22 +113,22 @@ public class Purchase extends TableImpl<PurchaseRecord> {
     /**
      * The column <code>DB.purchase.goods</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> GOODS = createField(DSL.name("goods"), SQLDataType.BLOB, this, "");
+    public final TableField<PurchaseRecord, byte[]> GOODS = createField(DSL.name("goods"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
 
     /**
      * The column <code>DB.purchase.goods_nonce</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> GOODS_NONCE = createField(DSL.name("goods_nonce"), SQLDataType.VARBINARY(32), this, "");
+    public final TableField<PurchaseRecord, byte[]> GOODS_NONCE = createField(DSL.name("goods_nonce"), SQLDataType.VARBINARY(32).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
 
     /**
      * The column <code>DB.purchase.refund_note</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> REFUND_NOTE = createField(DSL.name("refund_note"), SQLDataType.BLOB, this, "");
+    public final TableField<PurchaseRecord, byte[]> REFUND_NOTE = createField(DSL.name("refund_note"), SQLDataType.BLOB.defaultValue(DSL.field("NULL", SQLDataType.BLOB)), this, "");
 
     /**
      * The column <code>DB.purchase.refund_nonce</code>.
      */
-    public final TableField<PurchaseRecord, byte[]> REFUND_NONCE = createField(DSL.name("refund_nonce"), SQLDataType.VARBINARY(32), this, "");
+    public final TableField<PurchaseRecord, byte[]> REFUND_NONCE = createField(DSL.name("refund_nonce"), SQLDataType.VARBINARY(32).defaultValue(DSL.field("NULL", SQLDataType.VARBINARY)), this, "");
 
     /**
      * The column <code>DB.purchase.has_feedback_notes</code>.

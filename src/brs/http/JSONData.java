@@ -46,15 +46,37 @@ public final class JSONData {
       json.addProperty(UNCONFIRMED_BALANCE_NQT_RESPONSE, "0");
       json.addProperty(FORGED_BALANCE_NQT_RESPONSE,      "0");
       json.addProperty(GUARANTEED_BALANCE_NQT_RESPONSE,  "0");
+      json.addProperty("pledgeBalanceNQT",             "0");
+      json.addProperty("stablecoinBalance", "0");
+      json.addProperty("debtBtablecoinBalance",      "0");
     }
     else {
       json.addProperty(BALANCE_NQT_RESPONSE, String.valueOf(account.getBalanceNQT()));
       json.addProperty(UNCONFIRMED_BALANCE_NQT_RESPONSE, String.valueOf(account.getUnconfirmedBalanceNQT()));
       json.addProperty(FORGED_BALANCE_NQT_RESPONSE, String.valueOf(account.getForgedBalanceNQT()));
       json.addProperty(GUARANTEED_BALANCE_NQT_RESPONSE, String.valueOf(account.getBalanceNQT()));
+      json.addProperty("pledgeBalanceNQT", String.valueOf(account.getPledgeBalanceNQT()));
+      json.addProperty("stablecoinBalance", String.valueOf(account.getStablecoinBalance()));
+      json.addProperty("debtBtablecoinBalance", String.valueOf(account.getDebtStablecoinBalance()));
     }
     return json;
   }
+
+//  static JsonObject accountStableCoinBalance(Account account) {
+//    JsonObject json = new JsonObject();
+//    if (account == null) {
+//      json.addProperty("pledgeBalance",             "0");
+//      json.addProperty("stablecoinBalance", "0");
+//      json.addProperty("debtBtablecoin_balance",      "0");
+//    }
+//    else {
+//      json.addProperty("pledgeBalanceNQT", String.valueOf(account.getPledgeBalance()));
+//      json.addProperty("stablecoinBalance", String.valueOf(account.getStablecoinBalance()));
+//      json.addProperty("debtBtablecoin_balance", String.valueOf(account.getDebtStablecoinBalance()));
+//    }
+//    return json;
+//  }
+
 
   static JsonObject asset(Asset asset, int tradeCount, int transferCount, int assetAccountsCount, long circulatingSupply) {
     JsonObject json = new JsonObject();
@@ -401,16 +423,16 @@ public final class JSONData {
     json.addProperty(name, Convert.toUnsignedLong(accountId));
     json.addProperty(name + "RS", Convert.rsAccount(accountId));
   }
-  
+
   static JsonObject at(AT at) {
     return at(at, null, true);
   }
 
   static JsonObject at(AT at, AtMachineState atCreation, boolean includeDetails) {
     JsonObject json = new JsonObject();
-    
+
     long id = AtApiHelper.getLong(at.getId());
-    
+
     json.addProperty("at", Convert.toUnsignedLong( id ));
     json.addProperty("machineData", Convert.toHexString(at.getApDataBytes()));
     json.addProperty("balanceNQT", Convert.toUnsignedLong(at.getgBalance()));
@@ -422,7 +444,7 @@ public final class JSONData {
     json.addProperty("finished", at.getMachineState().isFinished());
     json.addProperty("dead", at.getMachineState().isDead());
     json.addProperty("machineCodeHashId", Convert.toUnsignedLong(at.getApCodeHashId()) );
-    
+
     if(includeDetails) {
       // These are immutable details, which we might want to avoid getting on every call
       json.addProperty("atVersion", at.getVersion());
@@ -435,7 +457,7 @@ public final class JSONData {
       json.addProperty("minActivation", Convert.toUnsignedLong(at.minActivationAmount()));
       json.addProperty("creationBlock", at.getCreationBlockHeight());
       if(atCreation != null) {
-        json.addProperty("creationMachineData", Convert.toHexString(atCreation.getApDataBytes()));        
+        json.addProperty("creationMachineData", Convert.toHexString(atCreation.getApDataBytes()));
       }
     }
     return json;

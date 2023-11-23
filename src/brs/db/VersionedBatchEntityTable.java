@@ -13,6 +13,10 @@ public interface VersionedBatchEntityTable<T> extends DerivedTable, EntityTable<
   @Override
   T get(BurstKey dbKey);
 
+
+  T getStableCoin(BurstKey dbKey);
+
+
   @Override
   void insert(T t);
 

@@ -12,6 +12,8 @@ public interface EntityTable<T> extends DerivedTable {
 
   T get(BurstKey dbKey, int height);
 
+  T getStableCoin(BurstKey dbKey);
+
   T getBy(Condition condition);
 
   T getBy(Condition condition, int height);

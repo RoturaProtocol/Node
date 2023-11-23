@@ -14,7 +14,9 @@ import java.util.Collection;
 public interface AccountStore {
 
   VersionedBatchEntityTable<Account> getAccountTable();
-  
+
+//  VersionedBatchEntityTable<Account.AccountStableCoin> getAccountStableCoinTable();
+
   long getAllAccountsBalance();
 
   VersionedEntityTable<Account.RewardRecipientAssignment> getRewardRecipientAssignmentTable();

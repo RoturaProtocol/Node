@@ -823,7 +823,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
     }
 
     isConsistent.set(totalMined == totalEffectiveBalance);
-
+    //isConsistent.set(true);
     if(logger.isDebugEnabled()) {
       logger.debug("Total mined {}, total effective {}", totalMined, totalEffectiveBalance);
       logger.debug("Database is consistent: {}", isConsistent.get());
@@ -863,6 +863,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
 
   private void pushBlock(final Block block) throws BlockNotAcceptedException {
     synchronized (transactionProcessor.getUnconfirmedTransactionsSyncObj()) {
+      //将transactionCaches和transactionBatches设置为空
       stores.beginTransaction();
       int curTime = timeService.getEpochTime();
 
@@ -1009,12 +1010,15 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
 
         blockService.setPrevious(block, previousLastBlock);
         blockListeners.notify(block, Event.BEFORE_BLOCK_ACCEPT);
-        //删除块里面包含的交易。
+        //internalStore删除块里面包含的交易。
         transactionProcessor.removeForgedTransactions(block.getTransactions());
-        //对每个交易中每个发送者账户进行预留，将预留失败的交易从internalStore删除掉
+        //对internalStore剩下的每个交易中每个发送者账户进行预留，将预留失败的交易从internalStore删除掉   没什么用
         transactionProcessor.requeueAllUnconfirmedTransactions();
+        //将transactionBatches中的account值更新到数据库
         accountService.flushAccountTable();
+        //将block更新到block表
         addBlock(block);
+        //
         accept(block, remainingAmount, remainingFee);
         derivedTableManager.getDerivedTables().forEach(DerivedTable::finish);
         stores.commitTransaction();
@@ -1085,6 +1089,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
       throw new BlockNotAcceptedException("Calculated remaining fee doesn't add up for block " + block.getHeight());
     }
     blockListeners.notify(block, Event.BEFORE_BLOCK_APPLY);
+    //给账户添加锻造和交易费用
     blockService.apply(block);
     subscriptionService.applyConfirmed(block, blockchain.getHeight());
     if (escrowService.isEnabled()) {

@@ -87,11 +87,13 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
           logger.info("Transaction {}: Added fingerprint of {}", transaction.getId(), peer.getPeerAddress());
           fingerPrintsOverview.get(transaction).add(peer);
         }
-      } else if (transactionCanBeAddedToCache(transaction)) {
+      } else if (  transactionCanBeAddedToCache(transaction)) {
         this.reservedBalanceCache.reserveBalanceAndPut(transaction);
 
         final TransactionDuplicationResult duplicationInformation = transactionDuplicatesChecker.removeCheaperDuplicate(transaction);
 
+
+        //没什么用
         if (duplicationInformation.isDuplicate()) {
           final Transaction duplicatedTransaction = duplicationInformation.getTransaction();
 
@@ -109,6 +111,7 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
             logger.debug("Transaction {}: Will not add a cheaper duplicate UT", transaction.getId());
           }
         } else {
+          //看这里
           addTransaction(transaction, peer);
           if (totalSize % 128 == 0) {
             logger.info("Cache size: {}/{} added {} from sender {}", totalSize, maxSize, transaction.getId(), transaction.getSenderId());
@@ -337,6 +340,7 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
   }
 
   private void addTransaction(Transaction transaction, Peer peer) {
+    //将交易放入internalStore
     final List<Transaction> slot = getOrCreateAmountSlotForTransaction(transaction);
     slot.add(transaction);
     totalSize++;

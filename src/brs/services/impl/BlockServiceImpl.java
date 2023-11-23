@@ -191,6 +191,7 @@ public class BlockServiceImpl implements BlockService {
     Account generatorAccount = accountService.getOrAddAccount(block.getGeneratorId());
     generatorAccount.apply(block.getGeneratorPublicKey(), block.getHeight());
 
+
     long blockReward = getBlockReward(block);
     long blockRewardTotal = blockReward;
     Map<Long, Integer> blockDistribution = networkParameters != null ? networkParameters.getBlockRewardDistribution(block.getHeight()) : null;

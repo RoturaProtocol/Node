@@ -11,6 +11,7 @@ import brs.db.TransactionDb;
 import brs.db.store.BlockchainStore;
 import brs.db.store.IndirectIncomingStore;
 import brs.fluxcapacitor.FluxValues;
+//import brs.schema.tables.AccountStablecoin;
 import brs.schema.tables.records.BlockRecord;
 import brs.schema.tables.records.TransactionRecord;
 import org.jooq.*;
@@ -223,6 +224,31 @@ public class SqlBlockchainStore implements BlockchainStore {
         ACCOUNT.BALANCE,ACCOUNT.UNCONFIRMED_BALANCE,ACCOUNT.FORGED_BALANCE,
         ACCOUNT.HEIGHT).values(2802355793221220719L,b, 0,0, 12798000000000000L,12798000000000000L,12798000000000000L, 0).execute();
     });
+
+
+//    Db.useDSLContext(ctx -> {
+//      byte[] b = Crypto.getPublicKey("some teach felicity people reflect cage task state ship study admit shove");
+//      ctx.insertInto(ACCOUNT_STABLECOIN
+//        ,ACCOUNT_STABLECOIN.ID
+//        ,ACCOUNT_STABLECOIN.CREATION_HEIGHT
+//        ,ACCOUNT_STABLECOIN.PUBLIC_KEY
+//        ,ACCOUNT_STABLECOIN.PLEDGE_BALANCE
+//        ,ACCOUNT_STABLECOIN.STABLECOIN_BALANCE
+//        ,ACCOUNT_STABLECOIN.DEBT_STABLECOIN_BALANCE
+//        ,ACCOUNT_STABLECOIN.HEIGHT
+//        ,ACCOUNT_STABLECOIN.LATEST
+//      ).values(
+//        2802355793221220719L,
+//        0,
+//        b,
+//        0L,
+//        0.0d,
+//        0.0d,
+//        0,
+//        true
+//      ).execute();
+//    });
+
   }
   @Override
   public Collection<Block> getLatestBlocks(int amountBlocks) {

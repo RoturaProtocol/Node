@@ -50,6 +50,12 @@ public abstract class CreateTransaction extends APIServlet.JsonRequestHandler {
     return createTransaction(req, senderAccount, recipientId, amountNQT, Attachment.ORDINARY_PAYMENT);
   }
 
+  public final JsonElement createTransactionTUSD(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT)
+    throws BurstException {
+    return createTransaction(req, senderAccount, recipientId, amountNQT ,Attachment.TUSD_PAYMENT);
+  }
+
+
   public final JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT, Attachment attachment) throws BurstException {
     return apiTransactionManager.createTransaction(req, senderAccount, recipientId, amountNQT, attachment, minimumFeeNQT());
   }

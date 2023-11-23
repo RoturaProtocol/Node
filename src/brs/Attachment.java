@@ -91,7 +91,22 @@ public interface Attachment extends Appendix {
     }
 
   };
-  
+
+  EmptyAttachment TUSD_PAYMENT = new EmptyAttachment() {
+
+    @Override
+    protected String getAppendixName() {
+      return "TUSDPayment";
+    }
+
+    @Override
+    public TransactionType getTransactionType() {
+      return TransactionType.Payment.TUSD;
+    }
+
+  };
+
+
   EmptyAttachment ASSET_ADD_TREASURY_ACCOUNT_ATTACHMENT = new EmptyAttachment() {
 
     @Override
@@ -612,7 +627,7 @@ public interface Attachment extends Appendix {
       this.description = Convert.readString(buffer, buffer.getShort(), Constants.MAX_ASSET_DESCRIPTION_LENGTH);
       this.quantityQNT = buffer.getLong();
       this.decimals = buffer.get();
-      
+
       boolean mintable = false;
       if(super.getVersion() > 1) {
         mintable = buffer.get() == 1;
@@ -776,7 +791,7 @@ public interface Attachment extends Appendix {
     }
 
   }
-  
+
   final class ColoredCoinsAssetMint extends AbstractAttachment {
 
     private final long assetId;
@@ -834,9 +849,9 @@ public interface Attachment extends Appendix {
     public long getQuantityQNT() {
       return quantityQNT;
     }
-    
+
   }
-  
+
   final class ColoredCoinsAssetDistributeToHolders extends AbstractAttachment {
 
     private final long assetId;
@@ -902,7 +917,7 @@ public interface Attachment extends Appendix {
     public long getAssetId() {
       return assetId;
     }
-    
+
     public long getMinimumAssetQuantityQNT() {
       return minimumAssetQuantityQNT;
     }
@@ -1714,9 +1729,9 @@ public interface Attachment extends Appendix {
     public TransactionType getTransactionType() {
       return TransactionType.BurstMining.REWARD_RECIPIENT_ASSIGNMENT;
     }
-    
+
   }
-  
+
 
   abstract class CommitmentAttachment extends AbstractAttachment {
 
@@ -1757,7 +1772,7 @@ public interface Attachment extends Appendix {
     }
 
   }
-  
+
   final class CommitmentAdd extends CommitmentAttachment {
 
     CommitmentAdd(ByteBuffer buffer, byte transactionVersion) {
@@ -1783,7 +1798,8 @@ public interface Attachment extends Appendix {
     }
 
   }
-  
+
+
   final class CommitmentRemove extends CommitmentAttachment {
 
     CommitmentRemove(ByteBuffer buffer, byte transactionVersion) {
@@ -1807,10 +1823,134 @@ public interface Attachment extends Appendix {
     public TransactionType getTransactionType() {
       return TransactionType.BurstMining.COMMITMENT_REMOVE;
     }
-    
+
   }
-  
-  
+
+  abstract class DebtAttachment extends AbstractAttachment {
+
+    private final long amountNQT;
+    private final double turaPrice;
+    private final double tusdPrice;
+    private final double turaTotusdRate;
+    private DebtAttachment(ByteBuffer buffer, byte transactionVersion) {
+      super(buffer, transactionVersion);
+      this.amountNQT = buffer.getLong();
+      this.turaPrice = buffer.getDouble();
+      this.tusdPrice = buffer.getDouble();
+      this.turaTotusdRate = buffer.getDouble();
+    }
+
+    private DebtAttachment(JsonObject attachmentData) {
+      super(attachmentData);
+      this.amountNQT = JSON.getAsLong(attachmentData.get(AMOUNT_NQT_PARAMETER));
+      this.turaPrice = Double.parseDouble(JSON.getAsString(attachmentData.get("turaPrice")));
+      this.tusdPrice = Double.parseDouble(JSON.getAsString(attachmentData.get("tusdPrice")));
+      this.turaTotusdRate = Double.parseDouble(JSON.getAsString(attachmentData.get("turaTotusdRate")));
+
+    }
+
+    private DebtAttachment(long amountNQT,double turaPrice,double tusdPrice,double turaTotusdRate, int blockchainHeight) {
+      super(blockchainHeight);
+      this.amountNQT = amountNQT;
+      this.turaPrice = turaPrice;
+      this.tusdPrice = tusdPrice;
+      this.turaTotusdRate = turaTotusdRate;
+
+    }
+
+    public long getAmountNQT() {
+      return amountNQT;
+    }
+    public double getTuraPrice() {
+      return turaPrice;
+    }
+    public double getTusdPrice() { return tusdPrice;}
+    public double getTuraTotusdRate() {
+      return turaTotusdRate;
+    }
+
+    @Override
+    protected int getMySize() {
+      return 32;
+    }
+
+    @Override
+    protected void putMyBytes(ByteBuffer buffer) {
+
+      buffer.putLong(amountNQT);
+      buffer.putDouble(turaPrice);
+      buffer.putDouble(tusdPrice);
+      buffer.putDouble(turaTotusdRate);
+
+    }
+
+    @Override
+    protected void putMyJSON(JsonObject attachment) {
+      attachment.addProperty(AMOUNT_NQT_RESPONSE, amountNQT);
+    }
+
+  }
+
+
+
+
+  final class DebtAdd extends DebtAttachment {
+    //确定版本号
+    DebtAdd(ByteBuffer buffer, byte transactionVersion) {
+      super(buffer, transactionVersion);
+    }
+    //确定版本号
+    DebtAdd(JsonObject attachmentData) {
+      super(attachmentData);
+    }
+
+    //确定版本号
+    public DebtAdd(long amountNQT,double turaPrice,double tusdPrice,double turaTotusdRate, int blockchainHeight) {
+      super(amountNQT,turaPrice,tusdPrice,turaTotusdRate, blockchainHeight);
+    }
+
+    @Override
+    protected String getAppendixName() {
+      return "DebtAdd";
+    }
+
+    @Override
+    public TransactionType getTransactionType() {
+      return TransactionType.BurstDebt.DEBT_ADD;
+    }
+
+  }
+
+
+  final class DebtRemove extends DebtAttachment {
+
+    DebtRemove(ByteBuffer buffer, byte transactionVersion) {
+      super(buffer, transactionVersion);
+    }
+
+    DebtRemove(JsonObject attachmentData) {
+      super(attachmentData);
+    }
+
+    public DebtRemove(long amountNQT,double turaPrice,double tusdPrice,double turaTotusdRate, int blockchainHeight) {
+      super(amountNQT,turaPrice,tusdPrice,turaTotusdRate, blockchainHeight);
+    }
+
+    @Override
+    protected String getAppendixName() {
+      return "DebtRemove";
+    }
+
+    @Override
+    public TransactionType getTransactionType() {
+      return TransactionType.BurstDebt.DEBT_REMOVE;
+    }
+
+  }
+
+
+
+
   final class AdvancedPaymentEscrowCreation extends AbstractAttachment {
 
     private final Long amountNQT;

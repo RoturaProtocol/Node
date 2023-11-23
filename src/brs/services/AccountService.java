@@ -1,6 +1,7 @@
 package brs.services;
 
 import brs.Account;
+
 import brs.Account.AccountAsset;
 import brs.Account.Event;
 import brs.Account.RewardRecipientAssignment;
@@ -18,7 +19,11 @@ public interface AccountService {
   Account getAccount(long id);
 
   Account getAccount(long id, int height);
-  
+
+//  Account.AccountStableCoin getAccountStableCoin(long id);
+
+
+
   Account getNullAccount();
 
   Account getAccount(byte[] publicKey);
@@ -32,7 +37,7 @@ public interface AccountService {
   Collection<Account> getAccountsWithName(String name);
 
   Collection<Account> getAllAccounts(int from, int to);
-  
+
   long getAllAccountsBalance();
 
   Account getOrAddAccount(long id);
@@ -40,7 +45,7 @@ public interface AccountService {
   void flushAccountTable();
 
   int getCount();
-  
+
   int getBatchedAccountsCount();
 
   void addToForgedBalanceNQT(Account account, long amountNQT);
@@ -56,6 +61,12 @@ public interface AccountService {
   void addToBalanceNQT(Account account, long amountNQT);
 
   void addToUnconfirmedBalanceNQT(Account account, long amountNQT);
+
+  void addToPledgeBalanceNQT(Account account, long amountNQT);
+
+  void addToStablecoinBalance(Account account, double amountNQT);
+
+  void addToDebtStablecoinBalance(Account account, double amountNQT);
 
   void addToBalanceAndUnconfirmedBalanceNQT(Account account, long amountNQT);
 
