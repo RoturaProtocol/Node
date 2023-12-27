@@ -2,8 +2,8 @@ package brs.db.store;
 
 import brs.Account;
 import brs.Asset;
+import brs.couchbasedb.impl.PublicEntityImpl;
 import brs.db.BurstKey;
-import brs.db.VersionedBatchEntityTable;
 import brs.db.VersionedEntityTable;
 
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.Collection;
  */
 public interface AccountStore {
 
-  VersionedBatchEntityTable<Account> getAccountTable();
+  PublicEntityImpl<Account> getAccountTable();
 
 //  VersionedBatchEntityTable<Account.AccountStableCoin> getAccountStableCoinTable();
 
@@ -31,7 +31,7 @@ public interface AccountStore {
 
   long getAssetCirculatingSupply(Asset asset, boolean ignoreTreasury);
 
-  BurstKey.LongKeyFactory<Account> getAccountKeyFactory();
+//  BurstKey.LongKeyFactory<Account> getAccountKeyFactory();
 
   Collection<Account.RewardRecipientAssignment> getAccountsWithRewardRecipient(Long recipientId);
 

@@ -49,6 +49,7 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
   @Override
   protected
   JsonElement processRequest(HttpServletRequest req) {
+
     String secret = req.getParameter(SECRET_PHRASE_PARAMETER);
     long nonce = Convert.parseUnsignedLong(req.getParameter(NONCE_PARAMETER));
 
@@ -97,17 +98,23 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
     }
 
     byte[] secretPublicKey = Crypto.getPublicKey(secret);
+
     Account secretAccount = accountService.getAccount(secretPublicKey);
+
     if(secretAccount != null) {
       try {
+
         /*
         ln 220817
         增加verifySecretAccount验证白名单，address唯一标识
         * */
 //        verifySecretAccount(accountService, blockchain, secretAccount, Convert.parseUnsignedLong(accountId));
         verifySecretAccount(accountService, blockchain, secretAccount, Convert.parseUnsignedLong(accountId),Convert.parseAddress(accountId));
+
       } catch (Exception e) {
+
         response.addProperty("result", e.getMessage());
+
         return response;
       }
     }
@@ -151,12 +158,12 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
 //    100000000000 = 1000
     long minerLicence = secretAccount.getBalanceNQT()-secretAccount.getUnconfirmedBalanceNQT();
 
-    Public p = new Public();
-    Boolean whiteLicence = p.verifyWhiteList(address.toString());
+//    Public p = new Public();
+//    Boolean whiteLicence = p.verifyWhiteList(address.toString());
 
-    if (minerLicence < 100000000000L && !whiteLicence){
-      throw new Exception("No mining licence");
-    }
+//    if (minerLicence < 100000000000L ){
+//      throw new Exception("No mining licence");
+//    }
 //    int height = blockchain.getHeight();
 //    long committedAmountNOT = Burst.getBlockchain().getCommittedAmount(genAccount.getId(), height+ Constants.COMMITMENT_WAIT, height, null);
 
@@ -183,6 +190,7 @@ public final class SubmitNonce extends APIServlet.JsonRequestHandler {
     else {
       throw new Exception("Passphrase is for a different account");
     }
+
   }
 
   @Override

@@ -87,16 +87,18 @@ public class BlockchainImpl implements Blockchain {
 
   @Override
   public Block getBlock(long blockId) {
-    Block block = getLastBlock();
-    if (block.getId() == blockId) {
-      return block;
-    }
+
+//    Block block = getLastBlock();
+//    if (block.getId() == blockId) {
+//      return block;
+//    }
     return blockDb.findBlock(blockId);
   }
 
   @Override
   public boolean hasBlock(long blockId) {
-    return getLastBlock().getId() == blockId || blockDb.hasBlock(blockId);
+//    return getLastBlock().getId() == blockId ||
+    return blockDb.hasBlock(blockId);
   }
 
   @Override
@@ -201,7 +203,7 @@ public class BlockchainImpl implements Blockchain {
     try {
       valid_account_numbers = p.getAccountNumbers(height-1);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new RuntimeException("getBlockReward", e);
     }
     if (height<=28849){
       if(valid_account_numbers<100000){
@@ -224,7 +226,7 @@ public class BlockchainImpl implements Blockchain {
       if(percentage <= 0){
         percentage = 1;
       }
-  
+
       double avgcommitment = ((double) block.getAverageCommitment())/10000;
       if(avgcommitment <= 0){
         avgcommitment = 1;
@@ -299,8 +301,8 @@ public class BlockchainImpl implements Blockchain {
       totalMined  = p.getALLAccountNumbers();
     } catch (SQLException e) {
       e.printStackTrace();
-    }    
-    
+    }
+
     return totalMined;
   }
 

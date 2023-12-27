@@ -11,10 +11,11 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DBCacheManagerImpl {
+public class DBCacheManagerImpl implements Serializable {
 
   private final CacheManager cacheManager;
 

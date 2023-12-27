@@ -1,34 +1,69 @@
 package brs;
 
+import brs.couchbasedb.impl.PublicEntityImpl;
 import brs.crypto.Crypto;
 import brs.crypto.EncryptedData;
 import brs.db.BurstKey;
 import brs.db.VersionedBatchEntityTable;
+import brs.services.TransactionService;
 import brs.util.Convert;
+import com.couchbase.client.core.deps.com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Account {
+public class Account implements  Serializable{
 
   private static final Logger logger = Logger.getLogger(Account.class.getSimpleName());
 
-  public final long id;
-  public final BurstKey nxtKey;
-  private final int creationHeight;
-  private byte[] publicKey;
-  private int keyHeight;
-  protected long balanceNQT;
-  protected long unconfirmedBalanceNQT;
-  protected long forgedBalanceNQT;
+  public  long id;
+  public  int creationHeight;
+  public byte[] publicKey;
+  public int keyHeight;
+  public long balanceNQT;
+  public long unconfirmedBalanceNQT;
+  public long forgedBalanceNQT;
 
-  protected long pledgeBalanceNQT;
-  protected double stablecoinBalance;
-  protected double debtStablecoinBalance;
+  public long pledgeBalanceNQT;
+  public double stablecoinBalance;
+  public double debtStablecoinBalance;
 
 
-  protected String name;
-  protected String description;
+  public String name;
+  public String description;
+
+
+  public Account() {
+
+  }
+  public Account(long id,int creationHeight,byte[] publicKey,int keyHeight,long balanceNQT,long unconfirmedBalanceNQT,long forgedBalanceNQT
+  ,long pledgeBalanceNQT,double stablecoinBalance,double debtStablecoinBalance,String name,String description) {
+    this.id = id;
+    this.creationHeight = creationHeight;
+    this.publicKey=publicKey;
+    this.keyHeight=keyHeight;
+    this.balanceNQT=balanceNQT;
+    this.unconfirmedBalanceNQT=unconfirmedBalanceNQT;
+    this.forgedBalanceNQT=forgedBalanceNQT;
+    this.pledgeBalanceNQT=pledgeBalanceNQT;
+    this.stablecoinBalance=stablecoinBalance;
+    this.debtStablecoinBalance=debtStablecoinBalance;
+    this.name=name;
+    this.description=description;
+
+  }
+
+
+  // 序列化为 JSON
+  public String toJson() {
+    Gson gson = new GsonBuilder().serializeNulls().create();
+    return gson.toJson(this);
+  }
+
+
 
   public void setPledgeBalanceNQT(long pledgeBalanceNQT) {
     this.pledgeBalanceNQT = pledgeBalanceNQT;
@@ -88,7 +123,7 @@ public class Account {
 
   }
 
-  public static class AccountAsset {
+  public static class AccountAsset implements  Serializable {
     public final long accountId;
     public final long assetId;
     public final BurstKey burstKey;
@@ -153,57 +188,7 @@ public class Account {
   }
 
 
-//  public static class AccountStableCoin {
-//    public final long id;
-//    public final BurstKey nxtKey;
-//    private final int creationHeight;
-//    private byte[] publicKey;
-//    protected long pledge_balance;
-//    protected double stablecoin_balance;
-//    protected double debt_stablecoin_balance;
-//
-//
-//    public AccountStableCoin(long id, BurstKey nxtKey, int creationHeight, byte[] publicKey, long pledge_balance, double stablecoin_balance
-//    , double debt_stablecoin_balance) {
-//      this.id = id;
-//      this.nxtKey = nxtKey;
-//      this.creationHeight = creationHeight;
-//      this.publicKey = publicKey;
-//      this.pledge_balance = pledge_balance;
-//      this.stablecoin_balance = stablecoin_balance;
-//      this.debt_stablecoin_balance = debt_stablecoin_balance;
-//    }
-//
-//
-//
-//
-//    public long getId() { return id; }
-//    public BurstKey getNxtKey() { return nxtKey; }
-//    public int getCreationHeight() { return creationHeight; }
-//    public byte[] getPublicKey() { return publicKey; }
-//    public long getPledgeBalance() { return pledge_balance; }
-//    public double getStablecoinBalance() { return stablecoin_balance; }
-//    public double getDebtStablecoinBalance() { return debt_stablecoin_balance; }
-//
-//    @Override
-//    public String toString() {
-//      return "AccountStableCoin id: "
-//        + Convert.toUnsignedLong(id)
-//        + " pledge_balance: "
-//        + pledge_balance
-//        + " stablecoin_balance: "
-//        + stablecoin_balance
-//        + " debt_stablecoin_balance: "
-//        + debt_stablecoin_balance;
-//    }
-//
-//
-//  }
-
-
-
-
-  public static class RewardRecipientAssignment {
+  public static class RewardRecipientAssignment implements  Serializable{
     public final Long accountId;
     private Long prevRecipientId;
     private Long recipientId;
@@ -240,7 +225,7 @@ public class Account {
     }
   }
 
-  static class DoubleSpendingException extends RuntimeException {
+  static class DoubleSpendingException extends RuntimeException implements  Serializable{
 
     DoubleSpendingException(String message) {
       super(message);
@@ -248,16 +233,16 @@ public class Account {
 
   }
 
-  private static BurstKey.LongKeyFactory<Account> accountBurstKeyFactory() {
-    return Burst.getStores().getAccountStore().getAccountKeyFactory();
-  }
+//  private static BurstKey.LongKeyFactory<Account> accountBurstKeyFactory() {
+//    return Burst.getStores().getAccountStore().getAccountKeyFactory();
+//  }
 
-  private static VersionedBatchEntityTable<Account> accountTable() {
+  private static PublicEntityImpl<Account> accountTable() {
     return Burst.getStores().getAccountStore().getAccountTable();
   }
 
   public static Account getAccount(long id) {
-    return id == 0 ? null : accountTable().get(accountBurstKeyFactory().newKey(id));
+    return id == 0 ? null : accountTable().get(id);
   }
 
   public static long getId(byte[] publicKey) {
@@ -265,7 +250,7 @@ public class Account {
     return Convert.fullHashToId(publicKeyHash);
   }
 
-  public static Account getOrAddAccount(long id) {
+  public static Account getOrAddAccount(long id)  {
     Account account = getAccount(id);
     if (account == null) {
       account = new Account(id);
@@ -279,16 +264,14 @@ public class Account {
       logger.log(Level.INFO, "CRITICAL ERROR: Reed-Solomon encoding fails for {0}", id);
     }
     this.id = id;
-    this.nxtKey = accountBurstKeyFactory().newKey(this.id);
     this.creationHeight = Burst.getBlockchain().getHeight();
   }
 
-  protected Account(long id, BurstKey burstKey, int creationHeight) {
+  public Account(long id, int creationHeight) {
     if (id != Crypto.rsDecode(Crypto.rsEncode(id))) {
       logger.log(Level.INFO, "CRITICAL ERROR: Reed-Solomon encoding fails for {0}", id);
     }
     this.id = id;
-    this.nxtKey = burstKey;
     this.creationHeight = creationHeight;
   }
 

@@ -7,6 +7,7 @@ import brs.Account.RewardRecipientAssignment;
 import brs.AssetTransfer;
 import brs.Burst;
 import brs.Constants;
+import brs.couchbasedb.impl.PublicEntityImpl;
 import brs.crypto.Crypto;
 import brs.db.BurstKey;
 import brs.db.BurstKey.LinkKeyFactory;
@@ -19,18 +20,19 @@ import brs.services.AccountService;
 import brs.util.Convert;
 import brs.util.Listener;
 import brs.util.Listeners;
+import com.couchbase.client.core.deps.com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static brs.schema.Tables.ACCOUNT;
 
-public class AccountServiceImpl implements AccountService {
+public class AccountServiceImpl implements AccountService, Serializable {
 
   private final AccountStore accountStore;
-  private final VersionedBatchEntityTable<Account> accountTable;
+  private final PublicEntityImpl<Account> accountTable;
 //  private final VersionedBatchEntityTable<Account.AccountStableCoin> accountStableCoinTable;
-  private final LongKeyFactory<Account> accountBurstKeyFactory;
+//  private final LongKeyFactory<Account> accountBurstKeyFactory;
   private final VersionedEntityTable<AccountAsset> accountAssetTable;
   private final LinkKeyFactory<AccountAsset> accountAssetKeyFactory;
   private final VersionedEntityTable<RewardRecipientAssignment> rewardRecipientAssignmentTable;
@@ -44,8 +46,7 @@ public class AccountServiceImpl implements AccountService {
   public AccountServiceImpl(AccountStore accountStore, AssetTransferStore assetTransferStore) {
     this.accountStore = accountStore;
     this.accountTable = accountStore.getAccountTable();
-//    this.accountStableCoinTable = accountStore.getAccountStableCoinTable();
-    this.accountBurstKeyFactory = accountStore.getAccountKeyFactory();
+//    this.accountBurstKeyFactory = accountStore.getAccountKeyFactory();
     this.assetTransferStore = assetTransferStore;
     this.accountAssetTable = accountStore.getAccountAssetTable();
     this.accountAssetKeyFactory = accountStore.getAccountAssetKeyFactory();
@@ -65,17 +66,17 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   public Account getAccount(long id) {
-    return id == 0 ? null : accountTable.get(accountBurstKeyFactory.newKey(id));
+    return id == 0 ? null : accountTable.get(id);
   }
 
   @Override
   public Account getNullAccount() {
-    return accountTable.get(accountBurstKeyFactory.newKey(0L));
+    return accountTable.get(0L);
   }
 
   @Override
   public Account getAccount(long id, int height) {
-    return id == 0 ? null : accountTable.get(accountBurstKeyFactory.newKey(id), height);
+    return id == 0 ? null : accountTable.get(id, height);
   }
 
 //  @Override
@@ -86,7 +87,8 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   public Account getAccount(byte[] publicKey) {
-    final Account account = accountTable.get(accountBurstKeyFactory.newKey(getId(publicKey)));
+
+    final Account account = accountTable.get(getId(publicKey));
 
     if (account == null) {
       return null;
@@ -117,22 +119,22 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   public Collection<Account> getAccountsWithName(String name) {
-    return accountTable.getManyBy(ACCOUNT.NAME.equalIgnoreCase(name), 0, -1);
+    return accountTable.getManyBy(name, 0, -1);
   }
-
-  @Override
-  public Collection<Account> getAllAccounts(int from, int to) {
-    return accountTable.getAll(from, to);
-  }
+//
+//  @Override
+//  public Collection<Account> getAllAccounts(int from, int to) {
+//    return accountTable.getAll(from, to);
+//  }
 
   @Override
   public long getAllAccountsBalance() {
-    return accountStore.getAllAccountsBalance();
+    return accountTable.getAllAccountsBalance();
   }
 
   @Override
-  public Account getOrAddAccount(long id) {
-    Account account = accountTable.get(accountBurstKeyFactory.newKey(id));
+  public Account getOrAddAccount(long id)  {
+    Account account = accountTable.get(id);
     if (account == null) {
       account = new Account(id);
       accountTable.insert(account);
@@ -145,20 +147,20 @@ public class AccountServiceImpl implements AccountService {
     return Convert.fullHashToId(publicKeyHash);
   }
 
-  @Override
-  public void flushAccountTable() {
-    accountTable.finish();
-  }
+//  @Override
+//  public void flushAccountTable() {
+//    accountTable.finish();
+//  }
 
   @Override
   public int getCount() {
     return accountTable.getCount();
   }
 
-  @Override
-  public int getBatchedAccountsCount() {
-    return accountTable.getBatch().size();
-  }
+//  @Override
+//  public int getBatchedAccountsCount() {
+//    return accountTable.getBatch().size();
+//  }
 
   @Override
   public void addToForgedBalanceNQT(Account account, long amountNQT) {

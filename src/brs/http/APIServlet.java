@@ -202,6 +202,7 @@ public final class APIServlet extends HttpServlet {
         response = e.getErrorResponse();
       } catch (BurstException | RuntimeException e) {
         logger.debug("Error processing API request", e);
+        System.out.println("111111");
         response = ERROR_INCORRECT_REQUEST;
       }
 

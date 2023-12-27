@@ -7,7 +7,9 @@ import org.jooq.impl.TableImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class DerivedSqlTable implements DerivedTable {
+import java.io.Serializable;
+
+public abstract class DerivedSqlTable implements DerivedTable, Serializable {
   private static final Logger logger = LoggerFactory.getLogger(DerivedSqlTable.class);
   final String table;
   final TableImpl<?> tableClass;
@@ -54,8 +56,8 @@ public abstract class DerivedSqlTable implements DerivedTable {
 
   }
 
-  @Override
-  public void optimize() {
-    Db.optimizeTable(table);
-  }
+//  @Override
+//  public void optimize() {
+//    Db.optimizeTable(table);
+//  }
 }

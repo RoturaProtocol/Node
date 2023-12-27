@@ -7,6 +7,7 @@ import brs.Account.Event;
 import brs.Account.RewardRecipientAssignment;
 import brs.AssetTransfer;
 import brs.util.Listener;
+import com.couchbase.client.core.deps.com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.Collection;
 
@@ -36,17 +37,17 @@ public interface AccountService {
 
   Collection<Account> getAccountsWithName(String name);
 
-  Collection<Account> getAllAccounts(int from, int to);
+//  Collection<Account> getAllAccounts(int from, int to);
 
   long getAllAccountsBalance();
 
-  Account getOrAddAccount(long id);
+  Account getOrAddAccount(long id)  ;
 
-  void flushAccountTable();
+//  void flushAccountTable();
 
   int getCount();
 
-  int getBatchedAccountsCount();
+//  int getBatchedAccountsCount();
 
   void addToForgedBalanceNQT(Account account, long amountNQT);
 

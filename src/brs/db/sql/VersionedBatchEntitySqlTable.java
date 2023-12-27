@@ -8,9 +8,10 @@ import org.ehcache.Cache;
 import org.jooq.*;
 import org.jooq.impl.TableImpl;
 
+import java.io.Serializable;
 import java.util.*;
 
-public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySqlTable<T> implements VersionedBatchEntityTable<T> {
+public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySqlTable<T> implements VersionedBatchEntityTable<T>, Serializable {
 
   private final DBCacheManagerImpl dbCacheManager;
   private final Class<T> tClass;
@@ -83,24 +84,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
     if (keySet.isEmpty()) {
       return;
     }
-//    System.out.println("finish");
-//    for (BurstKey burstKey : keySet) {
-//      System.out.println("burstKey");
-//      System.out.println(burstKey);
-//      System.out.println("**");
-//      for (long pkValue : burstKey.getPKValues()) {
-//        System.out.println(pkValue);
-//      }
-//    }
 
-//    for (String idColumn : dbKeyFactory.getPKColumns()) {
-//      System.out.println("idColumn");
-//      System.out.println(idColumn);
-//
-//    }
-
-//    System.out.println("getBatch().values()");
-//    System.out.println(getBatch().values());
     Db.useDSLContext(ctx -> {
       UpdateQuery updateQuery = ctx.updateQuery(tableClass);
       updateQuery.addValue(latestField, false);

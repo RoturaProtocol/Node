@@ -5,7 +5,8 @@ import brs.Asset;
 import brs.Burst;
 import brs.Transaction;
 import brs.TransactionType;
-import brs.db.VersionedBatchEntityTable;
+import brs.couchbasedb.impl.PublicEntityImpl;
+import brs.crypto.Crypto;
 import brs.db.VersionedEntityTable;
 import brs.db.cache.DBCacheManagerImpl;
 import brs.db.store.AccountStore;
@@ -16,25 +17,21 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 
 import static brs.schema.Tables.*;
 
-public class SqlAccountStore implements AccountStore {
+public class SqlAccountStore implements AccountStore, Serializable {
 
-  private static final DbKey.LongKeyFactory<Account> accountDbKeyFactory = new DbKey.LongKeyFactory<Account>(ACCOUNT.ID) {
-      @Override
-      public DbKey newKey(Account account) {
-        return (DbKey) account.nxtKey;
-      }
-  };
-//  private static final DbKey.LongKeyFactory<Account.AccountStableCoin> accountStableCoinDbKeyFactory = new DbKey.LongKeyFactory<Account.AccountStableCoin>(ACCOUNT_STABLECOIN.ID) {
-//    @Override
-//    public DbKey newKey(Account.AccountStableCoin account) {
-//      return (DbKey) account.nxtKey;
-//    }
+//  private static final DbKey.LongKeyFactory<Account> accountDbKeyFactory = new DbKey.LongKeyFactory<Account>(ACCOUNT.ID) {
+//      @Override
+//      public DbKey newKey(Account account) {
+//        return (DbKey) account.nxtKey;
+//      }
 //  };
+
 
   private static final DbKey.LongKeyFactory<Account.RewardRecipientAssignment> rewardRecipientAssignmentDbKeyFactory
     = new DbKey.LongKeyFactory<Account.RewardRecipientAssignment>(REWARD_RECIP_ASSIGN.ACCOUNT_ID) {
@@ -99,69 +96,39 @@ public class SqlAccountStore implements AccountStore {
       }
     };
 
-    accountTable = new VersionedBatchEntitySqlTable<Account>("account", brs.schema.Tables.ACCOUNT, accountDbKeyFactory, derivedTableManager, dbCacheManager, Account.class) {
-      @Override
-      protected Account load(DSLContext ctx, Record rs) {
-        return new SqlAccount(rs);
-      }
-
-      @Override
-      protected void bulkInsert(DSLContext ctx, Collection<Account> accounts) {
-        List<Query> accountQueries = new ArrayList<>();
-        int height = Burst.getBlockchain().getHeight();
-        for (Account account: accounts) {
-//          System.out.println("bulkInsert");
-//          System.out.println(account.getId());
-//          System.out.println(account.getPublicKey());
-          if (account == null) continue;
-          accountQueries.add(
-                  ctx.mergeInto(ACCOUNT, ACCOUNT.ID, ACCOUNT.HEIGHT, ACCOUNT.CREATION_HEIGHT, ACCOUNT.PUBLIC_KEY, ACCOUNT.KEY_HEIGHT, ACCOUNT.BALANCE,
-                          ACCOUNT.UNCONFIRMED_BALANCE, ACCOUNT.FORGED_BALANCE, ACCOUNT.NAME, ACCOUNT.DESCRIPTION, ACCOUNT.LATEST
-                          ,ACCOUNT.PLEDGE_BALANCE,ACCOUNT.STABLECOIN_BALANCE,ACCOUNT.DEBT_STABLECOIN_BALANCE
-                    )
-                          .key(ACCOUNT.ID, ACCOUNT.HEIGHT)
-                          .values(account.getId(), height, account.getCreationHeight(), account.getPublicKey(), account.getKeyHeight(),
-                                  account.getBalanceNQT(), account.getUnconfirmedBalanceNQT(), account.getForgedBalanceNQT(), account.getName(), account.getDescription(), true
-                          ,account.getPledgeBalanceNQT(),account.getStablecoinBalance(),account.getDebtStablecoinBalance() )
-          );
-        }
-
-        ctx.batch(accountQueries).execute();
-      }
-    };
-
-//    accountStableCoinTable = new VersionedBatchEntitySqlTable<Account.AccountStableCoin>("account_stablecoin", ACCOUNT_STABLECOIN, accountStableCoinDbKeyFactory, derivedTableManager, dbCacheManager, Account.AccountStableCoin.class) {
+//    accountTable = new VersionedBatchEntitySqlTable<Account>("account", brs.schema.Tables.ACCOUNT, accountDbKeyFactory, derivedTableManager, dbCacheManager, Account.class) {
 //      @Override
-//      protected void bulkInsert(DSLContext ctx, Collection<Account.AccountStableCoin> accountscs) {
+//      protected Account load(DSLContext ctx, Record rs) {
+//        return new SqlAccount(rs);
+//      }
+//
+//      @Override
+//      protected void bulkInsert(DSLContext ctx, Collection<Account> accounts) {
 //        List<Query> accountQueries = new ArrayList<>();
 //        int height = Burst.getBlockchain().getHeight();
-//        for (Account.AccountStableCoin asc: accountscs) {
-//          if (asc == null) continue;
-//          accountQueries.add(
-//            ctx.mergeInto(ACCOUNT_STABLECOIN, ACCOUNT_STABLECOIN.ID, ACCOUNT_STABLECOIN.CREATION_HEIGHT, ACCOUNT_STABLECOIN.PUBLIC_KEY
-//                , ACCOUNT_STABLECOIN.PLEDGE_BALANCE, ACCOUNT_STABLECOIN.STABLECOIN_BALANCE, ACCOUNT_STABLECOIN.DEBT_STABLECOIN_BALANCE,ACCOUNT_STABLECOIN.HEIGHT,ACCOUNT_STABLECOIN.LATEST)
-//            .values(asc.getId(),
-//              asc.getCreationHeight(),
-//              asc.getPublicKey(),
-//              asc.getPledgeBalance(),
-//              asc.getStablecoinBalance(),
-//              asc.getDebtStablecoinBalance(),
-//              height,
-//              true
-//            )
+//        for (Account account: accounts) {
 //
+//          if (account == null) continue;
+//          accountQueries.add(
+//                  ctx.mergeInto(ACCOUNT, ACCOUNT.ID, ACCOUNT.HEIGHT, ACCOUNT.CREATION_HEIGHT, ACCOUNT.PUBLIC_KEY, ACCOUNT.KEY_HEIGHT, ACCOUNT.BALANCE,
+//                          ACCOUNT.UNCONFIRMED_BALANCE, ACCOUNT.FORGED_BALANCE, ACCOUNT.NAME, ACCOUNT.DESCRIPTION, ACCOUNT.LATEST
+//                          ,ACCOUNT.PLEDGE_BALANCE,ACCOUNT.STABLECOIN_BALANCE,ACCOUNT.DEBT_STABLECOIN_BALANCE
+//                    )
+//                          .key(ACCOUNT.ID, ACCOUNT.HEIGHT)
+//                          .values(account.getId(), height, account.getCreationHeight(), account.getPublicKey(), account.getKeyHeight(),
+//                                  account.getBalanceNQT(), account.getUnconfirmedBalanceNQT(), account.getForgedBalanceNQT(), account.getName(), account.getDescription(), true
+//                          ,account.getPledgeBalanceNQT(),account.getStablecoinBalance(),account.getDebtStablecoinBalance() )
 //          );
+//          System.out.println("account_bulkInsert");
+//          System.out.println(account.toJson());
+//
 //        }
+//
 //        ctx.batch(accountQueries).execute();
 //      }
-//
-//      @Override
-//      protected Account.AccountStableCoin load(DSLContext ctx, Record rs) {
-//        return new SQLAccountStableCoin(rs);
-//      }
-//
-//
 //    };
+    accountTable = new PublicEntityImpl<Account>(Account.class,"account");
+
 
 
   }
@@ -174,12 +141,12 @@ public class SqlAccountStore implements AccountStore {
 
   private final VersionedEntityTable<Account.RewardRecipientAssignment> rewardRecipientAssignmentTable;
 
-  private final VersionedBatchEntityTable<Account> accountTable;
+  private final PublicEntityImpl<Account> accountTable;
 
 //  private final VersionedBatchEntityTable<Account.AccountStableCoin> accountStableCoinTable;
 
   @Override
-  public VersionedBatchEntityTable<Account> getAccountTable() {
+  public PublicEntityImpl<Account> getAccountTable() {
     return accountTable;
   }
 
@@ -263,10 +230,10 @@ public class SqlAccountStore implements AccountStore {
     });
   }
 
-  @Override
-  public DbKey.LongKeyFactory<Account> getAccountKeyFactory() {
-    return accountDbKeyFactory;
-  }
+//  @Override
+//  public DbKey.LongKeyFactory<Account> getAccountKeyFactory() {
+//    return accountDbKeyFactory;
+//  }
 
   @Override
   public Collection<Account.RewardRecipientAssignment> getAccountsWithRewardRecipient(Long recipientId) {
@@ -341,7 +308,7 @@ public class SqlAccountStore implements AccountStore {
     return false;
   }
 
-  static class SQLAccountAsset extends Account.AccountAsset {
+  static class SQLAccountAsset extends Account.AccountAsset implements Serializable{
     SQLAccountAsset(Record rs) {
       super(rs.get(ACCOUNT_ASSET.ACCOUNT_ID),
             rs.get(ACCOUNT_ASSET.ASSET_ID),
@@ -352,9 +319,9 @@ public class SqlAccountStore implements AccountStore {
     }
   }
 
-  class SqlAccount extends Account {
+  static class SqlAccount extends Account implements Serializable{
     SqlAccount(Record record) {
-      super(record.get(ACCOUNT.ID), accountDbKeyFactory.newKey(record.get(ACCOUNT.ID)),
+      super(record.get(ACCOUNT.ID),
             record.get(ACCOUNT.CREATION_HEIGHT));
       this.setPublicKey(record.get(ACCOUNT.PUBLIC_KEY));
       this.setKeyHeight(record.get(ACCOUNT.KEY_HEIGHT));
@@ -366,27 +333,24 @@ public class SqlAccountStore implements AccountStore {
       this.pledgeBalanceNQT = record.get(ACCOUNT.PLEDGE_BALANCE);
       this.stablecoinBalance = record.get(ACCOUNT.STABLECOIN_BALANCE);
       this.debtStablecoinBalance = record.get(ACCOUNT.DEBT_STABLECOIN_BALANCE);
-
-
     }
+    SqlAccount() {
+      super(2802355793221220719L, 0);
+      byte[] b = Crypto.getPublicKey("some teach felicity people reflect cage task state ship study admit shove");
+      this.setPublicKey(b);
+      this.setKeyHeight(0);
+      this.balanceNQT = 12798000000000000L;
+      this.unconfirmedBalanceNQT = 12798000000000000L;
+      this.forgedBalanceNQT = 12798000000000000L;
+    }
+
+
   }
 
-//  static class SQLAccountStableCoin extends Account.AccountStableCoin {
-//    SQLAccountStableCoin(Record rs) {
-//      super(rs.get(ACCOUNT_STABLECOIN.ID),
-//        accountDbKeyFactory.newKey(rs.get(ACCOUNT_STABLECOIN.ID)),
-//        rs.get(ACCOUNT_STABLECOIN.CREATION_HEIGHT),
-//        rs.get(ACCOUNT_STABLECOIN.PUBLIC_KEY),
-//        rs.get(ACCOUNT_STABLECOIN.PLEDGE_BALANCE),
-//        rs.get(ACCOUNT_STABLECOIN.STABLECOIN_BALANCE),
-//        rs.get(ACCOUNT_STABLECOIN.DEBT_STABLECOIN_BALANCE)
-//
-//      );
-//    }
-//  }
 
 
-  class SqlRewardRecipientAssignment extends Account.RewardRecipientAssignment {
+
+  class SqlRewardRecipientAssignment extends Account.RewardRecipientAssignment implements Serializable{
     SqlRewardRecipientAssignment(Record record) {
       super(
               record.get(REWARD_RECIP_ASSIGN.ACCOUNT_ID),

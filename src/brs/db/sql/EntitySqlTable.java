@@ -8,12 +8,13 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public abstract class EntitySqlTable<T> extends DerivedSqlTable implements EntityTable<T> {
+public abstract class EntitySqlTable<T> extends DerivedSqlTable implements EntityTable<T>, Serializable {
   final DbKey.Factory<T> dbKeyFactory;
   private final boolean multiversion;
   private final List<SortField<?>> defaultSort;

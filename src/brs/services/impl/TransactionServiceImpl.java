@@ -1,12 +1,13 @@
 package brs.services.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import brs.*;
 import brs.services.AccountService;
 import brs.services.TransactionService;
 
-public class TransactionServiceImpl implements TransactionService {
+public class TransactionServiceImpl implements TransactionService , Serializable {
 
   private final AccountService accountService;
   private final Blockchain blockchain;
@@ -40,7 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
           transaction.getFeeNQT(), minimumFeeNQT, blockchain.getHeight()));
     }
   }
-  
+
   @Override
   public void startNewBlock() {
     accountCommitmentRemovals.clear();

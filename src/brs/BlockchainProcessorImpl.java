@@ -19,6 +19,7 @@ import brs.props.PropertyService;
 import brs.props.Props;
 import brs.services.*;
 import brs.statistics.StatisticsManagerImpl;
+import brs.test.test3;
 import brs.transactionduplicates.TransactionDuplicatesCheckerImpl;
 import brs.unconfirmedtransactions.UnconfirmedTransactionStore;
 import brs.util.*;
@@ -1015,7 +1016,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
         //对internalStore剩下的每个交易中每个发送者账户进行预留，将预留失败的交易从internalStore删除掉   没什么用
         transactionProcessor.requeueAllUnconfirmedTransactions();
         //将transactionBatches中的account值更新到数据库
-        accountService.flushAccountTable();
+//        accountService.flushAccountTable();
         //将block更新到block表
         addBlock(block);
         //
@@ -1059,6 +1060,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
     subscriptionService.clearRemovals();
     transactionService.startNewBlock();
     for (Transaction transaction : block.getTransactions()) {
+      //处理附加物信息
       if (!transactionService.applyUnconfirmed(transaction)) {
         throw new TransactionNotAcceptedException(
             "Transaction not accepted: " + transaction.getStringId(), transaction);
@@ -1203,6 +1205,8 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
       // finally all stuff is reverted so nothing is written to the db
       // the block itself with all transactions we found is pushed using pushBlock which calls
       // accept (so it's going the same way like a received/synced block)
+
+
       try {
         stores.beginTransaction();
 
@@ -1356,6 +1360,16 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
         stores.endTransaction();
       }
 
+
+//      Map<String, Object> resultObjectMap = test3.applyTransactionSpark(transactionService);
+//      // 从映射中获取结果
+//      totalAmountNQT = (Long) resultObjectMap.get("totalAmountNQT");
+//      totalFeeNQT = (Long) resultObjectMap.get("totalFeeNQT");
+//      payloadSize = (int) resultObjectMap.get("payloadSize");
+//      orderedBlockTransactions = (SortedSet<Transaction>) resultObjectMap.get("orderedBlockTransactions");
+
+
+
       // ATs for block
       long generatorId = Account.getId(publicKey);
       int blockHeight = previousBlock.getHeight() + 1;
@@ -1390,6 +1404,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
         logger.info("Error generating block", e);
         return;
       }
+
       block.sign(secretPhrase);
       blockService.setPrevious(block, previousBlock);
       try {

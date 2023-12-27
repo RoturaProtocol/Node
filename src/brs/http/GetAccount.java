@@ -47,8 +47,7 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
 
     JsonObject response = JSONData.accountBalance(account);
 
-//    System.out.println("getaccount");
-//    System.out.println(account.getDebtStablecoinBalance());
+
     int height = parameterService.getHeight(req);
     if(height < 0) {
       height = blockchain.getHeight();

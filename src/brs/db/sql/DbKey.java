@@ -4,12 +4,13 @@ import brs.db.BurstKey;
 import brs.util.StringUtils;
 import org.jooq.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public interface DbKey extends BurstKey {
 
-  abstract class Factory<T> implements BurstKey.Factory<T> {
+  abstract class Factory<T> implements BurstKey.Factory<T>, Serializable {
 
     private final String pkClause;
     private final String[] pkColumns;
@@ -79,7 +80,7 @@ public interface DbKey extends BurstKey {
     }
   }
 
-  abstract class LinkKeyFactory<T> extends Factory<T> implements BurstKey.LinkKeyFactory<T> {
+  abstract class LinkKeyFactory<T> extends Factory<T> implements BurstKey.LinkKeyFactory<T>, Serializable {
 
     private final String idColumnA;
     private final String idColumnB;
@@ -147,7 +148,7 @@ public interface DbKey extends BurstKey {
       conditions.add(tableClass.field(idColumn, Long.class).eq(id));
       return conditions;
     }
-    
+
   }
 
   final class LinkKey implements DbKey {

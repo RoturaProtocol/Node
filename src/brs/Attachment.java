@@ -10,6 +10,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -22,7 +23,7 @@ public interface Attachment extends Appendix {
 
   TransactionType getTransactionType();
 
-  public abstract class AbstractAttachment extends AbstractAppendix implements Attachment {
+  public abstract class AbstractAttachment extends AbstractAppendix implements Attachment, Serializable{
 
     protected AbstractAttachment(ByteBuffer buffer, byte transactionVersion) {
       super(buffer, transactionVersion);
@@ -40,6 +41,10 @@ public interface Attachment extends Appendix {
       super(blockchainHeight);
     }
 
+    public AbstractAttachment() {
+      super();
+    }
+
     @Override
     public final void validate(Transaction transaction) throws BurstException.ValidationException {
       getTransactionType().validateAttachment(transaction);
@@ -47,6 +52,7 @@ public interface Attachment extends Appendix {
 
     @Override
     public final void apply(Transaction transaction, Account senderAccount, Account recipientAccount) {
+      System.out.println("附加物apply");
       getTransactionType().apply(transaction, senderAccount, recipientAccount);
     }
 
@@ -1733,7 +1739,7 @@ public interface Attachment extends Appendix {
   }
 
 
-  abstract class CommitmentAttachment extends AbstractAttachment {
+  abstract class CommitmentAttachment extends AbstractAttachment implements Serializable {
 
     private final long amountNQT;
 
@@ -1750,6 +1756,12 @@ public interface Attachment extends Appendix {
     private CommitmentAttachment(long amountNQT, int blockchainHeight) {
       super(blockchainHeight);
       this.amountNQT = amountNQT;
+    }
+
+    public CommitmentAttachment() {
+      super();
+
+      this.amountNQT = 0;
     }
 
     public long getAmountNQT() {
@@ -1773,7 +1785,11 @@ public interface Attachment extends Appendix {
 
   }
 
-  final class CommitmentAdd extends CommitmentAttachment {
+  final class CommitmentAdd extends CommitmentAttachment implements Serializable{
+    // 无参构造函数
+    CommitmentAdd() {
+      super();
+    }
 
     CommitmentAdd(ByteBuffer buffer, byte transactionVersion) {
       super(buffer, transactionVersion);

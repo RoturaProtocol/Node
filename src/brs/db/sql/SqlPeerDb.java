@@ -33,8 +33,8 @@ public class SqlPeerDb implements PeerDb {
         });
     }
 
-    @Override
-    public void optimize() {
-        Db.optimizeTable(PEER.getName());
-    }
+//    @Override
+//    public void optimize() {
+//        Db.optimizeTable(PEER.getName());
+//    }
 }

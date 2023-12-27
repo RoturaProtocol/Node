@@ -12,15 +12,13 @@ import brs.services.AccountService;
 import brs.services.TimeService;
 import brs.services.TransactionService;
 import brs.unconfirmedtransactions.UnconfirmedTransactionStore;
-import brs.util.JSON;
-import brs.util.Listener;
-import brs.util.Listeners;
-import brs.util.ThreadPool;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import brs.util.*;
+import com.couchbase.client.java.kv.GetResult;
+import com.google.gson.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.couchbase.client.java.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,9 +29,23 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+
+
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.Arrays;
+
+import static brs.Transaction.parseJsonObject;
 import static brs.http.common.ResultFields.UNCONFIRMED_TRANSACTIONS_RESPONSE;
 
 public class TransactionProcessorImpl implements TransactionProcessor {
+
+  //将交易放入couchbase
+  public static String connectionString = "couchbase://127.0.0.1";
+  public static String username = "root";
+  public static String password = "123456";
+  public static String bucketName = "transaction";
 
   private static final Logger logger = LoggerFactory.getLogger(TransactionProcessorImpl.class);
 
@@ -251,7 +263,7 @@ public class TransactionProcessorImpl implements TransactionProcessor {
       try {
         stores.beginTransaction();
         removed = unconfirmedTransactionStore.getAll();
-        accountService.flushAccountTable();
+//        accountService.flushAccountTable();
         unconfirmedTransactionStore.clear();
         stores.commitTransaction();
       } catch (Exception e) {
@@ -355,6 +367,33 @@ public class TransactionProcessorImpl implements TransactionProcessor {
 
             if(unconfirmedTransactionStore.put(transaction, peer)) {
               addedUnconfirmedTransactions.add(transaction);
+            }
+
+            try {
+              Cluster cluster = Cluster.connect(connectionString, username, password);
+              Bucket bucket = cluster.bucket(bucketName);
+
+              com.couchbase.client.java.Collection collection = bucket.defaultCollection();
+              // 将对象转换为 JSON 字符串
+              String jsonTransaction = transaction.toJson();
+              com.couchbase.client.java.json.JsonObject jsonObject = com.couchbase.client.java.json.JsonObject.fromJson(transaction.toJson());
+              com.couchbase.client.java.json.JsonArray array = jsonObject.getObject("signature").getArray("value");
+              // 使用 Gson 反序列化 JSON
+              byte[] byteArray = new Gson().fromJson(array.toString(), byte[].class);
+
+//              // 使用 Upsert 方法将文档写入 Couchbase
+//              collection.upsert(String.valueOf(transaction.getId()), jsonObject);
+
+//              com.couchbase.client.java.json.JsonObject jsonObject1 = collection.get(String.valueOf(transaction.getId())).contentAsObject();
+//              Gson gson = new GsonBuilder()
+//                .registerTypeAdapter(Transaction.class, new AttachmentDeserializer())
+//                .serializeNulls()
+//                .create();
+              // 反序列化
+//              Transaction transaction11 = gson.fromJson(jsonObject1.toString(), Transaction.class);
+
+            }catch (Exception e) {
+              throw e;
             }
 
             stores.commitTransaction();

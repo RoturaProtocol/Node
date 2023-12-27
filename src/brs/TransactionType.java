@@ -22,26 +22,32 @@ import brs.transactionduplicates.TransactionDuplicationKey;
 import brs.util.Convert;
 import brs.util.JSON;
 import brs.util.TextUtils;
+import com.google.gson.GsonBuilder;
 import signum.net.NetworkParameters;
 
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.*;
+import com.google.gson.Gson;
 
 import static brs.Constants.ONE_BURST;
 import static brs.http.JSONResponses.DEBT_COMMIT;
 import static brs.http.JSONResponses.NOT_ENOUGH_FUNDS;
 
-public abstract class TransactionType {
+
+
+
+public abstract class TransactionType implements Serializable{
 
   private static final Logger logger = LoggerFactory.getLogger(TransactionType.class);
 
-  private static final Map<Type, Map<Byte, TransactionType>> TRANSACTION_TYPES = new HashMap<>();
+  public static final Map<Type, Map<Byte, TransactionType>> TRANSACTION_TYPES = new HashMap<>();
 
   public static final Type TYPE_PAYMENT = new Type((byte)0, "Payment");
   public static final Type TYPE_MESSAGING = new Type((byte)1, "Messaging");
@@ -231,6 +237,10 @@ public abstract class TransactionType {
     TRANSACTION_TYPES.put(TYPE_BURST_DEBT, burstDebtTypes);
   }
 
+
+
+
+
   public static void setNetworkParameters(NetworkParameters params) {
     params.adjustTransactionTypes(TRANSACTION_TYPES);
   }
@@ -239,6 +249,8 @@ public abstract class TransactionType {
     for(Type t : TRANSACTION_TYPES.keySet()) {
 
       if(t.getType() == type) {
+
+
         Map<Byte, TransactionType> subtypes = TRANSACTION_TYPES.get(t);
         return subtypes == null ? null : subtypes.get(subtype);
       }
@@ -261,7 +273,7 @@ public abstract class TransactionType {
 
   public abstract Attachment.AbstractAttachment parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException;
 
-  protected abstract Attachment.AbstractAttachment parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException;
+  public abstract Attachment.AbstractAttachment parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException;
 
   protected abstract void validateAttachment(Transaction transaction) throws BurstException.ValidationException;
 
@@ -278,6 +290,7 @@ public abstract class TransactionType {
       accountService.addToUnconfirmedBalanceNQT(senderAccount, -transaction.getFeeNQT());
     }
     else {
+      System.out.println("transaction_getType_applyUnconfirmed");
       long totalAmountNQT = calculateTransactionAmountNQT(transaction);
       if (logger.isTraceEnabled()) {
         logger.trace("applyUnconfirmed: {} < totalamount: {} = false", senderAccount.getUnconfirmedBalanceNQT(), totalAmountNQT);
@@ -317,7 +330,7 @@ public abstract class TransactionType {
   protected abstract boolean applyAttachmentUnconfirmed(Transaction transaction, Account senderAccount);
 
   final void apply(Transaction transaction, Account senderAccount, Account recipientAccount) {
-
+    System.out.println("附加物apply");
     if(transaction.getAttachment().getTransactionType().getDescription().equals("TUSD Payment")){
 //      double amount = transaction.getAmountNQT()/100000000.0;
       double amount = transaction.getAmountNQT()/10000.0;
@@ -443,7 +456,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.EmptyAttachment parseAttachment(JsonObject attachmentData) {
+      public Attachment.EmptyAttachment parseAttachment(JsonObject attachmentData) {
         return Attachment.TUSD_PAYMENT;
       }
 
@@ -482,7 +495,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.EmptyAttachment parseAttachment(JsonObject attachmentData) {
+      public Attachment.EmptyAttachment parseAttachment(JsonObject attachmentData) {
         return Attachment.ORDINARY_PAYMENT;
       }
 
@@ -517,7 +530,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.PaymentMultiOutCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
+      public Attachment.PaymentMultiOutCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
         return new Attachment.PaymentMultiOutCreation(attachmentData);
       }
 
@@ -594,7 +607,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.PaymentMultiSameOutCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
+      public Attachment.PaymentMultiSameOutCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
         return new Attachment.PaymentMultiSameOutCreation(attachmentData);
       }
 
@@ -689,7 +702,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.EmptyAttachment parseAttachment(JsonObject attachmentData) {
+      public Attachment.EmptyAttachment parseAttachment(JsonObject attachmentData) {
         return Attachment.ARBITRARY_MESSAGE;
       }
 
@@ -761,7 +774,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.MessagingAliasAssignment parseAttachment(JsonObject attachmentData) {
+      public Attachment.MessagingAliasAssignment parseAttachment(JsonObject attachmentData) {
         return new Attachment.MessagingAliasAssignment(attachmentData);
       }
 
@@ -819,7 +832,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.MessagingAliasSell parseAttachment(JsonObject attachmentData) {
+      public Attachment.MessagingAliasSell parseAttachment(JsonObject attachmentData) {
         return new Attachment.MessagingAliasSell(attachmentData);
       }
 
@@ -895,7 +908,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.MessagingAliasBuy parseAttachment(JsonObject attachmentData) {
+      public Attachment.MessagingAliasBuy parseAttachment(JsonObject attachmentData) {
         return new Attachment.MessagingAliasBuy(attachmentData);
       }
 
@@ -970,7 +983,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.MessagingAccountInfo parseAttachment(JsonObject attachmentData) {
+      public Attachment.MessagingAccountInfo parseAttachment(JsonObject attachmentData) {
         return new Attachment.MessagingAccountInfo(attachmentData);
       }
 
@@ -1033,7 +1046,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.ColoredCoinsAssetIssuance parseAttachment(JsonObject attachmentData) {
+      public Attachment.ColoredCoinsAssetIssuance parseAttachment(JsonObject attachmentData) {
         return new Attachment.ColoredCoinsAssetIssuance(attachmentData);
       }
 
@@ -1099,7 +1112,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.ColoredCoinsAssetTransfer parseAttachment(JsonObject attachmentData) {
+      public Attachment.ColoredCoinsAssetTransfer parseAttachment(JsonObject attachmentData) {
         return new Attachment.ColoredCoinsAssetTransfer(attachmentData);
       }
 
@@ -1176,7 +1189,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.ColoredCoinsAssetMint parseAttachment(JsonObject attachmentData) {
+      public Attachment.ColoredCoinsAssetMint parseAttachment(JsonObject attachmentData) {
         return new Attachment.ColoredCoinsAssetMint(attachmentData);
       }
 
@@ -1267,7 +1280,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.AbstractAttachment parseAttachment(JsonObject attachmentData) {
+      public Attachment.AbstractAttachment parseAttachment(JsonObject attachmentData) {
         return Attachment.ASSET_ADD_TREASURY_ACCOUNT_ATTACHMENT;
       }
 
@@ -1349,7 +1362,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.ColoredCoinsAssetDistributeToHolders parseAttachment(JsonObject attachmentData) {
+      public Attachment.ColoredCoinsAssetDistributeToHolders parseAttachment(JsonObject attachmentData) {
         return new Attachment.ColoredCoinsAssetDistributeToHolders(attachmentData);
       }
 
@@ -1580,7 +1593,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.ColoredCoinsAskOrderPlacement parseAttachment(JsonObject attachmentData) {
+      public Attachment.ColoredCoinsAskOrderPlacement parseAttachment(JsonObject attachmentData) {
         return new Attachment.ColoredCoinsAskOrderPlacement(attachmentData);
       }
 
@@ -1630,7 +1643,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.ColoredCoinsBidOrderPlacement parseAttachment(JsonObject attachmentData) {
+      public Attachment.ColoredCoinsBidOrderPlacement parseAttachment(JsonObject attachmentData) {
         return new Attachment.ColoredCoinsBidOrderPlacement(attachmentData);
       }
 
@@ -1703,7 +1716,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.ColoredCoinsAskOrderCancellation parseAttachment(JsonObject attachmentData) {
+      public Attachment.ColoredCoinsAskOrderCancellation parseAttachment(JsonObject attachmentData) {
         return new Attachment.ColoredCoinsAskOrderCancellation(attachmentData);
       }
 
@@ -1750,7 +1763,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.ColoredCoinsBidOrderCancellation parseAttachment(JsonObject attachmentData) {
+      public Attachment.ColoredCoinsBidOrderCancellation parseAttachment(JsonObject attachmentData) {
         return new Attachment.ColoredCoinsBidOrderCancellation(attachmentData);
       }
 
@@ -1831,7 +1844,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DigitalGoodsListing parseAttachment(JsonObject attachmentData) {
+      public Attachment.DigitalGoodsListing parseAttachment(JsonObject attachmentData) {
         return new Attachment.DigitalGoodsListing(attachmentData);
       }
 
@@ -1879,7 +1892,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DigitalGoodsDelisting parseAttachment(JsonObject attachmentData) {
+      public Attachment.DigitalGoodsDelisting parseAttachment(JsonObject attachmentData) {
         return new Attachment.DigitalGoodsDelisting(attachmentData);
       }
 
@@ -1933,7 +1946,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DigitalGoodsPriceChange parseAttachment(JsonObject attachmentData) {
+      public Attachment.DigitalGoodsPriceChange parseAttachment(JsonObject attachmentData) {
         return new Attachment.DigitalGoodsPriceChange(attachmentData);
       }
 
@@ -1989,7 +2002,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DigitalGoodsQuantityChange parseAttachment(JsonObject attachmentData) {
+      public Attachment.DigitalGoodsQuantityChange parseAttachment(JsonObject attachmentData) {
         return new Attachment.DigitalGoodsQuantityChange(attachmentData);
       }
 
@@ -2046,7 +2059,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DigitalGoodsPurchase parseAttachment(JsonObject attachmentData) {
+      public Attachment.DigitalGoodsPurchase parseAttachment(JsonObject attachmentData) {
         return new Attachment.DigitalGoodsPurchase(attachmentData);
       }
 
@@ -2127,7 +2140,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DigitalGoodsDelivery parseAttachment(JsonObject attachmentData) {
+      public Attachment.DigitalGoodsDelivery parseAttachment(JsonObject attachmentData) {
         return new Attachment.DigitalGoodsDelivery(attachmentData);
       }
 
@@ -2187,7 +2200,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DigitalGoodsFeedback parseAttachment(JsonObject attachmentData) {
+      public Attachment.DigitalGoodsFeedback parseAttachment(JsonObject attachmentData) {
         return new Attachment.DigitalGoodsFeedback(attachmentData);
       }
 
@@ -2251,7 +2264,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DigitalGoodsRefund parseAttachment(JsonObject attachmentData) {
+      public Attachment.DigitalGoodsRefund parseAttachment(JsonObject attachmentData) {
         return new Attachment.DigitalGoodsRefund(attachmentData);
       }
 
@@ -2354,7 +2367,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.AccountControlEffectiveBalanceLeasing parseAttachment(JsonObject attachmentData) {
+      public Attachment.AccountControlEffectiveBalanceLeasing parseAttachment(JsonObject attachmentData) {
         return new Attachment.AccountControlEffectiveBalanceLeasing(attachmentData);
       }
 
@@ -2390,9 +2403,15 @@ public abstract class TransactionType {
 
   }
 
-  public abstract static class BurstMining extends TransactionType {
+  public abstract static class BurstMining extends TransactionType implements Serializable {
 
     private BurstMining() {}
+
+    // 序列化为 JSON
+    public String toJson() {
+      Gson gson = new GsonBuilder().serializeNulls().create();
+      return gson.toJson(this);
+    }
 
     @Override
     public final byte getType() {
@@ -2426,7 +2445,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.BurstMiningRewardRecipientAssignment parseAttachment(JsonObject attachmentData) {
+      public Attachment.BurstMiningRewardRecipientAssignment parseAttachment(JsonObject attachmentData) {
         return new Attachment.BurstMiningRewardRecipientAssignment(attachmentData);
       }
 
@@ -2496,7 +2515,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.CommitmentAdd parseAttachment(JsonObject attachmentData) {
+      public Attachment.CommitmentAdd parseAttachment(JsonObject attachmentData) {
         return new Attachment.CommitmentAdd(attachmentData);
       }
 
@@ -2579,7 +2598,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.CommitmentRemove parseAttachment(JsonObject attachmentData) {
+      public Attachment.CommitmentRemove parseAttachment(JsonObject attachmentData) {
         return new Attachment.CommitmentRemove(attachmentData);
       }
 
@@ -2771,7 +2790,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected DebtAdd parseAttachment(JsonObject attachmentData) {
+      public DebtAdd parseAttachment(JsonObject attachmentData) {
         return new DebtAdd(attachmentData);
       }
 
@@ -2887,7 +2906,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.DebtRemove parseAttachment(JsonObject attachmentData) {
+      public Attachment.DebtRemove parseAttachment(JsonObject attachmentData) {
         return new Attachment.DebtRemove(attachmentData);
       }
 
@@ -3025,7 +3044,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.AdvancedPaymentEscrowCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
+      public Attachment.AdvancedPaymentEscrowCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
         return new Attachment.AdvancedPaymentEscrowCreation(attachmentData);
       }
 
@@ -3140,7 +3159,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.AdvancedPaymentEscrowSign parseAttachment(JsonObject attachmentData) {
+      public Attachment.AdvancedPaymentEscrowSign parseAttachment(JsonObject attachmentData) {
         return new Attachment.AdvancedPaymentEscrowSign(attachmentData);
       }
 
@@ -3222,7 +3241,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.AdvancedPaymentEscrowResult parseAttachment(JsonObject attachmentData) {
+      public Attachment.AdvancedPaymentEscrowResult parseAttachment(JsonObject attachmentData) {
         return new Attachment.AdvancedPaymentEscrowResult(attachmentData);
       }
 
@@ -3280,7 +3299,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.AdvancedPaymentSubscriptionSubscribe parseAttachment(JsonObject attachmentData) {
+      public Attachment.AdvancedPaymentSubscriptionSubscribe parseAttachment(JsonObject attachmentData) {
         return new Attachment.AdvancedPaymentSubscriptionSubscribe(attachmentData);
       }
 
@@ -3348,7 +3367,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.AdvancedPaymentSubscriptionCancel parseAttachment(JsonObject attachmentData) {
+      public Attachment.AdvancedPaymentSubscriptionCancel parseAttachment(JsonObject attachmentData) {
         return new Attachment.AdvancedPaymentSubscriptionCancel(attachmentData);
       }
 
@@ -3423,7 +3442,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected Attachment.AdvancedPaymentSubscriptionPayment parseAttachment(JsonObject attachmentData) {
+      public Attachment.AdvancedPaymentSubscriptionPayment parseAttachment(JsonObject attachmentData) {
         return new Attachment.AdvancedPaymentSubscriptionPayment(attachmentData);
       }
 
@@ -3514,7 +3533,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected AbstractAttachment parseAttachment(JsonObject attachmentData) {
+      public AbstractAttachment parseAttachment(JsonObject attachmentData) {
         return new AutomatedTransactionsCreation(attachmentData);
       }
 
@@ -3617,7 +3636,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      protected AbstractAttachment parseAttachment(JsonObject attachmentData) {
+      public AbstractAttachment parseAttachment(JsonObject attachmentData) {
         return Attachment.AT_PAYMENT;
       }
 

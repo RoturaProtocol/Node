@@ -237,6 +237,7 @@ public class BlockServiceImpl implements BlockService {
       }
       block.setHeight(previousBlock.getHeight() + 1);
       if(block.getBaseTarget() == Constants.INITIAL_BASE_TARGET ) {
+
         try {
           this.calculateBaseTarget(block, previousBlock);
         } catch (BlockOutOfOrderException e) {
@@ -251,6 +252,7 @@ public class BlockServiceImpl implements BlockService {
 
   @Override
   public void calculateBaseTarget(Block block, Block previousBlock) throws BlockOutOfOrderException {
+
     long blockTime = Burst.getFluxCapacitor().getValue(FluxValues.BLOCK_TIME);
     //[liuhaoyang 20220311]
     if (block.getHeight() > 288387){
@@ -304,7 +306,11 @@ public class BlockServiceImpl implements BlockService {
         if(previousHeight < 1) {
           break;
         }
+        System.out.println("calculateBaseTarget");
+        System.out.println(itBlock.getPreviousBlockId());
         itBlock = downloadCache.getBlock(itBlock.getPreviousBlockId());
+        System.out.println(itBlock.getPreviousBlockId());
+
         if (itBlock == null) {
           throw new BlockOutOfOrderException("Previous block does no longer exist for block height " + previousHeight);
         }

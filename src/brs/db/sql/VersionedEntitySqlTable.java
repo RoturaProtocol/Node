@@ -8,10 +8,11 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class VersionedEntitySqlTable<T> extends EntitySqlTable<T> implements VersionedEntityTable<T> {
+public abstract class VersionedEntitySqlTable<T> extends EntitySqlTable<T> implements VersionedEntityTable<T> , Serializable {
 
   VersionedEntitySqlTable(String table, TableImpl<?> tableClass, BurstKey.Factory<T> dbKeyFactory, DerivedTableManager derivedTableManager) {
     super(table, tableClass, dbKeyFactory, true, derivedTableManager);

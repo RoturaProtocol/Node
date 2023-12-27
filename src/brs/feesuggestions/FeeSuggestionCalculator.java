@@ -23,13 +23,13 @@ public class FeeSuggestionCalculator {
     long cheap = 1;
     long standard = 2;
     long priority = 3;
-    if(Burst.getBlockchain() != null) {
-      Block lastBlock = Burst.getBlockchain().getLastBlock();
-      if(lastBlock != null) {
-        standard = Math.max(2, lastBlock.getTransactions().size()-2);
-        priority = lastBlock.getTransactions().size()+3;
-      }
-    }
+//    if(Burst.getBlockchain() != null) {
+//      Block lastBlock = Burst.getBlockchain().getLastBlock();
+//      if(lastBlock != null) {
+//        standard = Math.max(2, lastBlock.getTransactions().size()-2);
+//        priority = lastBlock.getTransactions().size()+3;
+//      }
+//    }
 
     long FEE_QUANT = Burst.getFluxCapacitor().getValue(FluxValues.FEE_QUANT);
     feeSuggestion.set(new FeeSuggestion(cheap * FEE_QUANT, standard * FEE_QUANT, priority * FEE_QUANT));

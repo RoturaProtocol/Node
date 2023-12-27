@@ -4,7 +4,9 @@ import brs.db.VersionedValuesTable;
 import brs.db.store.DerivedTableManager;
 import org.jooq.impl.TableImpl;
 
-public abstract class VersionedValuesSqlTable<T, V> extends ValuesSqlTable<T, V> implements VersionedValuesTable<T, V> {
+import java.io.Serializable;
+
+public abstract class VersionedValuesSqlTable<T, V> extends ValuesSqlTable<T, V> implements VersionedValuesTable<T, V>, Serializable {
   VersionedValuesSqlTable(String table, TableImpl<?> tableClass, DbKey.Factory<T> dbKeyFactory, DerivedTableManager derivedTableManager) {
     super(table, tableClass, dbKeyFactory, true, derivedTableManager);
   }

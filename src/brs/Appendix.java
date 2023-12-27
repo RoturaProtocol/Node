@@ -6,6 +6,7 @@ import brs.util.Convert;
 import brs.util.JSON;
 import com.google.gson.JsonObject;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -16,9 +17,9 @@ public interface Appendix {
   JsonObject getJsonObject();
   byte getVersion();
 
-  abstract class AbstractAppendix implements Appendix {
+  abstract class AbstractAppendix implements Appendix , Serializable {
 
-    private final byte version;
+    private byte version;
 
     AbstractAppendix(JsonObject attachmentData) {
       version = JSON.getAsByte(attachmentData.get("version." + getAppendixName()));
@@ -34,6 +35,10 @@ public interface Appendix {
 
     AbstractAppendix(int blockchainHeight) {
       this.version = (byte)(Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight) ? 1 : 0);
+    }
+
+    public AbstractAppendix() {
+      this.version = 1;
     }
 
     protected abstract String getAppendixName();

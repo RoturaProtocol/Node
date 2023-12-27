@@ -18,10 +18,10 @@ public interface BlockDb extends Table {
 
   Block findLastBlock(int timestamp);
 
-  Block loadBlock(BlockRecord r) throws BurstException.ValidationException;
+//  Block loadBlock(BlockRecord r) throws BurstException.ValidationException;
 
-  void saveBlock(DSLContext ctx, Block block);
-
+//  void saveBlock(DSLContext ctx, Block block);
+void saveBlock(Block block);
   // relying on cascade triggers in the database to delete the transactions for all deleted blocks
   void deleteBlocksFrom(long blockId);
 

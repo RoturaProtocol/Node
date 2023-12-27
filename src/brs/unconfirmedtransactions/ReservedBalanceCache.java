@@ -36,7 +36,7 @@ class ReservedBalanceCache {
     Account senderAccount = null;
 
     if (transaction.getSenderId() != 0) {
-      senderAccount = accountStore.getAccountTable().get(accountStore.getAccountKeyFactory().newKey(transaction.getSenderId()));
+      senderAccount = accountStore.getAccountTable().get(transaction.getSenderId());
     }
 
     final Long amountNQT = Convert.safeAdd(
@@ -71,7 +71,7 @@ class ReservedBalanceCache {
           LOGGER.debug("Transaction {}: Account {} commitment remove not allowed. Blocks mined {}, amount commitment {}, amount removing {}",
               transaction.getId(), transaction.getSenderId(), nBlocksMined, amountCommitted, totalAmountNQT);
         }
-        throw new BurstException.NotCurrentlyValidException("Commitment remove not allowed");        
+        throw new BurstException.NotCurrentlyValidException("Commitment remove not allowed");
       }
     }
 

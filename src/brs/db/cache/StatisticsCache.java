@@ -4,11 +4,12 @@ import brs.statistics.StatisticsManagerImpl;
 import org.ehcache.Cache;
 import org.ehcache.config.CacheRuntimeConfiguration;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-class StatisticsCache<K, V> implements Cache<K, V> {
+class StatisticsCache<K, V> implements Cache<K, V> , Serializable {
 
   private final Cache<K, V> wrappedCache;
   private final StatisticsManagerImpl statisticsManager;

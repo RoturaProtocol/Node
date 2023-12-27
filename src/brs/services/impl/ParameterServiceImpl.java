@@ -170,6 +170,9 @@ public class ParameterServiceImpl implements ParameterService {
     Account account;
     String secretPhrase = Convert.emptyToNull(req.getParameter(SECRET_PHRASE_PARAMETER));
     String publicKeyString = Convert.emptyToNull(req.getParameter(PUBLIC_KEY_PARAMETER));
+
+    System.out.println(secretPhrase);
+    System.out.println(publicKeyString);
     if (secretPhrase != null) {
       account = accountService.getAccount(Crypto.getPublicKey(secretPhrase));
     } else if (publicKeyString != null) {
